@@ -6,6 +6,44 @@ class EventRepository
     public function __construct(private mysqli $db) {}
 
     /** @return EventDto[] */
+    public function findUpcoming(int $limit): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT e.*, u.user_name AS creator_name
+               FROM event e
+               JOIN `user` u ON e.creator_user_id = u.user_id
+              WHERE e.event_date >= NOW()
+              ORDER BY e.event_date ASC
+              LIMIT ?'
+        );
+        $stmt->bind_param('i', $limit);
+        $stmt->execute();
+        $events = [];
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $events[] = $this->mapEventRow($row);
+        }
+        return $events;
+    }
+
+    /** @return EventDto[] */
+    public function findAllUpcoming(): array
+    {
+        $result = $this->db->query(
+            'SELECT e.*, u.user_name AS creator_name
+               FROM event e
+               JOIN `user` u ON e.creator_user_id = u.user_id
+              WHERE e.event_date >= NOW()
+              ORDER BY e.event_date ASC'
+        );
+        $events = [];
+        while ($row = $result->fetch_assoc()) {
+            $events[] = $this->mapEventRow($row);
+        }
+        return $events;
+    }
+
+    /** @return EventDto[] */
     public function findAll(): array
     {
         $result = $this->db->query(
@@ -178,10 +216,22 @@ class EventRepository
 
     private function generateGuid(): string
     {
-        $data = random_bytes(16);
-        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
-        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
-        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM event WHERE event_guid = ?'
+        );
+        for ($i = 0; $i < 10; $i++) {
+            $guid = '';
+            for ($j = 0; $j < 8; $j++) {
+                $guid .= $chars[random_int(0, 63)];
+            }
+            $stmt->bind_param('s', $guid);
+            $stmt->execute();
+            if ((int)$stmt->get_result()->fetch_row()[0] === 0) {
+                return $guid;
+            }
+        }
+        throw new \RuntimeException('Failed to generate unique event GUID');
     }
 
     private function mapEventRow(array $row): EventDto

@@ -13,9 +13,10 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="/events">EveEnSys</a>
+    <a class="navbar-brand fw-bold" href="/">EveEnSys</a>
     <div class="navbar-nav ms-auto align-items-center">
       <?php if (Session::isLoggedIn()): ?>
+        <a class="nav-link" href="/events/all">All Events</a>
         <a class="nav-link me-2 text-white-50" href="/profile">
           Hello, <?= h(Session::getUserName()) ?>
         </a>

@@ -1,18 +1,28 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h2><?= h($pageTitle) ?></h2>
-  <?php if (Session::isLoggedIn()): ?>
-    <a href="/events/create" class="btn btn-primary">+ Create Event</a>
-  <?php endif; ?>
+<div class="row justify-content-center">
+  <div class="col-lg-8 text-center mb-5">
+    <h1 class="display-5 fw-bold mb-3">Welcome to EveEnSys</h1>
+    <p class="lead text-muted">
+      EveEnSys is an event enrollment system. Browse upcoming events below —
+      or <a href="/register">create a free account</a> to organize your own events
+      and enroll participants.
+    </p>
+  </div>
 </div>
 
-<?php if (empty($events)): ?>
+<h2 class="mb-4">Upcoming Events</h2>
+
+<?php if (empty($upcomingEvents)): ?>
   <div class="text-center text-muted py-5">
-    <p class="fs-5">No upcoming events.</p>
-    <a href="/events/create" class="btn btn-outline-primary">Create one</a>
+    <p class="fs-5">No upcoming events at the moment.</p>
+    <?php if (Session::isLoggedIn()): ?>
+      <a href="/events/create" class="btn btn-outline-primary">Create the first one</a>
+    <?php else: ?>
+      <a href="/login" class="btn btn-outline-primary">Log in to create events</a>
+    <?php endif; ?>
   </div>
 <?php else: ?>
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    <?php foreach ($events as $event): ?>
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+    <?php foreach ($upcomingEvents as $event): ?>
       <div class="col">
         <div class="card h-100 shadow-sm">
           <div class="card-body">
@@ -42,5 +52,9 @@
         </div>
       </div>
     <?php endforeach; ?>
+  </div>
+
+  <div class="text-center">
+    <a href="/login" class="btn btn-outline-secondary">Log in to view all upcoming events</a>
   </div>
 <?php endif; ?>

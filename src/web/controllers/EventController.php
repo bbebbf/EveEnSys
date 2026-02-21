@@ -10,10 +10,27 @@ class EventController
         $this->eventRepo = new EventRepository($db);
     }
 
+    public function home(): void
+    {
+        if (Session::isLoggedIn()) {
+            $this->redirect('/events');
+        }
+        $upcomingEvents = $this->eventRepo->findUpcoming(3);
+        View::render('home/index', ['pageTitle' => 'Home', 'upcomingEvents' => $upcomingEvents]);
+    }
+
     public function index(): void
     {
+        Session::requireLogin();
+        $events = $this->eventRepo->findAllUpcoming();
+        View::render('event/index', ['pageTitle' => 'Upcoming Events', 'events' => $events]);
+    }
+
+    public function indexAll(): void
+    {
+        Session::requireLogin();
         $events = $this->eventRepo->findAll();
-        View::render('event/index', ['pageTitle' => 'Events', 'events' => $events]);
+        View::render('event/index', ['pageTitle' => 'All Events', 'events' => $events]);
     }
 
     public function show(string $guid): void

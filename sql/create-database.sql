@@ -13,7 +13,7 @@ CREATE TABLE `user` (
 -- ees_db.event definition
 CREATE TABLE `event` (
   `event_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `event_guid` varchar(36) NOT NULL,
+  `event_guid` varchar(8) NOT NULL,
   `creator_user_id` int(10) unsigned NOT NULL,
   `event_title` varchar(150) NOT NULL,
   `event_description` text DEFAULT NULL,

@@ -10,7 +10,7 @@ EveEnSys (Event Enrollment System) is a PHP web app where users register, create
 - A logged-in user can enroll themselves into an event (`subscriber.subscriber_is_creator = 1`).
 - A logged-in user can enroll other (non-registered) persons by name via `subscriber.subscriber_name`.
 - A logged-in user can change user name and user password.
-- All enrolled names are visible to logged-in users.
+- All enrolled names are visible to logged-in users only.
 
 ## Development Environment
 
