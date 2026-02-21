@@ -1,0 +1,48 @@
+services:
+
+  database:
+    container_name: ${DB_HOST}
+    hostname: ${DB_HOST}
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      MARIADB_RANDOM_ROOT_PASSWORD: 1;
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+    volumes:
+      - "./data/mariadb/data:/var/lib/mysql:Z"
+    ports:
+      - "8307:3306"
+
+  webapp:
+    build:
+      context: ./images/websrv-php
+    container_name: ees_webapp
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      APACHE_DOCUMENT_ROOT: "/var/www/html/public"
+      DB_HOST:
+      DB_USER:
+      DB_PASSWORD:
+      DB_NAME:
+    volumes:
+      - "../src/web:/var/www/html:Z"
+    ports:
+      - "8082:80"
+    depends_on:
+      - database
+
+  structurizr:
+    image: structurizr/lite
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - "../docs/structurizr:/usr/local/structurizr:Z"
+    ports:
+      - "8083:8080"
+    profiles:
+      - documentation

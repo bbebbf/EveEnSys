@@ -1,0 +1,10 @@
+Options -Indexes
+
+RewriteEngine On
+
+# Let real files and directories pass through
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Everything else goes to the front controller
+RewriteRule ^ index.php [QSA,L]
