@@ -35,11 +35,20 @@ class UserRepository
     {
         $stmt = $this->db->prepare(
             "INSERT INTO `user` (user_email, user_is_active, user_role, user_name, user_passwd)
-             VALUES (?, b'1', 0, ?, ?)"
+             VALUES (?, b'0', 0, ?, ?)"
         );
         $stmt->bind_param('sss', $email, $name, $hashedPwd);
         $stmt->execute();
         return $this->db->insert_id;
+    }
+
+    public function activate(int $userId): void
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE `user` SET user_is_active = b'1' WHERE user_id = ?"
+        );
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
     }
 
     public function updateLastLogin(int $userId): void

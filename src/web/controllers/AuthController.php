@@ -5,11 +5,13 @@ class AuthController
 {
     private UserRepository $userRepo;
     private PasswordResetRepository $resetRepo;
+    private ActivationTokenRepository $activationRepo;
 
     public function __construct(private mysqli $db)
     {
-        $this->userRepo  = new UserRepository($db);
-        $this->resetRepo = new PasswordResetRepository($db);
+        $this->userRepo       = new UserRepository($db);
+        $this->resetRepo      = new PasswordResetRepository($db);
+        $this->activationRepo = new ActivationTokenRepository($db);
     }
 
     public function showRegister(): void
@@ -70,10 +72,50 @@ class AuthController
             return;
         }
 
-        $hash = password_hash($pwd, PASSWORD_BCRYPT);
-        $this->userRepo->create($name, $email, $hash);
+        $hash   = password_hash($pwd, PASSWORD_BCRYPT);
+        $userId = $this->userRepo->create($name, $email, $hash);
 
-        Session::setFlash('success', 'Account created. Please log in.');
+        $rawToken = $this->activationRepo->createToken($userId);
+
+        $scheme  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
+        $link    = $baseUrl . '/activate-account?token=' . urlencode($rawToken);
+
+        $subject = 'Activate your EveEnSys account';
+        $body    = "Hello {$name},\r\n\r\n"
+            . "Thank you for registering at EveEnSys.\r\n\r\n"
+            . "Click the link below to activate your account (valid for 24 hours):\r\n"
+            . $link . "\r\n\r\n"
+            . "If you did not register, you can safely ignore this email.\r\n";
+
+        $headers = "From: EveEnSys <noreply@eveensys.local>\r\n"
+            . "Content-Type: text/plain; charset=UTF-8\r\n";
+
+        mail($email, $subject, $body, $headers);
+
+        $this->redirect('/activation-sent');
+    }
+
+    public function showActivationSent(): void
+    {
+        Session::requireGuest();
+        View::render('auth/activation_sent', ['pageTitle' => 'Activate Your Account']);
+    }
+
+    public function activateAccount(Request $req): void
+    {
+        $rawToken = $req->get('token', '');
+        $record   = $rawToken !== '' ? $this->activationRepo->findValidByToken($rawToken) : null;
+
+        if ($record === null) {
+            Session::setFlash('error', 'This activation link is invalid or has expired. Please register again.');
+            $this->redirect('/login');
+        }
+
+        $this->userRepo->activate((int)$record['user_id']);
+        $this->activationRepo->markUsed((int)$record['token_id']);
+
+        Session::setFlash('success', 'Account activated. You can now log in.');
         $this->redirect('/login');
     }
 

@@ -1,7 +1,6 @@
 ﻿
 # Ignore files which contains sensitive information
-msmtp.conf
 .env
 
-# Ignore Docker mariadb data directory
-docker/data/mariadb
+# Ignore Docker data directories
+/docker/data/*

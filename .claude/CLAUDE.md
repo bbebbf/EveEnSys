@@ -84,6 +84,8 @@ Three tables in database `ees_db`:
 - MariaDB 10.11
 - Bootstrap 5.3.8
 - Composer (installed in the image)
+- Structurizr lite, for documentation
+- Mailpit, for SMTP mock up
 
 ## Security features
 

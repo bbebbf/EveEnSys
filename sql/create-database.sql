@@ -39,6 +39,19 @@ CREATE TABLE `password_reset` (
   CONSTRAINT `password_reset_user_FK` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- ees_db.activation_token definition
+CREATE TABLE `activation_token` (
+  `token_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `token_hash` varchar(64) NOT NULL,
+  `token_expires_at` datetime NOT NULL,
+  `token_used` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`token_id`),
+  UNIQUE KEY `activation_token_UQ` (`token_hash`),
+  KEY `activation_token_user_FK` (`user_id`),
+  CONSTRAINT `activation_token_user_FK` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- ees_db.subscriber definition
 CREATE TABLE `subscriber` (
   `subscriber_id` int(10) unsigned NOT NULL AUTO_INCREMENT,

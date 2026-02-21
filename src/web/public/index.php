@@ -24,6 +24,7 @@ require APP_ROOT . '/model/dtos/SubscriberDto.php';
 require APP_ROOT . '/model/business/UserRepository.php';
 require APP_ROOT . '/model/business/EventRepository.php';
 require APP_ROOT . '/model/business/PasswordResetRepository.php';
+require APP_ROOT . '/model/business/ActivationTokenRepository.php';
 
 // Load controllers
 require APP_ROOT . '/controllers/AuthController.php';
@@ -62,6 +63,8 @@ $router->get('/reset-password',        fn() => (new AuthController($db))->showRe
 $router->post('/reset-password',       fn() => (new AuthController($db))->resetPassword($req));
 $router->get('/register',              fn() => (new AuthController($db))->showRegister());
 $router->post('/register',             fn() => (new AuthController($db))->register($req));
+$router->get('/activation-sent',       fn() => (new AuthController($db))->showActivationSent());
+$router->get('/activate-account',      fn() => (new AuthController($db))->activateAccount($req));
 $router->get('/login',                 fn() => (new AuthController($db))->showLogin());
 $router->post('/login',                fn() => (new AuthController($db))->login($req));
 $router->post('/logout',               fn() => (new AuthController($db))->logout());
