@@ -40,7 +40,7 @@ function h(mixed $value): string
 function format_event_date(string $eventDate): string
 {
     $ts = strtotime($eventDate);
-    return $ts !== false ? date('d.m.Y H:i \U\h\r', $ts) : '';
+    return $ts !== false ? date('d.m. \u\m H:i \U\h\r', $ts) : '';
 }
 
 Session::start();
