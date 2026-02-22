@@ -176,7 +176,7 @@ class EventRepository
     public function findSubscribersByEvent(int $eventId): array
     {
         $stmt = $this->db->prepare(
-            'SELECT s.subscriber_id, s.event_id, s.creator_user_id, s.subscriber_is_creator,
+            'SELECT s.subscriber_id, s.subscriber_guid, s.event_id, s.creator_user_id, s.subscriber_is_creator,
                     s.subscriber_enroll_timestamp,
                     IF(s.subscriber_is_creator, u.user_name, s.subscriber_name) AS subscriber_name
                FROM subscriber s
@@ -214,22 +214,39 @@ class EventRepository
 
     public function createSubscriber(int $eventId, int $creatorUserId, bool $isCreator, ?string $name): void
     {
+        $guid         = $this->generateSubscriberGuid();
         $now          = date('Y-m-d H:i:s');
         $isCreatorInt = $isCreator ? 1 : 0;
         $stmt = $this->db->prepare(
-            'INSERT INTO subscriber (event_id, creator_user_id, subscriber_is_creator, subscriber_name, subscriber_enroll_timestamp)
-             VALUES (?, ?, ?, ?, ?)'
+            'INSERT INTO subscriber (subscriber_guid, event_id, creator_user_id, subscriber_is_creator, subscriber_name, subscriber_enroll_timestamp)
+             VALUES (?, ?, ?, ?, ?, ?)'
         );
-        $stmt->bind_param('iiiss', $eventId, $creatorUserId, $isCreatorInt, $name, $now);
+        $stmt->bind_param('siiiss', $guid, $eventId, $creatorUserId, $isCreatorInt, $name, $now);
         $stmt->execute();
     }
 
-    public function deleteSubscriber(int $subscriberId, int $creatorUserId): bool
+    public function findSubscriberByGuid(string $subscriberGuid): ?SubscriberDto
     {
         $stmt = $this->db->prepare(
-            'DELETE FROM subscriber WHERE subscriber_id = ? AND creator_user_id = ?'
+            'SELECT s.subscriber_id, s.subscriber_guid, s.event_id, s.creator_user_id, s.subscriber_is_creator,
+                    s.subscriber_enroll_timestamp,
+                    IF(s.subscriber_is_creator, u.user_name, s.subscriber_name) AS subscriber_name
+               FROM subscriber s
+               JOIN `user` u ON s.creator_user_id = u.user_id
+              WHERE s.subscriber_guid = ?'
         );
-        $stmt->bind_param('ii', $subscriberId, $creatorUserId);
+        $stmt->bind_param('s', $subscriberGuid);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return $row ? $this->mapSubscriberRow($row) : null;
+    }
+
+    public function deleteSubscriber(string $subscriberGuid, int $creatorUserId): bool
+    {
+        $stmt = $this->db->prepare(
+            'DELETE FROM subscriber WHERE subscriber_guid = ? AND creator_user_id = ?'
+        );
+        $stmt->bind_param('si', $subscriberGuid, $creatorUserId);
         $stmt->execute();
         return $stmt->affected_rows > 0;
     }
@@ -254,6 +271,26 @@ class EventRepository
         throw new \RuntimeException('Failed to generate unique event GUID');
     }
 
+    private function generateSubscriberGuid(): string
+    {
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM subscriber WHERE subscriber_guid = ?'
+        );
+        for ($i = 0; $i < 10; $i++) {
+            $guid = '';
+            for ($j = 0; $j < 8; $j++) {
+                $guid .= $chars[random_int(0, 63)];
+            }
+            $stmt->bind_param('s', $guid);
+            $stmt->execute();
+            if ((int)$stmt->get_result()->fetch_row()[0] === 0) {
+                return $guid;
+            }
+        }
+        throw new \RuntimeException('Failed to generate unique subscriber GUID');
+    }
+
     private function mapEventRow(array $row): EventDto
     {
         return new EventDto(
@@ -273,6 +310,7 @@ class EventRepository
     {
         return new SubscriberDto(
             subscriberId:              (int)$row['subscriber_id'],
+            subscriberGuid:            $row['subscriber_guid'],
             eventId:                   (int)$row['event_id'],
             creatorUserId:             (int)$row['creator_user_id'],
             subscriberIsCreator:       (bool)$row['subscriber_is_creator'],

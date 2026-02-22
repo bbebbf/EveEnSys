@@ -102,7 +102,24 @@ class EventController
         $this->redirect('/events/' . $guid);
     }
 
-    public function unenroll(Request $req, string $guid, string $subscriberId): void
+    public function showUnenroll(string $guid, string $subscriberGuid): void
+    {
+        Session::requireLogin();
+        $event      = $this->eventRepo->findByGuid($guid) ?? $this->abort(404);
+        $subscriber = $this->eventRepo->findSubscriberByGuid($subscriberGuid) ?? $this->abort(404);
+
+        if ($subscriber->creatorUserId !== Session::getUserId()) {
+            $this->abort(403);
+        }
+
+        View::render('event/confirm_unenroll', [
+            'pageTitle'  => 'Abmeldung bestätigen',
+            'event'      => $event,
+            'subscriber' => $subscriber,
+        ]);
+    }
+
+    public function unenroll(Request $req, string $guid, string $subscriberGuid): void
     {
         Session::requireLogin();
 
@@ -114,7 +131,7 @@ class EventController
         $event  = $this->eventRepo->findByGuid($guid) ?? $this->abort(404);
         $userId = Session::getUserId();
 
-        if (!$this->eventRepo->deleteSubscriber((int)$subscriberId, $userId)) {
+        if (!$this->eventRepo->deleteSubscriber($subscriberGuid, $userId)) {
             Session::setFlash('error', 'Anmeldung nicht gefunden oder Sie haben keine Berechtigung, sie zu entfernen.');
         } else {
             Session::setFlash('success', 'Anmeldung entfernt.');

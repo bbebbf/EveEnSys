@@ -21,7 +21,7 @@ CREATE TABLE `event` (
   `event_duration_hours` float DEFAULT NULL,
   `event_max_subscriber` smallint(5) unsigned DEFAULT NULL,
   PRIMARY KEY (`event_id`),
-  UNIQUE KEY `event_guid_UQ` (`event_guid`),
+  UNIQUE KEY `event_event_guid_IDX` (`event_guid`) USING BTREE,
   KEY `event_user_FK` (`creator_user_id`),
   CONSTRAINT `event_user_FK` FOREIGN KEY (`creator_user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -55,12 +55,14 @@ CREATE TABLE `activation_token` (
 -- ees_db.subscriber definition
 CREATE TABLE `subscriber` (
   `subscriber_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `subscriber_guid` varchar(8) NOT NULL,
   `event_id` int(10) unsigned NOT NULL,
   `creator_user_id` int(10) unsigned NOT NULL,
   `subscriber_is_creator` bit(1) NOT NULL DEFAULT b'1',
   `subscriber_name` varchar(100) DEFAULT NULL,
   `subscriber_enroll_timestamp` datetime NOT NULL,
   PRIMARY KEY (`subscriber_id`),
+  UNIQUE KEY `subscriber_subscriber_guid_IDX` (`subscriber_guid`) USING BTREE,
   KEY `subscriber_user_FK` (`creator_user_id`),
   KEY `subscriber_event_FK` (`event_id`),
   CONSTRAINT `subscriber_event_FK` FOREIGN KEY (`event_id`) REFERENCES `event` (`event_id`),

@@ -74,12 +74,8 @@
                   <small class="text-muted ms-1"><?= h(date('d.m.Y', strtotime($sub->subscriberEnrollTimestamp))) ?></small>
                 </span>
                 <?php if ($sub->creatorUserId === Session::getUserId()): ?>
-                  <form method="post"
-                        action="/events/<?= h($event->eventGuid) ?>/unenroll/<?= h($sub->subscriberId) ?>"
-                        onsubmit="return confirm('Anmeldung entfernen?')">
-                    <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Entfernen</button>
-                  </form>
+                  <a href="/events/<?= h($event->eventGuid) ?>/unenroll/<?= h($sub->subscriberGuid) ?>"
+                     class="btn btn-sm btn-outline-danger">Abmelden</a>
                 <?php endif; ?>
               </li>
             <?php endforeach; ?>
