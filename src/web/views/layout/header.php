@@ -28,7 +28,7 @@
             <div class="dropdown-divider"></div>
             <form method="post" action="/logout" class="dropdown-item">
               <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
-              <button type="submit" class="btn p-0">Logout</button>
+              <button type="submit" class="btn border-0 p-0">Logout</button>
             </form>
           </div>
         </li>

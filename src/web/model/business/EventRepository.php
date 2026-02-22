@@ -72,7 +72,8 @@ class EventRepository
         $stmt->bind_param('i', $userId);
         $stmt->execute();
         $events = [];
-        while ($row = $stmt->get_result()->fetch_assoc()) {
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
             $events[] = $this->mapEventRow($row);
         }
         return $events;
