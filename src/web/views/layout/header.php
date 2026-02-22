@@ -14,16 +14,22 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
     <a class="navbar-brand fw-bold" href="/">EveEnSys</a>
-    <div class="navbar-nav ms-auto align-items-center">
+    <div class="navbar-nav ms-auto align-items-center gap-2">
       <?php if (Session::isLoggedIn()): ?>
-        <a class="nav-link" href="/events/all">All Events</a>
-        <a class="nav-link me-2 text-white-50" href="/profile">
-          Hello, <?= h(Session::getUserName()) ?>
-        </a>
-        <form method="post" action="/logout" class="d-inline">
-          <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
-          <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
-        </form>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <?= h(Session::getUserName()) ?>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/events/all">All Events</a>
+            <a class="dropdown-item" href="/profile">Change Password</a>
+            <div class="dropdown-divider"></div>
+            <form method="post" action="/logout" class="dropdown-item">
+              <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+              <button type="submit" class="btn p-0">Logout</button>
+            </form>
+          </div>
+        </li>
       <?php else: ?>
         <a class="nav-link" href="/login">Login</a>
         <a class="nav-link" href="/register">Register</a>

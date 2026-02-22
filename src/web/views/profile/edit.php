@@ -79,7 +79,7 @@
             <?php if (isset($pwdErrors['new_password'])): ?>
               <div class="invalid-feedback"><?= h($pwdErrors['new_password']) ?></div>
             <?php endif; ?>
-            <div class="form-text">Min. 8 characters, including uppercase, lowercase and a number.</div>
+            <div class="form-text">Min. 8 characters, including uppercase, lowercase and numbers.</div>
           </div>
 
           <div class="mb-3">
