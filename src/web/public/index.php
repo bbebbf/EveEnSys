@@ -27,6 +27,7 @@ require APP_ROOT . '/model/business/PasswordResetRepository.php';
 require APP_ROOT . '/model/business/ActivationTokenRepository.php';
 
 // Load controllers
+require APP_ROOT . '/controllers/ControllerTools.php';
 require APP_ROOT . '/controllers/AuthController.php';
 require APP_ROOT . '/controllers/EventController.php';
 
@@ -36,7 +37,7 @@ function h(mixed $value): string
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
 
-// Format an event_date string for display (e.g. "22.02.2026 14:30 Uhr")
+// Format an event_date string for display (e.g. "22.02.2026 um 14:30 Uhr")
 function format_event_date(string $eventDate): string
 {
     $ts = strtotime($eventDate);
@@ -64,9 +65,9 @@ $router->post('/events/{guid}/delete',   fn($p) => (new EventController($db))->d
 $router->post('/events/{guid}/enroll',             fn($p) => (new EventController($db))->enroll($req, $p['guid']));
 $router->get('/events/{guid}/unenroll/{subGuid}',    fn($p) => (new EventController($db))->showUnenroll($p['guid'], $p['subGuid']));
 $router->post('/events/{guid}/unenroll/{subGuid}',   fn($p) => (new EventController($db))->unenroll($req, $p['guid'], $p['subGuid']));
-$router->get('/profile',               fn() => (new AuthController($db))->showProfile());
-$router->post('/profile/name',         fn() => (new AuthController($db))->updateName($req));
-$router->post('/profile/password',     fn() => (new AuthController($db))->updatePassword($req));
+$router->get('/profile/{guid}',                fn($p) => (new AuthController($db))->showProfile($p['guid']));
+$router->post('/profile/{guid}/name',          fn($p) => (new AuthController($db))->updateName($req, $p['guid']));
+$router->post('/profile/{guid}/password',      fn($p) => (new AuthController($db))->updatePassword($req, $p['guid']));
 $router->get('/forgot-password',       fn() => (new AuthController($db))->showForgotPassword());
 $router->post('/forgot-password',      fn() => (new AuthController($db))->sendPasswordReset($req));
 $router->get('/reset-password',        fn() => (new AuthController($db))->showResetPassword($req));

@@ -24,7 +24,7 @@
             <a class="dropdown-item" href="/events/my">Meine Veranstaltungen</a>
             <a class="dropdown-item" href="/events/all">Alle Veranstaltungen</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/profile">Passwort ändern</a>
+            <a class="dropdown-item" href="/profile/<?= h(Session::getUserGuid()) ?>">Profil &amp; Passwort</a>
             <div class="dropdown-divider"></div>
             <form method="post" action="/logout" class="dropdown-item">
               <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">

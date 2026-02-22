@@ -8,7 +8,7 @@ class UserRepository
     public function findByEmail(string $email): ?UserDto
     {
         $stmt = $this->db->prepare(
-            'SELECT user_id, user_email, user_is_active, user_role, user_name, user_passwd, user_last_login
+            'SELECT user_id, user_guid, user_email, user_is_active, user_role, user_name, user_passwd, user_last_login
                FROM `user`
               WHERE user_email = ?'
         );
@@ -21,7 +21,7 @@ class UserRepository
     public function findById(int $id): ?UserDto
     {
         $stmt = $this->db->prepare(
-            'SELECT user_id, user_email, user_is_active, user_role, user_name, user_passwd, user_last_login
+            'SELECT user_id, user_guid, user_email, user_is_active, user_role, user_name, user_passwd, user_last_login
                FROM `user`
               WHERE user_id = ?'
         );
@@ -31,13 +31,27 @@ class UserRepository
         return $row ? $this->mapRow($row) : null;
     }
 
-    public function create(string $name, string $email, string $hashedPwd): int
+    public function findByGuid(string $guid): ?UserDto
     {
         $stmt = $this->db->prepare(
-            "INSERT INTO `user` (user_email, user_is_active, user_role, user_name, user_passwd)
-             VALUES (?, b'0', 0, ?, ?)"
+            'SELECT user_id, user_guid, user_email, user_is_active, user_role, user_name, user_passwd, user_last_login
+               FROM `user`
+              WHERE user_guid = ?'
         );
-        $stmt->bind_param('sss', $email, $name, $hashedPwd);
+        $stmt->bind_param('s', $guid);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return $row ? $this->mapRow($row) : null;
+    }
+
+    public function create(string $name, string $email, string $hashedPwd): int
+    {
+        $guid = $this->generateGuid();
+        $stmt = $this->db->prepare(
+            "INSERT INTO `user` (user_guid, user_email, user_is_active, user_role, user_name, user_passwd)
+             VALUES (?, ?, b'0', 0, ?, ?)"
+        );
+        $stmt->bind_param('ssss', $guid, $email, $name, $hashedPwd);
         $stmt->execute();
         return $this->db->insert_id;
     }
@@ -78,10 +92,31 @@ class UserRepository
         $stmt->execute();
     }
 
+    private function generateGuid(): string
+    {
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM `user` WHERE user_guid = ?'
+        );
+        for ($i = 0; $i < 10; $i++) {
+            $guid = '';
+            for ($j = 0; $j < 8; $j++) {
+                $guid .= $chars[random_int(0, 63)];
+            }
+            $stmt->bind_param('s', $guid);
+            $stmt->execute();
+            if ((int)$stmt->get_result()->fetch_row()[0] === 0) {
+                return $guid;
+            }
+        }
+        throw new \RuntimeException('Failed to generate unique user GUID');
+    }
+
     private function mapRow(array $row): UserDto
     {
         return new UserDto(
             userId:        (int)$row['user_id'],
+            userGuid:      $row['user_guid'],
             userEmail:     $row['user_email'],
             userIsActive:  (bool)ord((string)$row['user_is_active']),
             userRole:      (int)$row['user_role'],

@@ -25,8 +25,7 @@ class AuthController
         Session::requireGuest();
 
         if (!Session::validateCsrf($req->post('_csrf', ''))) {
-            http_response_code(403);
-            exit('Invalid CSRF token.');
+            ControllerTools::abort_Forbidden_403();
         }
 
         $name    = trim($req->post('name', ''));
@@ -93,7 +92,7 @@ class AuthController
 
         mail($email, $subject, $body, $headers);
 
-        $this->redirect('/activation-sent');
+        ControllerTools::redirect('/activation-sent');
     }
 
     public function showActivationSent(): void
@@ -109,14 +108,14 @@ class AuthController
 
         if ($record === null) {
             Session::setFlash('error', 'Dieser Aktivierungslink ist ungültig oder abgelaufen. Bitte registrieren Sie sich erneut.');
-            $this->redirect('/login');
+            ControllerTools::redirect('/login');
         }
 
         $this->userRepo->activate((int)$record['user_id']);
         $this->activationRepo->markUsed((int)$record['token_id']);
 
         Session::setFlash('success', 'Konto aktiviert. Sie können sich jetzt anmelden.');
-        $this->redirect('/login');
+        ControllerTools::redirect('/login');
     }
 
     public function showLogin(): void
@@ -130,8 +129,7 @@ class AuthController
         Session::requireGuest();
 
         if (!Session::validateCsrf($req->post('_csrf', ''))) {
-            http_response_code(403);
-            exit('Invalid CSRF token.');
+            ControllerTools::abort_Forbidden_403();
         }
 
         $email  = trim($req->post('email', ''));
@@ -157,7 +155,7 @@ class AuthController
 
         Session::login($user);
         $this->userRepo->updateLastLogin($user->userId);
-        $this->redirect('/events');
+        ControllerTools::redirect('/events');
     }
 
     public function showForgotPassword(): void
@@ -168,8 +166,7 @@ class AuthController
     public function sendPasswordReset(Request $req): void
     {
         if (!Session::validateCsrf($req->post('_csrf', ''))) {
-            http_response_code(403);
-            exit('Invalid CSRF token.');
+            ControllerTools::abort_Forbidden_403();
         }
 
         $email = trim($req->post('email', ''));
@@ -199,7 +196,7 @@ class AuthController
 
         // Always show the same message to prevent user enumeration
         Session::setFlash('success', 'Falls diese E-Mail-Adresse registriert ist, erhalten Sie in Kürze einen Link zum Zurücksetzen.');
-        $this->redirect('/forgot-password');
+        ControllerTools::redirect('/forgot-password');
     }
 
     public function showResetPassword(Request $req): void
@@ -209,7 +206,7 @@ class AuthController
 
         if ($record === null) {
             Session::setFlash('error', 'Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.');
-            $this->redirect('/forgot-password');
+            ControllerTools::redirect('/forgot-password');
         }
 
         View::render('auth/reset_password', [
@@ -222,8 +219,7 @@ class AuthController
     public function resetPassword(Request $req): void
     {
         if (!Session::validateCsrf($req->post('_csrf', ''))) {
-            http_response_code(403);
-            exit('Invalid CSRF token.');
+            ControllerTools::abort_Forbidden_403();
         }
 
         $rawToken = $req->post('token', '');
@@ -231,7 +227,7 @@ class AuthController
 
         if ($record === null) {
             Session::setFlash('error', 'Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.');
-            $this->redirect('/forgot-password');
+            ControllerTools::redirect('/forgot-password');
         }
 
         $newPwd  = $req->post('new_password', '');
@@ -263,28 +259,33 @@ class AuthController
         $this->resetRepo->markUsed((int)$record['reset_id']);
 
         Session::setFlash('success', 'Ihr Passwort wurde zurückgesetzt. Sie können sich jetzt anmelden.');
-        $this->redirect('/login');
+        ControllerTools::redirect('/login');
     }
 
-    public function showProfile(): void
+    public function showProfile(string $guid): void
     {
         Session::requireLogin();
-        $user = $this->userRepo->findById(Session::getUserId());
+        if ($guid !== Session::getUserGuid()) {
+            ControllerTools::abort_Forbidden_403();
+        }
+        $user = $this->userRepo->findByGuid($guid);
         View::render('profile/edit', [
-            'pageTitle'     => 'Mein Profil',
+            'pageTitle'     => 'Profil',
             'user'          => $user,
             'nameErrors'    => [],
             'pwdErrors'     => [],
         ]);
     }
 
-    public function updateName(Request $req): void
+    public function updateName(Request $req, string $guid): void
     {
         Session::requireLogin();
+        if ($guid !== Session::getUserGuid()) {
+            ControllerTools::abort_Forbidden_403();
+        }
 
         if (!Session::validateCsrf($req->post('_csrf', ''))) {
-            http_response_code(403);
-            exit('Invalid CSRF token.');
+            ControllerTools::abort_Forbidden_403();
         }
 
         $name   = trim($req->post('name', ''));
@@ -297,9 +298,9 @@ class AuthController
         }
 
         if (!empty($errors)) {
-            $user = $this->userRepo->findById(Session::getUserId());
+            $user = $this->userRepo->findByGuid($guid);
             View::render('profile/edit', [
-                'pageTitle'  => 'Mein Profil',
+                'pageTitle'  => 'Profil',
                 'user'       => $user,
                 'nameErrors' => $errors,
                 'pwdErrors'  => [],
@@ -310,16 +311,18 @@ class AuthController
         $this->userRepo->updateName(Session::getUserId(), $name);
         Session::setUserName($name);
         Session::setFlash('success', 'Anzeigename erfolgreich aktualisiert.');
-        $this->redirect('/profile');
+        ControllerTools::redirect('/profile/' . $guid);
     }
 
-    public function updatePassword(Request $req): void
+    public function updatePassword(Request $req, string $guid): void
     {
         Session::requireLogin();
+        if ($guid !== Session::getUserGuid()) {
+            ControllerTools::abort_Forbidden_403();
+        }
 
         if (!Session::validateCsrf($req->post('_csrf', ''))) {
-            http_response_code(403);
-            exit('Invalid CSRF token.');
+            ControllerTools::abort_Forbidden_403();
         }
 
         $currentPwd = $req->post('current_password', '');
@@ -327,7 +330,7 @@ class AuthController
         $confirm    = $req->post('new_password_confirm', '');
         $errors     = [];
 
-        $user = $this->userRepo->findById(Session::getUserId());
+        $user = $this->userRepo->findByGuid($guid);
 
         if (!password_verify($currentPwd, $user->userPasswd)) {
             $errors['current_password'] = 'Das aktuelle Passwort ist falsch.';
@@ -347,7 +350,7 @@ class AuthController
 
         if (!empty($errors)) {
             View::render('profile/edit', [
-                'pageTitle'  => 'Mein Profil',
+                'pageTitle'  => 'Profil',
                 'user'       => $user,
                 'nameErrors' => [],
                 'pwdErrors'  => $errors,
@@ -357,7 +360,7 @@ class AuthController
 
         $this->userRepo->updatePassword(Session::getUserId(), password_hash($newPwd, PASSWORD_BCRYPT));
         Session::setFlash('success', 'Passwort erfolgreich geändert.');
-        $this->redirect('/profile');
+        ControllerTools::redirect('/profile/' . $guid);
     }
 
     public function logout(): void
@@ -365,17 +368,10 @@ class AuthController
         Session::requireLogin();
 
         if (!Session::validateCsrf($_POST['_csrf'] ?? '')) {
-            http_response_code(403);
-            exit('Invalid CSRF token.');
+            ControllerTools::abort_Forbidden_403();
         }
 
         Session::logout();
-        $this->redirect('/login');
-    }
-
-    private function redirect(string $path): never
-    {
-        header('Location: ' . $path);
-        exit;
+        ControllerTools::redirect('/login');
     }
 }

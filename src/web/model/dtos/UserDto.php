@@ -5,6 +5,7 @@ class UserDto
 {
     public function __construct(
         public readonly int     $userId,
+        public readonly string  $userGuid,
         public readonly string  $userEmail,
         public readonly bool    $userIsActive,
         public readonly int     $userRole,

@@ -1,13 +1,15 @@
 ﻿-- ees_db.`user` definition
 CREATE TABLE `user` (
   `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_guid` varchar(8) NOT NULL,
   `user_email` varchar(100) NOT NULL,
   `user_is_active` bit(1) NOT NULL DEFAULT b'0',
   `user_role` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `user_name` varchar(100) NOT NULL,
   `user_passwd` varchar(100) NOT NULL,
   `user_last_login` datetime DEFAULT NULL,
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `user_user_guid_IDX` (`user_guid`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ees_db.event definition

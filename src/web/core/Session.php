@@ -39,6 +39,7 @@ class Session
     {
         session_regenerate_id(true);
         $_SESSION['user_id']   = $user->userId;
+        $_SESSION['user_guid'] = $user->userGuid;
         $_SESSION['user_name'] = $user->userName;
         $_SESSION['user_role'] = $user->userRole;
         if (!isset($_SESSION['csrf_token'])) {
@@ -55,6 +56,11 @@ class Session
     public static function getUserId(): ?int
     {
         return isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
+    }
+
+    public static function getUserGuid(): ?string
+    {
+        return $_SESSION['user_guid'] ?? null;
     }
 
     public static function getUserName(): ?string

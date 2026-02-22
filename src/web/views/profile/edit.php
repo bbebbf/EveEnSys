@@ -1,4 +1,4 @@
-<h2 class="mb-4">Mein Profil</h2>
+<h2 class="mb-4">Profil</h2>
 
 <div class="row g-4">
 
@@ -18,7 +18,7 @@
           </div>
         <?php endif; ?>
 
-        <form method="post" action="/profile/name" novalidate>
+        <form method="post" action="/profile/<?= h($user->userGuid) ?>/name" novalidate>
           <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
 
           <div class="mb-3">
@@ -56,7 +56,7 @@
           </div>
         <?php endif; ?>
 
-        <form method="post" action="/profile/password" novalidate>
+        <form method="post" action="/profile/<?= h($user->userGuid) ?>/password" novalidate>
           <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
 
           <div class="mb-3">
