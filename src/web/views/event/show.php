@@ -20,7 +20,7 @@
 
     <dl class="row mb-4">
       <dt class="col-sm-3">Datum &amp; Uhrzeit</dt>
-      <dd class="col-sm-9"><?= h(date('d.m.Y \u\m H:i \U\h\r', strtotime($event->eventDate))) ?></dd>
+      <dd class="col-sm-9"><?= format_event_date($event->eventDate) ?></dd>
 
       <?php if ($event->eventDurationHours !== null): ?>
         <dt class="col-sm-3">Dauer</dt>

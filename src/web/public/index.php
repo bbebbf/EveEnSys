@@ -36,6 +36,13 @@ function h(mixed $value): string
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
 
+// Format an event_date string for display (e.g. "22.02.2026 14:30 Uhr")
+function format_event_date(string $eventDate): string
+{
+    $ts = strtotime($eventDate);
+    return $ts !== false ? date('d.m.Y H:i \U\h\r', $ts) : '';
+}
+
 Session::start();
 
 $db  = db_connect();

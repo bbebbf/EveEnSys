@@ -39,7 +39,7 @@
           </div>
           <div class="card-footer text-muted small">
             <i class="bi bi-calendar-event"></i>
-            <?= h(date('d.m.Y H:i', strtotime($event->eventDate))) ?>
+            <?= format_event_date($event->eventDate) ?>
             <?php if ($event->eventDurationHours !== null): ?>
               &nbsp;&bull;&nbsp;<?= h($event->eventDurationHours) ?>h
             <?php endif; ?>

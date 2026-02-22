@@ -18,7 +18,7 @@
         <p>Möchten Sie die folgende Veranstaltung wirklich dauerhaft löschen?</p>
         <p class="fw-bold fs-5"><?= h($event->eventTitle) ?></p>
         <p class="text-muted small">
-          Geplant: <?= h(date('d.m.Y H:i', strtotime($event->eventDate))) ?>
+          Geplant: <?= format_event_date($event->eventDate) ?>
         </p>
         <p class="text-danger small">Diese Aktion kann nicht rückgängig gemacht werden.</p>
       </div>
