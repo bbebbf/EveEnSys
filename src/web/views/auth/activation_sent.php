@@ -1,16 +1,16 @@
-<h2 class="mb-4">Check Your Email</h2>
+<h2 class="mb-4">E-Mail prüfen</h2>
 
 <div class="row justify-content-center">
   <div class="col-md-6 text-center">
     <p class="text-muted">
-      Registration successful! We have sent an activation link to your email address.
-      Please click the link to activate your account before logging in.
+      Registrierung erfolgreich! Ein Aktivierungslink wurde an Ihre E-Mail-Adresse gesendet.
+      Bitte klicken Sie auf den Link, um Ihr Konto zu aktivieren, bevor Sie sich anmelden.
     </p>
     <p class="text-muted">
-      The link is valid for 24 hours.
+      Der Link ist 24 Stunden gültig.
     </p>
     <p class="mt-3">
-      <a href="/login">Back to login</a>
+      <a href="/login">Zurück zur Anmeldung</a>
     </p>
   </div>
 </div>

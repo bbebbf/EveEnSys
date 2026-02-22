@@ -1,4 +1,4 @@
-<h2 class="mb-4">Register</h2>
+<h2 class="mb-4">Registrieren</h2>
 
 <?php if (!empty($errors)): ?>
   <div class="alert alert-danger">
@@ -28,7 +28,7 @@
       </div>
 
       <div class="mb-3">
-        <label for="email" class="form-label">Email address</label>
+        <label for="email" class="form-label">E-Mail-Adresse</label>
         <input type="email"
                class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>"
                id="email" name="email"
@@ -40,7 +40,7 @@
       </div>
 
       <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">Passwort</label>
         <input type="password"
                class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>"
                id="password" name="password"
@@ -51,7 +51,7 @@
       </div>
 
       <div class="mb-3">
-        <label for="password_confirm" class="form-label">Confirm password</label>
+        <label for="password_confirm" class="form-label">Passwort bestätigen</label>
         <input type="password"
                class="form-control <?= isset($errors['password_confirm']) ? 'is-invalid' : '' ?>"
                id="password_confirm" name="password_confirm"
@@ -61,11 +61,11 @@
         <?php endif; ?>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">Register</button>
+      <button type="submit" class="btn btn-primary w-100">Registrieren</button>
     </form>
 
     <p class="mt-3 text-center">
-      Already have an account? <a href="/login">Log in</a>
+      Bereits ein Konto? <a href="/login">Anmelden</a>
     </p>
   </div>
 </div>

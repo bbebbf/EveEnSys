@@ -1,4 +1,4 @@
-<h2 class="mb-4">Login</h2>
+<h2 class="mb-4">Anmelden</h2>
 
 <?php if (isset($errors['general'])): ?>
   <div class="alert alert-danger"><?= h($errors['general']) ?></div>
@@ -10,7 +10,7 @@
       <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
 
       <div class="mb-3">
-        <label for="email" class="form-label">Email address</label>
+        <label for="email" class="form-label">E-Mail-Adresse</label>
         <input type="email"
                class="form-control"
                id="email" name="email"
@@ -19,21 +19,21 @@
       </div>
 
       <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">Passwort</label>
         <input type="password"
                class="form-control"
                id="password" name="password"
                required>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">Login</button>
+      <button type="submit" class="btn btn-primary w-100">Anmelden</button>
     </form>
 
     <p class="mt-3 text-center">
-      <a href="/forgot-password">Forgot your password?</a>
+      <a href="/forgot-password">Passwort vergessen?</a>
     </p>
     <p class="text-center">
-      No account yet? <a href="/register">Register</a>
+      Noch kein Konto? <a href="/register">Registrieren</a>
     </p>
   </div>
 </div>

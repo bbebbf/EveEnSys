@@ -1,14 +1,14 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h2><?= h($pageTitle) ?></h2>
   <?php if (Session::isLoggedIn()): ?>
-    <a href="/events/create" class="btn btn-primary">+ Create Event</a>
+    <a href="/events/create" class="btn btn-primary">+ Veranstaltung erstellen</a>
   <?php endif; ?>
 </div>
 
 <?php if (empty($events)): ?>
   <div class="text-center text-muted py-5">
-    <p class="fs-5">No upcoming events.</p>
-    <a href="/events/create" class="btn btn-outline-primary">Create one</a>
+    <p class="fs-5">Keine bevorstehenden Veranstaltungen.</p>
+    <a href="/events/create" class="btn btn-outline-primary">Jetzt erstellen</a>
   </div>
 <?php else: ?>
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -29,15 +29,15 @@
           </div>
           <div class="card-footer text-muted small">
             <i class="bi bi-calendar-event"></i>
-            <?= h(date('D, d M Y H:i', strtotime($event->eventDate))) ?>
+            <?= h(date('d.m.Y H:i', strtotime($event->eventDate))) ?>
             <?php if ($event->eventDurationHours !== null): ?>
               &nbsp;&bull;&nbsp;<?= h($event->eventDurationHours) ?>h
             <?php endif; ?>
             <?php if ($event->eventMaxSubscriber !== null): ?>
-              &nbsp;&bull;&nbsp;max <?= h($event->eventMaxSubscriber) ?>
+              &nbsp;&bull;&nbsp;max. <?= h($event->eventMaxSubscriber) ?> Personen
             <?php endif; ?>
             <br>
-            By <?= h($event->creatorName ?? 'Unknown') ?>
+            Von <?= h($event->creatorName ?? 'Unbekannt') ?>
           </div>
         </div>
       </div>

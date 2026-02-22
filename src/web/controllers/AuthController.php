@@ -17,7 +17,7 @@ class AuthController
     public function showRegister(): void
     {
         Session::requireGuest();
-        View::render('auth/register', ['pageTitle' => 'Register', 'errors' => [], 'old' => []]);
+        View::render('auth/register', ['pageTitle' => 'Registrieren', 'errors' => [], 'old' => []]);
     }
 
     public function register(Request $req): void
@@ -36,19 +36,19 @@ class AuthController
         $errors  = [];
 
         if ($name === '') {
-            $errors['name'] = 'Name is required.';
+            $errors['name'] = 'Name ist erforderlich.';
         } elseif (mb_strlen($name) > 100) {
-            $errors['name'] = 'Name must not exceed 100 characters.';
+            $errors['name'] = 'Der Name darf maximal 100 Zeichen lang sein.';
         }
 
         if ($email === '') {
-            $errors['email'] = 'Email is required.';
+            $errors['email'] = 'E-Mail-Adresse ist erforderlich.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'Please enter a valid email address.';
+            $errors['email'] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
         } elseif (mb_strlen($email) > 100) {
-            $errors['email'] = 'Email must not exceed 100 characters.';
+            $errors['email'] = 'Die E-Mail-Adresse darf maximal 100 Zeichen lang sein.';
         } elseif ($this->userRepo->findByEmail($email) !== null) {
-            $errors['email'] = 'This email address is already registered.';
+            $errors['email'] = 'Diese E-Mail-Adresse ist bereits registriert.';
         }
 
         if (strlen($pwd) < 8
@@ -56,16 +56,16 @@ class AuthController
             || !preg_match('/[a-z]/', $pwd)
             || !preg_match('/[0-9]/', $pwd)
         ) {
-            $errors['password'] = 'Password must be at least 8 characters and contain uppercase and lowercase letters and at least one number.';
+            $errors['password'] = 'Das Passwort muss mindestens 8 Zeichen lang sein und Groß- und Kleinbuchstaben sowie mindestens eine Zahl enthalten.';
         }
 
         if ($pwd !== $confirm) {
-            $errors['password_confirm'] = 'Passwords do not match.';
+            $errors['password_confirm'] = 'Die Passwörter stimmen nicht überein.';
         }
 
         if (!empty($errors)) {
             View::render('auth/register', [
-                'pageTitle' => 'Register',
+                'pageTitle' => 'Registrieren',
                 'errors'    => $errors,
                 'old'       => ['name' => $name, 'email' => $email],
             ]);
@@ -81,12 +81,12 @@ class AuthController
         $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
         $link    = $baseUrl . '/activate-account?token=' . urlencode($rawToken);
 
-        $subject = 'Activate your EveEnSys account';
-        $body    = "Hello {$name},\r\n\r\n"
-            . "Thank you for registering at EveEnSys.\r\n\r\n"
-            . "Click the link below to activate your account (valid for 24 hours):\r\n"
+        $subject = 'EveEnSys-Konto aktivieren';
+        $body    = "Hallo {$name},\r\n\r\n"
+            . "Vielen Dank für Ihre Registrierung bei EveEnSys.\r\n\r\n"
+            . "Klicken Sie auf den folgenden Link, um Ihr Konto zu aktivieren (gültig für 24 Stunden):\r\n"
             . $link . "\r\n\r\n"
-            . "If you did not register, you can safely ignore this email.\r\n";
+            . "Falls Sie sich nicht registriert haben, können Sie diese E-Mail ignorieren.\r\n";
 
         $headers = "From: EveEnSys <noreply@eveensys.local>\r\n"
             . "Content-Type: text/plain; charset=UTF-8\r\n";
@@ -99,7 +99,7 @@ class AuthController
     public function showActivationSent(): void
     {
         Session::requireGuest();
-        View::render('auth/activation_sent', ['pageTitle' => 'Activate Your Account']);
+        View::render('auth/activation_sent', ['pageTitle' => 'Konto aktivieren']);
     }
 
     public function activateAccount(Request $req): void
@@ -108,21 +108,21 @@ class AuthController
         $record   = $rawToken !== '' ? $this->activationRepo->findValidByToken($rawToken) : null;
 
         if ($record === null) {
-            Session::setFlash('error', 'This activation link is invalid or has expired. Please register again.');
+            Session::setFlash('error', 'Dieser Aktivierungslink ist ungültig oder abgelaufen. Bitte registrieren Sie sich erneut.');
             $this->redirect('/login');
         }
 
         $this->userRepo->activate((int)$record['user_id']);
         $this->activationRepo->markUsed((int)$record['token_id']);
 
-        Session::setFlash('success', 'Account activated. You can now log in.');
+        Session::setFlash('success', 'Konto aktiviert. Sie können sich jetzt anmelden.');
         $this->redirect('/login');
     }
 
     public function showLogin(): void
     {
         Session::requireGuest();
-        View::render('auth/login', ['pageTitle' => 'Login', 'errors' => [], 'old' => []]);
+        View::render('auth/login', ['pageTitle' => 'Anmelden', 'errors' => [], 'old' => []]);
     }
 
     public function login(Request $req): void
@@ -141,14 +141,14 @@ class AuthController
         $user = $this->userRepo->findByEmail($email);
 
         if (!$user || !password_verify($pwd, $user->userPasswd)) {
-            $errors['general'] = 'Invalid email or password.';
+            $errors['general'] = 'Ungültige E-Mail-Adresse oder falsches Passwort.';
         } elseif (!$user->userIsActive) {
-            $errors['general'] = 'Account is not active.';
+            $errors['general'] = 'Das Konto ist nicht aktiv.';
         }
 
         if (!empty($errors)) {
             View::render('auth/login', [
-                'pageTitle' => 'Login',
+                'pageTitle' => 'Anmelden',
                 'errors'    => $errors,
                 'old'       => ['email' => $email],
             ]);
@@ -162,7 +162,7 @@ class AuthController
 
     public function showForgotPassword(): void
     {
-        View::render('auth/forgot_password', ['pageTitle' => 'Forgot Password']);
+        View::render('auth/forgot_password', ['pageTitle' => 'Passwort vergessen']);
     }
 
     public function sendPasswordReset(Request $req): void
@@ -184,12 +184,12 @@ class AuthController
             $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
             $link    = $baseUrl . '/reset-password?token=' . urlencode($rawToken);
 
-            $subject = 'Reset your EveEnSys password';
-            $body    = "Hello {$user->userName},\r\n\r\n"
-                . "You requested a password reset for your EveEnSys account.\r\n\r\n"
-                . "Click the link below to set a new password (valid for 1 hour):\r\n"
+            $subject = 'EveEnSys-Passwort zurücksetzen';
+            $body    = "Hallo {$user->userName},\r\n\r\n"
+                . "Sie haben eine Passwortzurücksetzung für Ihr EveEnSys-Konto angefordert.\r\n\r\n"
+                . "Klicken Sie auf den folgenden Link, um ein neues Passwort festzulegen (gültig für 1 Stunde):\r\n"
                 . $link . "\r\n\r\n"
-                . "If you did not request this, you can safely ignore this email.\r\n";
+                . "Falls Sie diese Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.\r\n";
 
             $headers = "From: EveEnSys <noreply@eveensys.local>\r\n"
                 . "Content-Type: text/plain; charset=UTF-8\r\n";
@@ -198,7 +198,7 @@ class AuthController
         }
 
         // Always show the same message to prevent user enumeration
-        Session::setFlash('success', 'If that email address is registered, you will receive a reset link shortly.');
+        Session::setFlash('success', 'Falls diese E-Mail-Adresse registriert ist, erhalten Sie in Kürze einen Link zum Zurücksetzen.');
         $this->redirect('/forgot-password');
     }
 
@@ -208,12 +208,12 @@ class AuthController
         $record   = $rawToken !== '' ? $this->resetRepo->findValidByToken($rawToken) : null;
 
         if ($record === null) {
-            Session::setFlash('error', 'This password reset link is invalid or has expired. Please request a new one.');
+            Session::setFlash('error', 'Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.');
             $this->redirect('/forgot-password');
         }
 
         View::render('auth/reset_password', [
-            'pageTitle' => 'Set New Password',
+            'pageTitle' => 'Neues Passwort festlegen',
             'token'     => $rawToken,
             'errors'    => [],
         ]);
@@ -230,7 +230,7 @@ class AuthController
         $record   = $rawToken !== '' ? $this->resetRepo->findValidByToken($rawToken) : null;
 
         if ($record === null) {
-            Session::setFlash('error', 'This password reset link is invalid or has expired. Please request a new one.');
+            Session::setFlash('error', 'Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.');
             $this->redirect('/forgot-password');
         }
 
@@ -243,16 +243,16 @@ class AuthController
             || !preg_match('/[a-z]/', $newPwd)
             || !preg_match('/[0-9]/', $newPwd)
         ) {
-            $errors['new_password'] = 'Password must be at least 8 characters and contain uppercase and lowercase letters and at least one number.';
+            $errors['new_password'] = 'Das Passwort muss mindestens 8 Zeichen lang sein und Groß- und Kleinbuchstaben sowie mindestens eine Zahl enthalten.';
         }
 
         if ($newPwd !== $confirm) {
-            $errors['new_password_confirm'] = 'Passwords do not match.';
+            $errors['new_password_confirm'] = 'Die Passwörter stimmen nicht überein.';
         }
 
         if (!empty($errors)) {
             View::render('auth/reset_password', [
-                'pageTitle' => 'Set New Password',
+                'pageTitle' => 'Neues Passwort festlegen',
                 'token'     => $rawToken,
                 'errors'    => $errors,
             ]);
@@ -262,7 +262,7 @@ class AuthController
         $this->userRepo->updatePassword((int)$record['user_id'], password_hash($newPwd, PASSWORD_BCRYPT));
         $this->resetRepo->markUsed((int)$record['reset_id']);
 
-        Session::setFlash('success', 'Your password has been reset. You can now log in.');
+        Session::setFlash('success', 'Ihr Passwort wurde zurückgesetzt. Sie können sich jetzt anmelden.');
         $this->redirect('/login');
     }
 
@@ -271,7 +271,7 @@ class AuthController
         Session::requireLogin();
         $user = $this->userRepo->findById(Session::getUserId());
         View::render('profile/edit', [
-            'pageTitle'     => 'My Profile',
+            'pageTitle'     => 'Mein Profil',
             'user'          => $user,
             'nameErrors'    => [],
             'pwdErrors'     => [],
@@ -291,15 +291,15 @@ class AuthController
         $errors = [];
 
         if ($name === '') {
-            $errors['name'] = 'Name is required.';
+            $errors['name'] = 'Name ist erforderlich.';
         } elseif (mb_strlen($name) > 100) {
-            $errors['name'] = 'Name must not exceed 100 characters.';
+            $errors['name'] = 'Der Name darf maximal 100 Zeichen lang sein.';
         }
 
         if (!empty($errors)) {
             $user = $this->userRepo->findById(Session::getUserId());
             View::render('profile/edit', [
-                'pageTitle'  => 'My Profile',
+                'pageTitle'  => 'Mein Profil',
                 'user'       => $user,
                 'nameErrors' => $errors,
                 'pwdErrors'  => [],
@@ -309,7 +309,7 @@ class AuthController
 
         $this->userRepo->updateName(Session::getUserId(), $name);
         Session::setUserName($name);
-        Session::setFlash('success', 'Display name updated successfully.');
+        Session::setFlash('success', 'Anzeigename erfolgreich aktualisiert.');
         $this->redirect('/profile');
     }
 
@@ -330,7 +330,7 @@ class AuthController
         $user = $this->userRepo->findById(Session::getUserId());
 
         if (!password_verify($currentPwd, $user->userPasswd)) {
-            $errors['current_password'] = 'Current password is incorrect.';
+            $errors['current_password'] = 'Das aktuelle Passwort ist falsch.';
         }
 
         if (strlen($newPwd) < 8
@@ -338,16 +338,16 @@ class AuthController
             || !preg_match('/[a-z]/', $newPwd)
             || !preg_match('/[0-9]/', $newPwd)
         ) {
-            $errors['new_password'] = 'Password must be at least 8 characters and contain uppercase and lowercase letters and at least one number.';
+            $errors['new_password'] = 'Das Passwort muss mindestens 8 Zeichen lang sein und Groß- und Kleinbuchstaben sowie mindestens eine Zahl enthalten.';
         }
 
         if ($newPwd !== $confirm) {
-            $errors['new_password_confirm'] = 'Passwords do not match.';
+            $errors['new_password_confirm'] = 'Die Passwörter stimmen nicht überein.';
         }
 
         if (!empty($errors)) {
             View::render('profile/edit', [
-                'pageTitle'  => 'My Profile',
+                'pageTitle'  => 'Mein Profil',
                 'user'       => $user,
                 'nameErrors' => [],
                 'pwdErrors'  => $errors,
@@ -356,7 +356,7 @@ class AuthController
         }
 
         $this->userRepo->updatePassword(Session::getUserId(), password_hash($newPwd, PASSWORD_BCRYPT));
-        Session::setFlash('success', 'Password changed successfully.');
+        Session::setFlash('success', 'Passwort erfolgreich geändert.');
         $this->redirect('/profile');
     }
 

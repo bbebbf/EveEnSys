@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,20 +21,20 @@
             <?= h(Session::getUserName()) ?>
           </a>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="/events/my">My Events</a>
-            <a class="dropdown-item" href="/events/all">All Events</a>
+            <a class="dropdown-item" href="/events/my">Meine Veranstaltungen</a>
+            <a class="dropdown-item" href="/events/all">Alle Veranstaltungen</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/profile">Change Password</a>
+            <a class="dropdown-item" href="/profile">Passwort ändern</a>
             <div class="dropdown-divider"></div>
             <form method="post" action="/logout" class="dropdown-item">
               <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
-              <button type="submit" class="btn border-0 p-0">Logout</button>
+              <button type="submit" class="btn border-0 p-0">Abmelden</button>
             </form>
           </div>
         </li>
       <?php else: ?>
-        <a class="nav-link" href="/login">Login</a>
-        <a class="nav-link" href="/register">Register</a>
+        <a class="nav-link" href="/login">Anmelden</a>
+        <a class="nav-link" href="/register">Registrieren</a>
       <?php endif; ?>
     </div>
   </div>

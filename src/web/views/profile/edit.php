@@ -1,11 +1,11 @@
-<h2 class="mb-4">My Profile</h2>
+<h2 class="mb-4">Mein Profil</h2>
 
 <div class="row g-4">
 
-  <?php /* Change display name */ ?>
+  <?php /* Anzeigename ändern */ ?>
   <div class="col-md-6">
     <div class="card">
-      <div class="card-header"><strong>Display name</strong></div>
+      <div class="card-header"><strong>Anzeigename</strong></div>
       <div class="card-body">
 
         <?php if (!empty($nameErrors)): ?>
@@ -33,17 +33,17 @@
             <?php endif; ?>
           </div>
 
-          <button type="submit" class="btn btn-primary">Save name</button>
+          <button type="submit" class="btn btn-primary">Name speichern</button>
         </form>
 
       </div>
     </div>
   </div>
 
-  <?php /* Change password */ ?>
+  <?php /* Passwort ändern */ ?>
   <div class="col-md-6">
     <div class="card">
-      <div class="card-header"><strong>Change password</strong></div>
+      <div class="card-header"><strong>Passwort ändern</strong></div>
       <div class="card-body">
 
         <?php if (!empty($pwdErrors)): ?>
@@ -60,7 +60,7 @@
           <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
 
           <div class="mb-3">
-            <label for="current_password" class="form-label">Current password</label>
+            <label for="current_password" class="form-label">Aktuelles Passwort</label>
             <input type="password"
                    class="form-control <?= isset($pwdErrors['current_password']) ? 'is-invalid' : '' ?>"
                    id="current_password" name="current_password"
@@ -71,7 +71,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="new_password" class="form-label">New password</label>
+            <label for="new_password" class="form-label">Neues Passwort</label>
             <input type="password"
                    class="form-control <?= isset($pwdErrors['new_password']) ? 'is-invalid' : '' ?>"
                    id="new_password" name="new_password"
@@ -79,11 +79,11 @@
             <?php if (isset($pwdErrors['new_password'])): ?>
               <div class="invalid-feedback"><?= h($pwdErrors['new_password']) ?></div>
             <?php endif; ?>
-            <div class="form-text">Min. 8 characters, including uppercase, lowercase and numbers.</div>
+            <div class="form-text">Mind. 8 Zeichen, mit Groß- und Kleinbuchstaben sowie Zahlen.</div>
           </div>
 
           <div class="mb-3">
-            <label for="new_password_confirm" class="form-label">Confirm new password</label>
+            <label for="new_password_confirm" class="form-label">Neues Passwort bestätigen</label>
             <input type="password"
                    class="form-control <?= isset($pwdErrors['new_password_confirm']) ? 'is-invalid' : '' ?>"
                    id="new_password_confirm" name="new_password_confirm"
@@ -93,7 +93,7 @@
             <?php endif; ?>
           </div>
 
-          <button type="submit" class="btn btn-primary">Change password</button>
+          <button type="submit" class="btn btn-primary">Passwort ändern</button>
         </form>
 
       </div>

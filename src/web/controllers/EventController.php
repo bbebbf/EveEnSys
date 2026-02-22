@@ -16,28 +16,28 @@ class EventController
             $this->redirect('/events');
         }
         $upcomingEvents = $this->eventRepo->findUpcoming(3);
-        View::render('home/index', ['pageTitle' => 'Home', 'upcomingEvents' => $upcomingEvents]);
+        View::render('home/index', ['pageTitle' => 'Startseite', 'upcomingEvents' => $upcomingEvents]);
     }
 
     public function index(): void
     {
         Session::requireLogin();
         $events = $this->eventRepo->findAllUpcoming();
-        View::render('event/index', ['pageTitle' => 'Upcoming Events', 'events' => $events]);
+        View::render('event/index', ['pageTitle' => 'Bevorstehende Veranstaltungen', 'events' => $events]);
     }
 
     public function indexAll(): void
     {
         Session::requireLogin();
         $events = $this->eventRepo->findAll();
-        View::render('event/index', ['pageTitle' => 'All Events', 'events' => $events]);
+        View::render('event/index', ['pageTitle' => 'Alle Veranstaltungen', 'events' => $events]);
     }
 
     public function indexMy(): void
     {
         Session::requireLogin();
         $events = $this->eventRepo->findAllByUser(Session::getUserId());
-        View::render('event/index', ['pageTitle' => 'My Events', 'events' => $events]);
+        View::render('event/index', ['pageTitle' => 'Meine Veranstaltungen', 'events' => $events]);
     }
 
     public function show(string $guid): void
@@ -71,30 +71,30 @@ class EventController
         if ($event->eventMaxSubscriber !== null) {
             $count = $this->eventRepo->countSubscribers($event->eventId);
             if ($count >= $event->eventMaxSubscriber) {
-                Session::setFlash('error', 'This event is fully booked.');
+                Session::setFlash('error', 'Diese Veranstaltung ist ausgebucht.');
                 $this->redirect('/events/' . $guid);
             }
         }
 
         if ($type === 'self') {
             if ($this->eventRepo->isUserEnrolledAsSelf($event->eventId, $userId)) {
-                Session::setFlash('error', 'You are already enrolled in this event.');
+                Session::setFlash('error', 'Sie sind bereits für diese Veranstaltung angemeldet.');
                 $this->redirect('/events/' . $guid);
             }
             $this->eventRepo->createSubscriber($event->eventId, $userId, true, null);
-            Session::setFlash('success', 'You have been enrolled successfully.');
+            Session::setFlash('success', 'Sie wurden erfolgreich angemeldet.');
         } elseif ($type === 'other') {
             $name = trim($req->post('subscriber_name', ''));
             if ($name === '') {
-                Session::setFlash('error', 'Please enter a name.');
+                Session::setFlash('error', 'Bitte geben Sie einen Namen ein.');
                 $this->redirect('/events/' . $guid);
             }
             if (mb_strlen($name) > 100) {
-                Session::setFlash('error', 'Name must not exceed 100 characters.');
+                Session::setFlash('error', 'Der Name darf maximal 100 Zeichen lang sein.');
                 $this->redirect('/events/' . $guid);
             }
             $this->eventRepo->createSubscriber($event->eventId, $userId, false, $name);
-            Session::setFlash('success', $name . ' has been enrolled successfully.');
+            Session::setFlash('success', $name . ' wurde erfolgreich angemeldet.');
         } else {
             $this->redirect('/events/' . $guid);
         }
@@ -115,9 +115,9 @@ class EventController
         $userId = Session::getUserId();
 
         if (!$this->eventRepo->deleteSubscriber((int)$subscriberId, $userId)) {
-            Session::setFlash('error', 'Enrollment not found or you do not have permission to remove it.');
+            Session::setFlash('error', 'Anmeldung nicht gefunden oder Sie haben keine Berechtigung, sie zu entfernen.');
         } else {
-            Session::setFlash('success', 'Enrollment removed.');
+            Session::setFlash('success', 'Anmeldung entfernt.');
         }
 
         $this->redirect('/events/' . $guid);
@@ -127,7 +127,7 @@ class EventController
     {
         Session::requireLogin();
         View::render('event/form', [
-            'pageTitle' => 'Create Event',
+            'pageTitle' => 'Veranstaltung erstellen',
             'event'     => null,
             'errors'    => [],
             'old'       => [],
@@ -156,7 +156,7 @@ class EventController
         }
 
         $guid = $this->eventRepo->create(Session::getUserId(), $data);
-        Session::setFlash('success', 'Event created successfully.');
+        Session::setFlash('success', 'Veranstaltung erfolgreich erstellt.');
         $this->redirect('/events/' . $guid);
     }
 
@@ -170,7 +170,7 @@ class EventController
         }
 
         View::render('event/form', [
-            'pageTitle' => 'Edit Event',
+            'pageTitle' => 'Veranstaltung bearbeiten',
             'event'     => $event,
             'errors'    => [],
             'old'       => [],
@@ -205,7 +205,7 @@ class EventController
         }
 
         $this->eventRepo->update($event->eventId, $data);
-        Session::setFlash('success', 'Event updated successfully.');
+        Session::setFlash('success', 'Veranstaltung erfolgreich aktualisiert.');
         $this->redirect('/events/' . $guid);
     }
 
@@ -219,7 +219,7 @@ class EventController
         }
 
         View::render('event/confirm_delete', [
-            'pageTitle' => 'Delete Event',
+            'pageTitle' => 'Veranstaltung löschen',
             'event'     => $event,
         ]);
     }
@@ -242,7 +242,7 @@ class EventController
         $this->eventRepo->deleteSubscribersByEvent($event->eventId);
         $this->eventRepo->delete($event->eventId);
 
-        Session::setFlash('success', 'Event deleted.');
+        Session::setFlash('success', 'Veranstaltung gelöscht.');
         $this->redirect('/events');
     }
 
@@ -257,20 +257,20 @@ class EventController
         $errors = [];
 
         if ($title === '') {
-            $errors['event_title'] = 'Title is required.';
+            $errors['event_title'] = 'Der Titel ist erforderlich.';
         } elseif (mb_strlen($title) > 150) {
-            $errors['event_title'] = 'Title must not exceed 150 characters.';
+            $errors['event_title'] = 'Der Titel darf maximal 150 Zeichen lang sein.';
         }
 
         $eventDate = null;
         if ($dateRaw === '') {
-            $errors['event_date'] = 'Date and time are required.';
+            $errors['event_date'] = 'Datum und Uhrzeit sind erforderlich.';
         } else {
             $dt = DateTime::createFromFormat('Y-m-d\TH:i', $dateRaw)
                ?: DateTime::createFromFormat('Y-m-d H:i', $dateRaw)
                ?: DateTime::createFromFormat('Y-m-d H:i:s', $dateRaw);
             if (!$dt) {
-                $errors['event_date'] = 'Please enter a valid date and time.';
+                $errors['event_date'] = 'Bitte geben Sie ein gültiges Datum und eine gültige Uhrzeit ein.';
             } else {
                 $eventDate = $dt->format('Y-m-d H:i:s');
             }
@@ -279,7 +279,7 @@ class EventController
         $duration = null;
         if ($durationRaw !== '') {
             if (!is_numeric($durationRaw) || (float)$durationRaw <= 0) {
-                $errors['event_duration_hours'] = 'Duration must be a positive number.';
+                $errors['event_duration_hours'] = 'Die Dauer muss eine positive Zahl sein.';
             } else {
                 $duration = (float)$durationRaw;
             }
@@ -288,7 +288,7 @@ class EventController
         $maxSub = null;
         if ($maxSubRaw !== '') {
             if (!ctype_digit($maxSubRaw) || (int)$maxSubRaw <= 0) {
-                $errors['event_max_subscriber'] = 'Max subscribers must be a positive whole number.';
+                $errors['event_max_subscriber'] = 'Die maximale Teilnehmerzahl muss eine positive ganze Zahl sein.';
             } else {
                 $maxSub = (int)$maxSubRaw;
             }

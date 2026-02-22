@@ -1,4 +1,4 @@
-<h2 class="mb-4">Set New Password</h2>
+<h2 class="mb-4">Neues Passwort festlegen</h2>
 
 <div class="row justify-content-center">
   <div class="col-md-6">
@@ -18,7 +18,7 @@
       <input type="hidden" name="token" value="<?= h($token) ?>">
 
       <div class="mb-3">
-        <label for="new_password" class="form-label">New password</label>
+        <label for="new_password" class="form-label">Neues Passwort</label>
         <input type="password"
                class="form-control <?= isset($errors['new_password']) ? 'is-invalid' : '' ?>"
                id="new_password" name="new_password"
@@ -26,11 +26,11 @@
         <?php if (isset($errors['new_password'])): ?>
           <div class="invalid-feedback"><?= h($errors['new_password']) ?></div>
         <?php endif; ?>
-        <div class="form-text">Min. 8 characters, including uppercase, lowercase and numbers.</div>
+        <div class="form-text">Mind. 8 Zeichen, mit Groß- und Kleinbuchstaben sowie Zahlen.</div>
       </div>
 
       <div class="mb-3">
-        <label for="new_password_confirm" class="form-label">Confirm new password</label>
+        <label for="new_password_confirm" class="form-label">Neues Passwort bestätigen</label>
         <input type="password"
                class="form-control <?= isset($errors['new_password_confirm']) ? 'is-invalid' : '' ?>"
                id="new_password_confirm" name="new_password_confirm"
@@ -40,7 +40,7 @@
         <?php endif; ?>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">Set new password</button>
+      <button type="submit" class="btn btn-primary w-100">Passwort festlegen</button>
     </form>
 
   </div>

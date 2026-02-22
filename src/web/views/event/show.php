@@ -3,7 +3,7 @@
 
     <nav aria-label="breadcrumb" class="mb-3">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/events">Events</a></li>
+        <li class="breadcrumb-item"><a href="/events">Veranstaltungen</a></li>
         <li class="breadcrumb-item active"><?= h($event->eventTitle) ?></li>
       </ol>
     </nav>
@@ -12,32 +12,32 @@
       <h2><?= h($event->eventTitle) ?></h2>
       <?php if (Session::isLoggedIn() && Session::getUserId() === $event->creatorUserId): ?>
         <div class="btn-group ms-3">
-          <a href="/events/<?= h($event->eventGuid) ?>/edit" class="btn btn-sm btn-outline-secondary">Edit</a>
-          <a href="/events/<?= h($event->eventGuid) ?>/delete" class="btn btn-sm btn-outline-danger">Delete</a>
+          <a href="/events/<?= h($event->eventGuid) ?>/edit" class="btn btn-sm btn-outline-secondary">Bearbeiten</a>
+          <a href="/events/<?= h($event->eventGuid) ?>/delete" class="btn btn-sm btn-outline-danger">Löschen</a>
         </div>
       <?php endif; ?>
     </div>
 
     <dl class="row mb-4">
-      <dt class="col-sm-3">Date &amp; time</dt>
-      <dd class="col-sm-9"><?= h(date('l, d F Y \a\t H:i', strtotime($event->eventDate))) ?></dd>
+      <dt class="col-sm-3">Datum &amp; Uhrzeit</dt>
+      <dd class="col-sm-9"><?= h(date('d.m.Y \u\m H:i \U\h\r', strtotime($event->eventDate))) ?></dd>
 
       <?php if ($event->eventDurationHours !== null): ?>
-        <dt class="col-sm-3">Duration</dt>
-        <dd class="col-sm-9"><?= h($event->eventDurationHours) ?> hour(s)</dd>
+        <dt class="col-sm-3">Dauer</dt>
+        <dd class="col-sm-9"><?= h($event->eventDurationHours) ?> Stunde(n)</dd>
       <?php endif; ?>
 
       <?php if ($event->eventMaxSubscriber !== null): ?>
-        <dt class="col-sm-3">Max participants</dt>
+        <dt class="col-sm-3">Max. teilnehmende Personen</dt>
         <dd class="col-sm-9"><?= h($event->eventMaxSubscriber) ?></dd>
       <?php endif; ?>
 
-      <dt class="col-sm-3">Organiser</dt>
-      <dd class="col-sm-9"><?= h($event->creatorName ?? 'Unknown') ?></dd>
+      <dt class="col-sm-3">Veranstalter</dt>
+      <dd class="col-sm-9"><?= h($event->creatorName ?? 'Unbekannt') ?></dd>
     </dl>
 
     <?php if ($event->eventDescription !== null): ?>
-      <h5>Description</h5>
+      <h5>Beschreibung</h5>
       <p class="text-muted"><?= nl2br(h($event->eventDescription)) ?></p>
     <?php endif; ?>
 
@@ -49,7 +49,7 @@
     ?>
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <strong>Enrolled participants</strong>
+        <strong>Angemeldete Teilnehmer</strong>
         <?php if ($event->eventMaxSubscriber !== null): ?>
           <span class="badge <?= $isFull ? 'bg-danger' : 'bg-secondary' ?>">
             <?= h($subscriberCount) ?>/<?= h($event->eventMaxSubscriber) ?>
@@ -62,23 +62,23 @@
       <?php if (Session::isLoggedIn()): ?>
         <ul class="list-group list-group-flush">
           <?php if (empty($subscribers)): ?>
-            <li class="list-group-item text-muted">No participants enrolled yet.</li>
+            <li class="list-group-item text-muted">Noch keine Teilnehmer angemeldet.</li>
           <?php else: ?>
             <?php foreach ($subscribers as $sub): ?>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span>
-                  <?= h($sub->subscriberName ?? 'Unknown') ?>
+                  <?= h($sub->subscriberName ?? 'Unbekannt') ?>
                   <?php if ($sub->subscriberIsCreator): ?>
-                    <span class="badge bg-primary ms-1">Me</span>
+                    <span class="badge bg-primary ms-1">Ich</span>
                   <?php endif; ?>
-                  <small class="text-muted ms-1"><?= h(date('Y-m-d', strtotime($sub->subscriberEnrollTimestamp))) ?></small>
+                  <small class="text-muted ms-1"><?= h(date('d.m.Y', strtotime($sub->subscriberEnrollTimestamp))) ?></small>
                 </span>
                 <?php if ($sub->creatorUserId === Session::getUserId()): ?>
                   <form method="post"
                         action="/events/<?= h($event->eventGuid) ?>/unenroll/<?= h($sub->subscriberId) ?>"
-                        onsubmit="return confirm('Remove this enrollment?')">
+                        onsubmit="return confirm('Anmeldung entfernen?')">
                     <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Entfernen</button>
                   </form>
                 <?php endif; ?>
               </li>
@@ -88,16 +88,16 @@
 
         <div class="card-body">
           <?php if ($isFull): ?>
-            <p class="text-danger mb-0">This event is fully booked.</p>
+            <p class="text-danger mb-0">Diese Veranstaltung ist ausgebucht.</p>
           <?php else: ?>
             <?php if (!$isEnrolledAsSelf): ?>
               <form method="post" action="/events/<?= h($event->eventGuid) ?>/enroll" class="mb-3">
                 <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
                 <input type="hidden" name="enroll_type" value="self">
-                <button type="submit" class="btn btn-primary btn-sm w-100">Enroll yourself</button>
+                <button type="submit" class="btn btn-primary btn-sm w-100">Selbst anmelden</button>
               </form>
             <?php else: ?>
-              <p class="text-success mb-3"><small>You are enrolled in this event.</small></p>
+              <p class="text-success mb-3"><small>Sie sind für diese Veranstaltung angemeldet.</small></p>
             <?php endif; ?>
 
             <form method="post" action="/events/<?= h($event->eventGuid) ?>/enroll">
@@ -105,8 +105,8 @@
               <input type="hidden" name="enroll_type" value="other">
               <div class="input-group input-group-sm">
                 <input type="text" name="subscriber_name" class="form-control"
-                       placeholder="Enroll someone by name" maxlength="100" required>
-                <button type="submit" class="btn btn-outline-secondary">Enroll</button>
+                       placeholder="Person anmelden" maxlength="100" required>
+                <button type="submit" class="btn btn-outline-secondary">Anmelden</button>
               </div>
             </form>
           <?php endif; ?>
@@ -114,7 +114,7 @@
 
       <?php else: ?>
         <div class="card-body text-muted">
-          <a href="/login">Log in</a> to see participants and enroll.
+          <a href="/login">Anmelden</a>, um Teilnehmer zu sehen und sich anzumelden.
         </div>
       <?php endif; ?>
 

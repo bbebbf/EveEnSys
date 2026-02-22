@@ -1,27 +1,27 @@
-<h2 class="mb-4">Forgot Password</h2>
+<h2 class="mb-4">Passwort vergessen</h2>
 
 <div class="row justify-content-center">
   <div class="col-md-6">
     <p class="text-muted">
-      Enter the email address of your account and we will send you a link to reset your password.
+      Geben Sie die E-Mail-Adresse Ihres Kontos ein und ein Link zum Zurücksetzen Ihres Passworts wird an diese E-Mail-Adresse gesendet.
     </p>
 
     <form method="post" action="/forgot-password" novalidate>
       <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
 
       <div class="mb-3">
-        <label for="email" class="form-label">Email address</label>
+        <label for="email" class="form-label">E-Mail-Adresse</label>
         <input type="email"
                class="form-control"
                id="email" name="email"
                required autofocus>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">Send reset link</button>
+      <button type="submit" class="btn btn-primary w-100">Link senden</button>
     </form>
 
     <p class="mt-3 text-center">
-      <a href="/login">Back to login</a>
+      <a href="/login">Zurück zur Anmeldung</a>
     </p>
   </div>
 </div>

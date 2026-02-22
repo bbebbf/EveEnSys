@@ -16,17 +16,17 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
 
 <nav aria-label="breadcrumb" class="mb-3">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/events">Events</a></li>
+    <li class="breadcrumb-item"><a href="/events">Veranstaltungen</a></li>
     <?php if ($isEdit): ?>
       <li class="breadcrumb-item">
         <a href="/events/<?= h($event->eventGuid) ?>"><?= h($event->eventTitle) ?></a>
       </li>
     <?php endif; ?>
-    <li class="breadcrumb-item active"><?= $isEdit ? 'Edit' : 'Create Event' ?></li>
+    <li class="breadcrumb-item active"><?= $isEdit ? 'Bearbeiten' : 'Veranstaltung erstellen' ?></li>
   </ol>
 </nav>
 
-<h2 class="mb-4"><?= $isEdit ? 'Edit Event' : 'Create Event' ?></h2>
+<h2 class="mb-4"><?= $isEdit ? 'Veranstaltung bearbeiten' : 'Veranstaltung erstellen' ?></h2>
 
 <?php if (!empty($errors)): ?>
   <div class="alert alert-danger">
@@ -44,7 +44,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
       <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
 
       <div class="mb-3">
-        <label for="event_title" class="form-label">Title <span class="text-danger">*</span></label>
+        <label for="event_title" class="form-label">Titel <span class="text-danger">*</span></label>
         <input type="text"
                class="form-control <?= isset($errors['event_title']) ? 'is-invalid' : '' ?>"
                id="event_title" name="event_title"
@@ -56,7 +56,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
       </div>
 
       <div class="mb-3">
-        <label for="event_date" class="form-label">Date &amp; time <span class="text-danger">*</span></label>
+        <label for="event_date" class="form-label">Datum &amp; Uhrzeit <span class="text-danger">*</span></label>
         <?php
         // Format the existing date for datetime-local input (Y-m-d\TH:i)
         $dateValue = '';
@@ -78,7 +78,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
       </div>
 
       <div class="mb-3">
-        <label for="event_description" class="form-label">Description</label>
+        <label for="event_description" class="form-label">Beschreibung</label>
         <textarea class="form-control"
                   id="event_description" name="event_description"
                   rows="4"><?= h($val('event_description', 'eventDescription')) ?></textarea>
@@ -86,7 +86,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label for="event_duration_hours" class="form-label">Duration (hours)</label>
+          <label for="event_duration_hours" class="form-label">Dauer (Stunden)</label>
           <input type="number"
                  class="form-control <?= isset($errors['event_duration_hours']) ? 'is-invalid' : '' ?>"
                  id="event_duration_hours" name="event_duration_hours"
@@ -98,7 +98,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
         </div>
 
         <div class="col-md-6 mb-3">
-          <label for="event_max_subscriber" class="form-label">Max participants</label>
+          <label for="event_max_subscriber" class="form-label">Max. teilnehmende Personen</label>
           <input type="number"
                  class="form-control <?= isset($errors['event_max_subscriber']) ? 'is-invalid' : '' ?>"
                  id="event_max_subscriber" name="event_max_subscriber"
@@ -112,12 +112,12 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
 
       <div class="d-flex gap-2">
         <button type="submit" class="btn btn-primary">
-          <?= $isEdit ? 'Save changes' : 'Create event' ?>
+          <?= $isEdit ? 'Änderungen speichern' : 'Veranstaltung erstellen' ?>
         </button>
         <?php if ($isEdit): ?>
-          <a href="/events/<?= h($event->eventGuid) ?>" class="btn btn-outline-secondary">Cancel</a>
+          <a href="/events/<?= h($event->eventGuid) ?>" class="btn btn-outline-secondary">Abbrechen</a>
         <?php else: ?>
-          <a href="/events" class="btn btn-outline-secondary">Cancel</a>
+          <a href="/events" class="btn btn-outline-secondary">Abbrechen</a>
         <?php endif; ?>
       </div>
 
