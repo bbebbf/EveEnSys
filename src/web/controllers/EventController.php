@@ -33,6 +33,13 @@ class EventController
         View::render('event/index', ['pageTitle' => 'All Events', 'events' => $events]);
     }
 
+    public function indexMy(): void
+    {
+        Session::requireLogin();
+        $events = $this->eventRepo->findAllByUser(Session::getUserId());
+        View::render('event/index', ['pageTitle' => 'My Events', 'events' => $events]);
+    }
+
     public function show(string $guid): void
     {
         $event           = $this->eventRepo->findByGuid($guid) ?? $this->abort(404);

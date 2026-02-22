@@ -21,7 +21,9 @@
             <?= h(Session::getUserName()) ?>
           </a>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/events/my">My Events</a>
             <a class="dropdown-item" href="/events/all">All Events</a>
+            <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="/profile">Change Password</a>
             <div class="dropdown-divider"></div>
             <form method="post" action="/logout" class="dropdown-item">

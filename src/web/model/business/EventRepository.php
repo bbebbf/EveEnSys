@@ -59,6 +59,25 @@ class EventRepository
         return $events;
     }
 
+    /** @return EventDto[] */
+    public function findAllByUser(int $userId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT e.*, u.user_name AS creator_name
+               FROM event e
+               JOIN `user` u ON e.creator_user_id = u.user_id
+               WHERE u.user_id = ?
+              ORDER BY e.event_date ASC'
+        );
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        $events = [];
+        while ($row = $stmt->get_result()->fetch_assoc()) {
+            $events[] = $this->mapEventRow($row);
+        }
+        return $events;
+    }
+
     public function findById(int $id): ?EventDto
     {
         $stmt = $this->db->prepare(
