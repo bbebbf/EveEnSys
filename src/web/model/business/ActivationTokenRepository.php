@@ -58,7 +58,7 @@ class ActivationTokenRepository
         $stmt->execute();
     }
 
-    private function deleteByUser(int $userId): void
+    public function deleteByUser(int $userId): void
     {
         $stmt = $this->db->prepare('DELETE FROM activation_token WHERE user_id = ?');
         $stmt->bind_param('i', $userId);

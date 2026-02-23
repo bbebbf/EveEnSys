@@ -363,6 +363,61 @@ class AuthController
         ControllerTools::redirect('/profile/' . $guid);
     }
 
+    public function showDeleteProfile(string $guid): void
+    {
+        Session::requireLogin();
+        if ($guid !== Session::getUserGuid()) {
+            ControllerTools::abort_Forbidden_403();
+        }
+        $user = $this->userRepo->findByGuid($guid);
+        View::render('profile/confirm_delete', [
+            'pageTitle' => 'Profil löschen',
+            'user'      => $user,
+            'errors'    => [],
+        ]);
+    }
+
+    public function deleteProfile(Request $req, string $guid): void
+    {
+        Session::requireLogin();
+        if ($guid !== Session::getUserGuid()) {
+            ControllerTools::abort_Forbidden_403();
+        }
+
+        if (!Session::validateCsrf($req->post('_csrf', ''))) {
+            ControllerTools::abort_Forbidden_403();
+        }
+
+        $user     = $this->userRepo->findByGuid($guid);
+        $password = $req->post('password', '');
+        $errors   = [];
+
+        if (!password_verify($password, $user->userPasswd)) {
+            $errors['password'] = 'Das Passwort ist falsch.';
+        }
+
+        if (!empty($errors)) {
+            View::render('profile/confirm_delete', [
+                'pageTitle' => 'Profil löschen',
+                'user'      => $user,
+                'errors'    => $errors,
+            ]);
+            return;
+        }
+
+        $eventRepo = new EventRepository($this->db);
+        $eventRepo->deleteSubscribersForUserEvents($user->userId);
+        $eventRepo->deleteSubscribersByCreator($user->userId);
+        $eventRepo->deleteAllByUser($user->userId);
+        $this->resetRepo->deleteByUser($user->userId);
+        $this->activationRepo->deleteByUser($user->userId);
+        $this->userRepo->delete($user->userId);
+
+        Session::logout();
+        Session::setFlash('success', 'Ihr Profil wurde gelöscht.');
+        ControllerTools::redirect('/login');
+    }
+
     public function logout(): void
     {
         Session::requireLogin();

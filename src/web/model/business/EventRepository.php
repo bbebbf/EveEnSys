@@ -172,6 +172,29 @@ class EventRepository
         $stmt->execute();
     }
 
+    public function deleteSubscribersForUserEvents(int $userId): void
+    {
+        $stmt = $this->db->prepare(
+            'DELETE FROM subscriber WHERE event_id IN (SELECT event_id FROM event WHERE creator_user_id = ?)'
+        );
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+    }
+
+    public function deleteSubscribersByCreator(int $userId): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM subscriber WHERE creator_user_id = ?');
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+    }
+
+    public function deleteAllByUser(int $userId): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM event WHERE creator_user_id = ?');
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+    }
+
     /** @return SubscriberDto[] */
     public function findSubscribersByEvent(int $eventId): array
     {

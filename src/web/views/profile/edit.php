@@ -2,8 +2,8 @@
 
 <div class="row g-4">
 
-  <?php /* Anzeigename ändern */ ?>
   <div class="col-md-6">
+    <?php /* Anzeigename ändern */ ?>
     <div class="card">
       <div class="card-header"><strong>Anzeigename</strong></div>
       <div class="card-body">
@@ -40,8 +40,8 @@
     </div>
   </div>
 
-  <?php /* Passwort ändern */ ?>
   <div class="col-md-6">
+    <?php /* Passwort ändern */ ?>
     <div class="card">
       <div class="card-header"><strong>Passwort ändern</strong></div>
       <div class="card-body">
@@ -98,6 +98,14 @@
 
       </div>
     </div>
-  </div>
 
+    <?php /* Profil löschen */ ?>
+    <div class="card border-danger mt-3">
+      <div class="card-header bg-danger text-white"><strong>Profil löschen</strong></div>
+      <div class="card-body">
+        <p class="text-danger small mb-2">Diese Aktion löscht Ihr Konto sowie alle Ihre Veranstaltungen dauerhaft und kann nicht rückgängig gemacht werden.</p>
+        <a href="/profile/<?= h($user->userGuid) ?>/delete" class="btn btn-outline-danger btn-sm">Profil löschen</a>
+      </div>
+    </div>
+  </div>
 </div>

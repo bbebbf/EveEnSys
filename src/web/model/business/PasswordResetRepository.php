@@ -58,7 +58,7 @@ class PasswordResetRepository
         $stmt->execute();
     }
 
-    private function deleteByUser(int $userId): void
+    public function deleteByUser(int $userId): void
     {
         $stmt = $this->db->prepare('DELETE FROM password_reset WHERE user_id = ?');
         $stmt->bind_param('i', $userId);

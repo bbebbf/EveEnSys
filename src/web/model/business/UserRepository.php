@@ -92,6 +92,13 @@ class UserRepository
         $stmt->execute();
     }
 
+    public function delete(int $userId): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM `user` WHERE user_id = ?');
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+    }
+
     private function generateGuid(): string
     {
         $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
