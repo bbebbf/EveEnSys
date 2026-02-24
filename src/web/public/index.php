@@ -3,6 +3,17 @@ declare(strict_types=1);
 
 define('APP_ROOT', dirname(__DIR__));
 
+// Load app config
+$_appConfigFile = APP_ROOT . '/_config/app-config.json';
+$_appConfig = false;
+$_appConfig_valid = false;
+if (file_exists($_appConfigFile)) {
+    $_appConfig = json_decode(file_get_contents($_appConfigFile), true);
+}
+$_appConfig_valid = is_array($_appConfig);
+define('APP_TITLE_SHORT', $_appConfig_valid ? $_appConfig['AppTitleShort'] : 'No App Title');
+unset($_appConfig);
+
 // Security headers
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');

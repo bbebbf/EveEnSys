@@ -80,14 +80,14 @@ class AuthController
         $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
         $link    = $baseUrl . '/activate-account?token=' . urlencode($rawToken);
 
-        $subject = 'EveEnSys-Konto aktivieren';
+        $subject = APP_TITLE_SHORT . '-Konto aktivieren';
         $body    = "Hallo {$name},\r\n\r\n"
-            . "Vielen Dank für Ihre Registrierung bei EveEnSys.\r\n\r\n"
+            . "Vielen Dank für Ihre Registrierung bei " . APP_TITLE_SHORT . ".\r\n\r\n"
             . "Klicken Sie auf den folgenden Link, um Ihr Konto zu aktivieren (gültig für 24 Stunden):\r\n"
             . $link . "\r\n\r\n"
             . "Falls Sie sich nicht registriert haben, können Sie diese E-Mail ignorieren.\r\n";
 
-        $headers = "From: EveEnSys <noreply@eveensys.local>\r\n"
+        $headers = "From: " . $this->getNoReplyAddress() . "\r\n"
             . "Content-Type: text/plain; charset=UTF-8\r\n";
 
         mail($email, $subject, $body, $headers);
@@ -181,14 +181,14 @@ class AuthController
             $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
             $link    = $baseUrl . '/reset-password?token=' . urlencode($rawToken);
 
-            $subject = 'EveEnSys-Passwort zurücksetzen';
+            $subject = APP_TITLE_SHORT . '-Passwort zurücksetzen';
             $body    = "Hallo {$user->userName},\r\n\r\n"
-                . "Sie haben eine Passwortzurücksetzung für Ihr EveEnSys-Konto angefordert.\r\n\r\n"
+                . "Sie haben eine Passwortzurücksetzung für Ihr " . APP_TITLE_SHORT . "-Konto angefordert.\r\n\r\n"
                 . "Klicken Sie auf den folgenden Link, um ein neues Passwort festzulegen (gültig für 1 Stunde):\r\n"
                 . $link . "\r\n\r\n"
                 . "Falls Sie diese Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.\r\n";
 
-            $headers = "From: EveEnSys <noreply@eveensys.local>\r\n"
+            $headers = "From: " . $this->getNoReplyAddress() . "\r\n"
                 . "Content-Type: text/plain; charset=UTF-8\r\n";
 
             mail($user->userEmail, $subject, $body, $headers);
@@ -428,5 +428,10 @@ class AuthController
 
         Session::logout();
         ControllerTools::redirect('/login');
+    }
+
+    private function getNoReplyAddress(): string
+    {
+        return APP_TITLE_SHORT . ' <noreply@' . $_SERVER['HTTP_HOST'] . '>';
     }
 }

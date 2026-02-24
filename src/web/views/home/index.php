@@ -1,11 +1,11 @@
 <div class="row justify-content-center">
   <div class="col-lg-8 text-center mb-5">
-    <h1 class="display-5 fw-bold mb-3">Willkommen bei EveEnSys</h1>
-    <p class="lead text-muted">
-      EveEnSys ist ein Veranstaltungsanmeldesystem. Stöbern Sie unten in den bevorstehenden Veranstaltungen –
-      oder <a href="/register">erstellen Sie ein kostenloses Konto</a>, um eigene Veranstaltungen zu organisieren
-      und Teilnehmer anzumelden.
-    </p>
+      <?php
+        $greetingsFile = __DIR__ . '/greetings.php';
+        if (file_exists($greetingsFile)) {
+            include $greetingsFile;
+        }
+      ?>
   </div>
 </div>
 
