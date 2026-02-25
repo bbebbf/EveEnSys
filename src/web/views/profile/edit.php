@@ -5,7 +5,12 @@
   <div class="col-md-6">
     <?php /* Anzeigename ändern */ ?>
     <div class="card">
-      <div class="card-header"><strong>Anzeigename</strong></div>
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Daten</strong>
+        <?php if ($user->userRole >= 1): ?>
+          <span class="badge bg-danger ms-2">Administrator</span>
+        <?php endif; ?>
+    </div>
       <div class="card-body">
 
         <?php if (!empty($nameErrors)): ?>
@@ -103,7 +108,7 @@
     <div class="card border-danger mt-3">
       <div class="card-header bg-danger text-white"><strong>Profil löschen</strong></div>
       <div class="card-body">
-        <p class="text-danger small mb-2">Diese Aktion löscht Ihr Konto sowie alle Ihre Veranstaltungen dauerhaft und kann nicht rückgängig gemacht werden.</p>
+        <p class="text-danger small mb-2">Diese Aktion löscht Ihr Konto komplett und kann nicht rückgängig gemacht werden.</p>
         <a href="/profile/<?= h($user->userGuid) ?>/delete" class="btn btn-outline-danger btn-sm">Profil löschen</a>
       </div>
     </div>

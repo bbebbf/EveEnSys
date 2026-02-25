@@ -9,8 +9,6 @@
   </div>
 </div>
 
-<h2 class="mb-4">Bevorstehende Veranstaltungen</h2>
-
 <?php if (empty($upcomingEvents)): ?>
   <div class="text-center text-muted py-5">
     <p class="fs-5">Derzeit keine bevorstehenden Veranstaltungen.</p>
@@ -21,6 +19,7 @@
     <?php endif; ?>
   </div>
 <?php else: ?>
+  <h2 class="mb-4">Bevorstehende Veranstaltungen</h2>
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
     <?php foreach ($upcomingEvents as $event): ?>
       <div class="col">

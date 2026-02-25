@@ -13,7 +13,12 @@
       </div>
       <div class="card-body">
         <p>Möchten Sie Ihr Konto <strong><?= h($user->userName) ?></strong> wirklich dauerhaft löschen?</p>
-        <p class="text-danger small">Diese Aktion löscht Ihr Konto sowie alle Ihre Veranstaltungen und kann nicht rückgängig gemacht werden.</p>
+        <p class="text-danger">Diese Aktion löscht Ihr Konto komplett und kann nicht rückgängig gemacht werden.</p>
+        <ul class="text-danger">
+            <li>Alle Ihre Veranstaltungen werden gelöscht.</li>
+            <li>Alle Ihre Anmeldungen zu Veranstaltungen werden gelöscht.</li>
+            <li>Sie verlieren den Zugriff auf alle Funktionen dieser Plattform.</li>
+        </ul>
 
         <?php if (!empty($errors)): ?>
           <div class="alert alert-danger">
