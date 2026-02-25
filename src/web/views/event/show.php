@@ -34,6 +34,25 @@
 
       <dt class="col-sm-3">Veranstalter</dt>
       <dd class="col-sm-9"><?= h($event->creatorName ?? 'Unbekannt') ?></dd>
+
+      <?php if ($isAdmin || $isCreator): ?>
+        <dt class="col-sm-3">Sichtbarkeit</dt>
+        <dd class="col-sm-9">
+          <?php if ($event->eventIsVisible): ?>
+            <span class="badge bg-success">Sichtbar</span>
+          <?php else: ?>
+            <span class="badge bg-warning text-dark">Versteckt</span>
+          <?php endif; ?>
+          <?php if ($isAdmin): ?>
+            <form method="post" action="/events/<?= h($event->eventGuid) ?>/toggle-visible" class="d-inline ms-2">
+              <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+              <button type="submit" class="btn btn-sm <?= $event->eventIsVisible ? 'btn-outline-warning' : 'btn-outline-success' ?>">
+                <?= $event->eventIsVisible ? 'Verstecken' : 'Sichtbar machen' ?>
+              </button>
+            </form>
+          <?php endif; ?>
+        </dd>
+      <?php endif; ?>
     </dl>
 
     <?php if ($event->eventDescription !== null): ?>

@@ -363,6 +363,59 @@ class AuthController
         ControllerTools::redirect('/profile/' . $guid);
     }
 
+    public function showAdminUsers(): void
+    {
+        Session::requireLogin();
+        if (!Session::isAdmin()) {
+            ControllerTools::abort_Forbidden_403();
+        }
+        $users      = $this->userRepo->findAll();
+        $adminCount = $this->userRepo->countAdmins();
+        View::render('admin/users', [
+            'pageTitle'  => 'Benutzerverwaltung',
+            'users'      => $users,
+            'adminCount' => $adminCount,
+        ]);
+    }
+
+    public function toggleAdminRole(Request $req, string $guid): void
+    {
+        Session::requireLogin();
+        if (!Session::isAdmin()) {
+            ControllerTools::abort_Forbidden_403();
+        }
+        if (!Session::validateCsrf($req->post('_csrf', ''))) {
+            ControllerTools::abort_Forbidden_403();
+        }
+
+        $user = $this->userRepo->findByGuid($guid);
+        if ($user === null) {
+            ControllerTools::abort_NotFound_404();
+        }
+
+        if ($user->userRole >= 1) {
+            if ($user->userId === Session::getUserId()) {
+                Session::setFlash('error', 'Sie können sich selbst die Administrator-Rechte nicht entziehen.');
+                ControllerTools::redirect('/admin/users');
+            }
+            if ($this->userRepo->countAdmins() <= 1) {
+                Session::setFlash('error', 'Es muss mindestens ein Administrator vorhanden sein.');
+                ControllerTools::redirect('/admin/users');
+            }
+            $this->userRepo->setRole($user->userId, 0);
+            Session::setFlash('success', 'Administrator-Rechte von ' . $user->userName . ' wurden entzogen.');
+        } else {
+            if (!$user->userIsActive) {
+                Session::setFlash('error', 'Einem inaktiven Benutzer können keine Administrator-Rechte vergeben werden.');
+                ControllerTools::redirect('/admin/users');
+            }
+            $this->userRepo->setRole($user->userId, 1);
+            Session::setFlash('success', $user->userName . ' wurde zum Administrator ernannt.');
+        }
+
+        ControllerTools::redirect('/admin/users');
+    }
+
     public function showDeleteProfile(string $guid): void
     {
         Session::requireLogin();
@@ -370,6 +423,13 @@ class AuthController
             ControllerTools::abort_Forbidden_403();
         }
         $user = $this->userRepo->findByGuid($guid);
+        if ($user->userRole >= 1
+            && $this->userRepo->countAdmins() === 1
+            && $this->userRepo->countAll() > 1
+        ) {
+            Session::setFlash('error', 'Ihr Konto kann nicht gelöscht werden, solange Sie der einzige Administrator sind. Ernennen Sie zuerst einen anderen Administrator.');
+            ControllerTools::redirect('/profile/' . $guid);
+        }
         View::render('profile/confirm_delete', [
             'pageTitle' => 'Profil löschen',
             'user'      => $user,
@@ -391,6 +451,14 @@ class AuthController
         $user     = $this->userRepo->findByGuid($guid);
         $password = $req->post('password', '');
         $errors   = [];
+
+        if ($user->userRole >= 1
+            && $this->userRepo->countAdmins() === 1
+            && $this->userRepo->countAll() > 1
+        ) {
+            Session::setFlash('error', 'Ihr Konto kann nicht gelöscht werden, solange Sie der einzige Administrator sind. Ernennen Sie zuerst einen anderen Administrator.');
+            ControllerTools::redirect('/profile/' . $guid);
+        }
 
         if (!password_verify($password, $user->userPasswd)) {
             $errors['password'] = 'Das Passwort ist falsch.';

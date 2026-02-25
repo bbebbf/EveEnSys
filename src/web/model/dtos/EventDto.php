@@ -7,6 +7,7 @@ class EventDto
         public readonly int     $eventId,
         public readonly string  $eventGuid,
         public readonly int     $creatorUserId,
+        public readonly bool    $eventIsVisible,
         public readonly string  $eventTitle,
         public readonly ?string $eventDescription,
         public readonly string  $eventDate,

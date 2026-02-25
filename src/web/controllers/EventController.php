@@ -22,28 +22,49 @@ class EventController
     public function index(): void
     {
         Session::requireLogin();
-        $events = $this->eventRepo->findAllUpcoming();
-        View::render('event/index', ['pageTitle' => 'Bevorstehende Veranstaltungen', 'events' => $events]);
+        $isAdmin = Session::isAdmin();
+        $events  = $this->eventRepo->findAllUpcoming(!$isAdmin);
+        View::render('event/index', [
+            'pageTitle' => 'Bevorstehende Veranstaltungen',
+            'events'    => $events,
+            'isAdmin'   => $isAdmin,
+        ]);
     }
 
     public function indexAll(): void
     {
         Session::requireLogin();
-        $events = $this->eventRepo->findAll();
-        View::render('event/index', ['pageTitle' => 'Alle Veranstaltungen', 'events' => $events]);
+        $isAdmin = Session::isAdmin();
+        $events  = $this->eventRepo->findAll(!$isAdmin);
+        View::render('event/index', [
+            'pageTitle' => 'Alle Veranstaltungen',
+            'events'    => $events,
+            'isAdmin'   => $isAdmin,
+        ]);
     }
 
     public function indexMy(): void
     {
         Session::requireLogin();
         $events = $this->eventRepo->findAllByUser(Session::getUserId());
-        View::render('event/index', ['pageTitle' => 'Meine Veranstaltungen', 'events' => $events]);
+        View::render('event/index', [
+            'pageTitle' => 'Meine Veranstaltungen',
+            'events'    => $events,
+            'isAdmin'   => Session::isAdmin(),
+        ]);
     }
 
     public function show(string $guid): void
     {
-        $event           = $this->eventRepo->findByGuid($guid) ?? ControllerTools::abort_NotFound_404();
-        $subscribers     = $this->eventRepo->findSubscribersByEvent($event->eventId);
+        $event     = $this->eventRepo->findByGuid($guid) ?? ControllerTools::abort_NotFound_404();
+        $isAdmin   = Session::isAdmin();
+        $isCreator = Session::isLoggedIn() && Session::getUserId() === $event->creatorUserId;
+
+        if (!$event->eventIsVisible && !$isAdmin && !$isCreator) {
+            ControllerTools::abort_NotFound_404();
+        }
+
+        $subscribers      = $this->eventRepo->findSubscribersByEvent($event->eventId);
         $isEnrolledAsSelf = Session::isLoggedIn()
             && $this->eventRepo->isUserEnrolledAsSelf($event->eventId, Session::getUserId());
         View::render('event/show', [
@@ -52,6 +73,8 @@ class EventController
             'subscribers'      => $subscribers,
             'isEnrolledAsSelf' => $isEnrolledAsSelf,
             'subscriberCount'  => count($subscribers),
+            'isAdmin'          => $isAdmin,
+            'isCreator'        => $isCreator,
         ]);
     }
 
@@ -65,7 +88,13 @@ class EventController
 
         $event  = $this->eventRepo->findByGuid($guid) ?? ControllerTools::abort_NotFound_404();
         $userId = Session::getUserId();
-        $type   = $req->post('enroll_type', '');
+
+        if (!$event->eventIsVisible) {
+            Session::setFlash('error', 'Anmeldungen für versteckte Veranstaltungen sind nicht möglich.');
+            ControllerTools::redirect('/events/' . $guid);
+        }
+
+        $type = $req->post('enroll_type', '');
 
         if ($event->eventMaxSubscriber !== null) {
             $count = $this->eventRepo->countSubscribers($event->eventId);
@@ -135,6 +164,26 @@ class EventController
             Session::setFlash('success', 'Anmeldung entfernt.');
         }
 
+        ControllerTools::redirect('/events/' . $guid);
+    }
+
+    public function toggleVisible(Request $req, string $guid): void
+    {
+        Session::requireLogin();
+
+        if (!Session::isAdmin()) {
+            ControllerTools::abort_Forbidden_403();
+        }
+
+        if (!Session::validateCsrf($req->post('_csrf', ''))) {
+            ControllerTools::abort_Forbidden_403();
+        }
+
+        $event = $this->eventRepo->findByGuid($guid) ?? ControllerTools::abort_NotFound_404();
+        $this->eventRepo->setVisible($event->eventId, !$event->eventIsVisible);
+
+        $msg = $event->eventIsVisible ? 'Veranstaltung ist jetzt versteckt.' : 'Veranstaltung ist jetzt sichtbar.';
+        Session::setFlash('success', $msg);
         ControllerTools::redirect('/events/' . $guid);
     }
 

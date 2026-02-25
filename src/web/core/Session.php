@@ -19,6 +19,11 @@ class Session
         return isset($_SESSION['user_id']);
     }
 
+    public static function isAdmin(): bool
+    {
+        return isset($_SESSION['user_role']) && (int)$_SESSION['user_role'] === 1;
+    }
+
     public static function requireLogin(): void
     {
         if (!self::isLoggedIn()) {

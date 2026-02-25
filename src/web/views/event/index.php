@@ -16,10 +16,13 @@
       <div class="col">
         <div class="card h-100 shadow-sm">
           <div class="card-body">
-            <h5 class="card-title">
+            <h5 class="card-title d-flex justify-content-between">
               <a href="/events/<?= h($event->eventGuid) ?>" class="text-decoration-none stretched-link">
                 <?= h($event->eventTitle) ?>
               </a>
+              <?php if (!$event->eventIsVisible): ?>
+                <span class="badge text-bg-warning"><small>Versteckt</small></span>
+              <?php endif; ?>
             </h5>
             <?php if ($event->eventDescription !== null): ?>
               <p class="card-text text-muted small">
@@ -38,6 +41,16 @@
             <?php endif; ?>
             <br>
             Von <?= h($event->creatorName ?? 'Unbekannt') ?>
+            <?php if ($isAdmin): ?>
+              <div class="mt-2 position-relative" style="z-index: 2;">
+                <form method="post" action="/events/<?= h($event->eventGuid) ?>/toggle-visible">
+                  <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+                  <button type="submit" class="btn btn-sm <?= $event->eventIsVisible ? 'btn-outline-warning' : 'btn-outline-success' ?>">
+                    <?= $event->eventIsVisible ? 'Verstecken' : 'Sichtbar machen' ?>
+                  </button>
+                </form>
+              </div>
+            <?php endif; ?>
           </div>
         </div>
       </div>

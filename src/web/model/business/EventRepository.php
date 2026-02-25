@@ -13,6 +13,7 @@ class EventRepository
                FROM event e
                JOIN `user` u ON e.creator_user_id = u.user_id
               WHERE e.event_date >= NOW()
+                AND e.event_is_visible = 1
               ORDER BY e.event_date ASC
               LIMIT ?'
         );
@@ -27,15 +28,15 @@ class EventRepository
     }
 
     /** @return EventDto[] */
-    public function findAllUpcoming(): array
+    public function findAllUpcoming(bool $visibleOnly = true): array
     {
-        $result = $this->db->query(
-            'SELECT e.*, u.user_name AS creator_name
+        $sql = 'SELECT e.*, u.user_name AS creator_name
                FROM event e
                JOIN `user` u ON e.creator_user_id = u.user_id
-              WHERE e.event_date >= NOW()
-              ORDER BY e.event_date ASC'
-        );
+              WHERE e.event_date >= NOW()'
+             . ($visibleOnly ? ' AND e.event_is_visible = 1' : '')
+             . ' ORDER BY e.event_date ASC';
+        $result = $this->db->query($sql);
         $events = [];
         while ($row = $result->fetch_assoc()) {
             $events[] = $this->mapEventRow($row);
@@ -44,14 +45,14 @@ class EventRepository
     }
 
     /** @return EventDto[] */
-    public function findAll(): array
+    public function findAll(bool $visibleOnly = true): array
     {
-        $result = $this->db->query(
-            'SELECT e.*, u.user_name AS creator_name
+        $sql = 'SELECT e.*, u.user_name AS creator_name
                FROM event e
-               JOIN `user` u ON e.creator_user_id = u.user_id
-              ORDER BY e.event_date ASC'
-        );
+               JOIN `user` u ON e.creator_user_id = u.user_id'
+             . ($visibleOnly ? ' WHERE e.event_is_visible = 1' : '')
+             . ' ORDER BY e.event_date ASC';
+        $result = $this->db->query($sql);
         $events = [];
         while ($row = $result->fetch_assoc()) {
             $events[] = $this->mapEventRow($row);
@@ -152,6 +153,14 @@ class EventRepository
     {
         $stmt = $this->db->prepare('DELETE FROM event WHERE event_id = ?');
         $stmt->bind_param('i', $eventId);
+        $stmt->execute();
+    }
+
+    public function setVisible(int $eventId, bool $visible): void
+    {
+        $val  = $visible ? 1 : 0;
+        $stmt = $this->db->prepare('UPDATE event SET event_is_visible = ? WHERE event_id = ?');
+        $stmt->bind_param('ii', $val, $eventId);
         $stmt->execute();
     }
 
@@ -320,6 +329,7 @@ class EventRepository
             eventId:            (int)$row['event_id'],
             eventGuid:          $row['event_guid'],
             creatorUserId:      (int)$row['creator_user_id'],
+            eventIsVisible:     (bool)$row['event_is_visible'],
             eventTitle:         $row['event_title'],
             eventDescription:   $row['event_description'] ?? null,
             eventDate:          $row['event_date'],

@@ -23,6 +23,10 @@
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="/events/my">Meine Veranstaltungen</a>
             <a class="dropdown-item" href="/events/all">Alle Veranstaltungen</a>
+            <?php if (Session::isAdmin()): ?>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/admin/users">Benutzerverwaltung</a>
+            <?php endif; ?>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="/profile/<?= h(Session::getUserGuid()) ?>">Profil &amp; Passwort</a>
             <div class="dropdown-divider"></div>

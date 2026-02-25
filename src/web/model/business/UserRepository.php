@@ -63,6 +63,11 @@ class UserRepository
         );
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+
+        // Promote to admin if no admin exists yet
+        if ($this->countAdmins() === 0) {
+            $this->setRole($userId, 1);
+        }
     }
 
     public function updateLastLogin(int $userId): void
@@ -99,6 +104,40 @@ class UserRepository
         $stmt->execute();
     }
 
+    public function setRole(int $userId, int $role): void
+    {
+        $stmt = $this->db->prepare('UPDATE `user` SET user_role = ? WHERE user_id = ?');
+        $stmt->bind_param('ii', $role, $userId);
+        $stmt->execute();
+    }
+
+    public function countAdmins(): int
+    {
+        $result = $this->db->query("SELECT COUNT(*) FROM `user` WHERE user_role >= 1");
+        return (int)$result->fetch_row()[0];
+    }
+
+    public function countAll(): int
+    {
+        $result = $this->db->query("SELECT COUNT(*) FROM `user`");
+        return (int)$result->fetch_row()[0];
+    }
+
+    /** @return UserDto[] */
+    public function findAll(): array
+    {
+        $result = $this->db->query(
+            'SELECT user_id, user_guid, user_email, user_is_active, user_role, user_name, user_passwd, user_last_login
+               FROM `user`
+              ORDER BY user_name ASC'
+        );
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $this->mapRow($row);
+        }
+        return $users;
+    }
+
     private function generateGuid(): string
     {
         $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
@@ -125,7 +164,7 @@ class UserRepository
             userId:        (int)$row['user_id'],
             userGuid:      $row['user_guid'],
             userEmail:     $row['user_email'],
-            userIsActive:  (bool)ord((string)$row['user_is_active']),
+            userIsActive:  (bool)$row['user_is_active'],
             userRole:      (int)$row['user_role'],
             userName:      $row['user_name'],
             userPasswd:    $row['user_passwd'],
