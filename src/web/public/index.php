@@ -11,7 +11,8 @@ if (file_exists($_appConfigFile)) {
     $_appConfig = json_decode(file_get_contents($_appConfigFile), true);
 }
 $_appConfig_valid = is_array($_appConfig);
-define('APP_TITLE_SHORT', $_appConfig_valid ? $_appConfig['AppTitleShort'] : 'No App Title');
+define('APP_TITLE_SHORT', $_appConfig_valid && array_key_exists('AppTitleShort', $_appConfig) ? $_appConfig['AppTitleShort'] : 'No App Title');
+define('APP_IMPRESS_URL', $_appConfig_valid && array_key_exists('AppImpressUrl', $_appConfig) ? $_appConfig['AppImpressUrl'] : '');
 unset($_appConfig);
 
 // Security headers

@@ -4,7 +4,11 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mt-4">
   <div class="container">
     <div class="navbar-nav mx-auto align-items-center">
-      <a class="nav-link" href="https://www.gemeinschaft-filsum.de/impressum">Impressum</a>
+      <?php if (strlen(APP_IMPRESS_URL) > 0): ?>
+        <a class="nav-link" href="<?= APP_IMPRESS_URL ?>">Impressum</a>
+      <?php else: ?>
+        <a class="nav-link" href="#">Kein Impressum</a>
+      <?php endif; ?>
     </div>
   </div>
 </nav>
