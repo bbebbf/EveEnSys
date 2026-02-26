@@ -11,6 +11,7 @@ class EventDto
         public readonly string  $eventTitle,
         public readonly ?string $eventDescription,
         public readonly string  $eventDate,
+        public readonly ?string $eventLocation,
         public readonly ?float  $eventDurationHours,
         public readonly ?int    $eventMaxSubscriber,
         public readonly ?string $creatorName = null,

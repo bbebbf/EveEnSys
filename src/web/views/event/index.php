@@ -39,6 +39,9 @@
             <?php if ($event->eventMaxSubscriber !== null): ?>
               &nbsp;&bull;&nbsp;max. <?= h($event->eventMaxSubscriber) ?> Personen
             <?php endif; ?>
+            <?php if ($event->eventLocation !== null): ?>
+              <br><i class="bi bi-geo-alt"></i> <?= h($event->eventLocation) ?>
+            <?php endif; ?>
             <br>
             Von <?= h($event->creatorName ?? 'Unbekannt') ?>
             <?php if ($isAdmin): ?>

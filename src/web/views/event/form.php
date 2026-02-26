@@ -78,6 +78,18 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
       </div>
 
       <div class="mb-3">
+        <label for="event_location" class="form-label">Veranstaltungsort</label>
+        <input type="text"
+               class="form-control <?= isset($errors['event_location']) ? 'is-invalid' : '' ?>"
+               id="event_location" name="event_location"
+               value="<?= h($val('event_location', 'eventLocation')) ?>"
+               maxlength="150">
+        <?php if (isset($errors['event_location'])): ?>
+          <div class="invalid-feedback"><?= h($errors['event_location']) ?></div>
+        <?php endif; ?>
+      </div>
+
+      <div class="mb-3">
         <label for="event_description" class="form-label">Beschreibung</label>
         <textarea class="form-control"
                   id="event_description" name="event_description"

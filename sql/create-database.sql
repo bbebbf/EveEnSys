@@ -21,6 +21,7 @@ CREATE TABLE `event` (
   `event_title` varchar(150) NOT NULL,
   `event_description` text DEFAULT NULL,
   `event_date` datetime NOT NULL,
+  `event_location` varchar(150) DEFAULT NULL,
   `event_duration_hours` float DEFAULT NULL,
   `event_max_subscriber` smallint(5) unsigned DEFAULT NULL,
   PRIMARY KEY (`event_id`),

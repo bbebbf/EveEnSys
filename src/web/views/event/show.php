@@ -22,6 +22,11 @@
       <dt class="col-sm-3">Datum &amp; Uhrzeit</dt>
       <dd class="col-sm-9"><?= format_event_date($event->eventDate) ?></dd>
 
+      <?php if ($event->eventLocation !== null): ?>
+        <dt class="col-sm-3">Veranstaltungsort</dt>
+        <dd class="col-sm-9"><?= h($event->eventLocation) ?></dd>
+      <?php endif; ?>
+
       <?php if ($event->eventDurationHours !== null): ?>
         <dt class="col-sm-3">Dauer</dt>
         <dd class="col-sm-9"><?= h($event->eventDurationHours) ?> Stunde(n)</dd>

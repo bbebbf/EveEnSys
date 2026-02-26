@@ -112,16 +112,17 @@ class EventRepository
     {
         $guid = $this->generateGuid();
         $stmt = $this->db->prepare(
-            'INSERT INTO event (event_guid, creator_user_id, event_title, event_description, event_date, event_duration_hours, event_max_subscriber)
-             VALUES (?, ?, ?, ?, ?, ?, ?)'
+            'INSERT INTO event (event_guid, creator_user_id, event_title, event_description, event_date, event_location, event_duration_hours, event_max_subscriber)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->bind_param(
-            'sisssdi',
+            'sissssdi',
             $guid,
             $creatorUserId,
             $data['event_title'],
             $data['event_description'],
             $data['event_date'],
+            $data['event_location'],
             $data['event_duration_hours'],
             $data['event_max_subscriber']
         );
@@ -134,14 +135,15 @@ class EventRepository
         $stmt = $this->db->prepare(
             'UPDATE event
                 SET event_title = ?, event_description = ?, event_date = ?,
-                    event_duration_hours = ?, event_max_subscriber = ?
+                    event_location = ?, event_duration_hours = ?, event_max_subscriber = ?
               WHERE event_id = ?'
         );
         $stmt->bind_param(
-            'sssdii',
+            'ssssdii',
             $data['event_title'],
             $data['event_description'],
             $data['event_date'],
+            $data['event_location'],
             $data['event_duration_hours'],
             $data['event_max_subscriber'],
             $eventId
@@ -333,6 +335,7 @@ class EventRepository
             eventTitle:         $row['event_title'],
             eventDescription:   $row['event_description'] ?? null,
             eventDate:          $row['event_date'],
+            eventLocation:      $row['event_location'] ?? null,
             eventDurationHours: isset($row['event_duration_hours']) ? (float)$row['event_duration_hours'] : null,
             eventMaxSubscriber: isset($row['event_max_subscriber']) ? (int)$row['event_max_subscriber'] : null,
             creatorName:        $row['creator_name'] ?? null,
