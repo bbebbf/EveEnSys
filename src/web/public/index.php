@@ -49,11 +49,10 @@ function h(mixed $value): string
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
 
-// Format an event_date string for display (e.g. "22.02.2026 um 14:30 Uhr")
-function format_event_date(string $eventDate): string
+// Format an event date for display (e.g. "22.02.2026 um 14:30 Uhr")
+function format_event_date(\DateTimeImmutable $eventDate): string
 {
-    $ts = strtotime($eventDate);
-    return $ts !== false ? date('d.m. \u\m H:i \U\h\r', $ts) : '';
+    return $eventDate !== null ? $eventDate->format('d.m. \u\m H:i \U\h\r') : '';
 }
 
 Session::start();

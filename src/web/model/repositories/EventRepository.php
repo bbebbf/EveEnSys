@@ -334,7 +334,7 @@ class EventRepository
             eventIsVisible:     (bool)$row['event_is_visible'],
             eventTitle:         $row['event_title'],
             eventDescription:   $row['event_description'] ?? null,
-            eventDate:          $row['event_date'],
+            eventDate:          new \DateTimeImmutable($row['event_date']),
             eventLocation:      $row['event_location'] ?? null,
             eventDurationHours: isset($row['event_duration_hours']) ? (float)$row['event_duration_hours'] : null,
             eventMaxSubscriber: isset($row['event_max_subscriber']) ? (int)$row['event_max_subscriber'] : null,

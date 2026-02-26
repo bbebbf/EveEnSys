@@ -10,7 +10,7 @@ class EventDto
         public readonly bool    $eventIsVisible,
         public readonly string  $eventTitle,
         public readonly ?string $eventDescription,
-        public readonly string  $eventDate,
+        public readonly \DateTimeImmutable $eventDate,
         public readonly ?string $eventLocation,
         public readonly ?float  $eventDurationHours,
         public readonly ?int    $eventMaxSubscriber,

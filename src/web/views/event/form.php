@@ -62,9 +62,8 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
         $dateValue = '';
         if (!empty($old['event_date'])) {
             $dateValue = $old['event_date'];
-        } elseif ($event !== null && $event->eventDate) {
-            $dt = DateTime::createFromFormat('Y-m-d H:i:s', $event->eventDate);
-            $dateValue = $dt ? $dt->format('Y-m-d\TH:i') : '';
+        } elseif ($event !== null) {
+            $dateValue = $event->eventDate->format('Y-m-d\TH:i');
         }
         ?>
         <input type="datetime-local"
