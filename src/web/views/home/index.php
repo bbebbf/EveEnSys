@@ -44,13 +44,13 @@
           </div>
           <div class="card-footer text-muted small">
             <?php if ($event->eventDurationHours !== null): ?>
-              &bull;&nbsp;<?= h($event->eventDurationHours) ?>h
+              &nbsp;<i class="bi bi-clock-history"></i> <?= h($event->eventDurationHours) ?> h
             <?php endif; ?>
             <?php if ($event->eventMaxSubscriber !== null): ?>
-              &bull;&nbsp;max. <?= h($event->eventMaxSubscriber) ?> Personen
+              &nbsp;<i class="bi bi-people"></i> max. <?= h($event->eventMaxSubscriber) ?>
             <?php endif; ?>
             <?php if ($event->eventLocation !== null): ?>
-              &bull;&nbsp;<i class="bi bi-geo-alt"></i> <?= h($event->eventLocation) ?>
+              &nbsp;<i class="bi bi-geo-alt"></i> <?= h($event->eventLocation) ?>
             <?php endif; ?>
           </div>
         </div>
