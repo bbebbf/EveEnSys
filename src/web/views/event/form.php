@@ -92,7 +92,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
         <label for="event_description" class="form-label">Beschreibung</label>
         <textarea class="form-control"
                   id="event_description" name="event_description"
-                  rows="4"><?= h($val('event_description', 'eventDescription')) ?></textarea>
+                  rows="6"><?= h($val('event_description', 'eventDescription')) ?></textarea>
       </div>
 
       <div class="row">
