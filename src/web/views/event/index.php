@@ -14,15 +14,35 @@
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     <?php foreach ($events as $event): ?>
       <div class="col">
+
+
         <div class="card h-100 shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>
+              <i class="bi bi-calendar-event"></i>
+              <?= format_event_date($event->eventDate) ?>
+            </span>
+            <span>
+              <?php if (!$event->eventIsVisible): ?>
+                <span class="badge text-bg-warning"><small>Versteckt</small></span>
+              <?php endif; ?>
+              <?php if ($isAdmin): ?>
+                <div class="mt-2 position-relative" style="z-index: 2;">
+                  <form method="post" action="/events/<?= h($event->eventGuid) ?>/toggle-visible">
+                    <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+                    <button type="submit" class="btn btn-sm <?= $event->eventIsVisible ? 'btn-outline-warning' : 'btn-outline-success' ?>">
+                      <?= $event->eventIsVisible ? 'Verstecken' : 'Sichtbar machen' ?>
+                    </button>
+                  </form>
+                </div>
+              <?php endif; ?>
+            </span>
+          </div>
           <div class="card-body">
             <h5 class="card-title d-flex justify-content-between">
               <a href="/events/<?= h($event->eventGuid) ?>" class="text-decoration-none stretched-link">
                 <?= h($event->eventTitle) ?>
               </a>
-              <?php if (!$event->eventIsVisible): ?>
-                <span class="badge text-bg-warning"><small>Versteckt</small></span>
-              <?php endif; ?>
             </h5>
             <?php if ($event->eventDescription !== null): ?>
               <p class="card-text text-muted small">
@@ -30,32 +50,25 @@
               </p>
             <?php endif; ?>
           </div>
-          <div class="card-footer text-muted small">
-            <i class="bi bi-calendar-event"></i>
-            <?= format_event_date($event->eventDate) ?>
+          <div class="card-footer text-muted small d-flex justify-content-between align-items-center">
+            <span>
             <?php if ($event->eventDurationHours !== null): ?>
-              &nbsp;&bull;&nbsp;<?= h($event->eventDurationHours) ?>h
+              &bull;&nbsp;<?= h($event->eventDurationHours) ?>h
             <?php endif; ?>
             <?php if ($event->eventMaxSubscriber !== null): ?>
-              &nbsp;&bull;&nbsp;max. <?= h($event->eventMaxSubscriber) ?> Personen
+              &bull;&nbsp;max. <?= h($event->eventMaxSubscriber) ?> Personen
             <?php endif; ?>
             <?php if ($event->eventLocation !== null): ?>
-              <br><i class="bi bi-geo-alt"></i> <?= h($event->eventLocation) ?>
+              &bull;&nbsp;<i class="bi bi-geo-alt"></i> <?= h($event->eventLocation) ?>
             <?php endif; ?>
-            <br>
-            Von <?= h($event->creatorName ?? 'Unbekannt') ?>
-            <?php if ($isAdmin): ?>
-              <div class="mt-2 position-relative" style="z-index: 2;">
-                <form method="post" action="/events/<?= h($event->eventGuid) ?>/toggle-visible">
-                  <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
-                  <button type="submit" class="btn btn-sm <?= $event->eventIsVisible ? 'btn-outline-warning' : 'btn-outline-success' ?>">
-                    <?= $event->eventIsVisible ? 'Verstecken' : 'Sichtbar machen' ?>
-                  </button>
-                </form>
-              </div>
-            <?php endif; ?>
+            </span>
+            <span>
+              <?= h($event->creatorName ?? 'Unbekannt') ?>
+            </span>
           </div>
         </div>
+
+
       </div>
     <?php endforeach; ?>
   </div>
