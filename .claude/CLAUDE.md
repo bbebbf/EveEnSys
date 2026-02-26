@@ -48,7 +48,7 @@ src/web/            # PHP source (mounted to /var/www/html in container)
   controllers/      # AuthController, EventController
   model/
     dtos/           # Database entity classes
-    business/       # Repository classes (all SQL)
+    repositories/   # Repository classes (all SQL)
   views/            # PHP view templates
 
 sql/

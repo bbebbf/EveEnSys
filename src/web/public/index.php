@@ -33,10 +33,10 @@ require APP_ROOT . '/model/dtos/EventDto.php';
 require APP_ROOT . '/model/dtos/SubscriberDto.php';
 
 // Load repositories
-require APP_ROOT . '/model/business/UserRepository.php';
-require APP_ROOT . '/model/business/EventRepository.php';
-require APP_ROOT . '/model/business/PasswordResetRepository.php';
-require APP_ROOT . '/model/business/ActivationTokenRepository.php';
+require APP_ROOT . '/model/repositories/UserRepository.php';
+require APP_ROOT . '/model/repositories/EventRepository.php';
+require APP_ROOT . '/model/repositories/PasswordResetRepository.php';
+require APP_ROOT . '/model/repositories/ActivationTokenRepository.php';
 
 // Load controllers
 require APP_ROOT . '/controllers/ControllerTools.php';
