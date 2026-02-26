@@ -92,9 +92,6 @@
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span>
                   <?= h($sub->subscriberName ?? 'Unbekannt') ?>
-                  <?php if ($sub->subscriberIsCreator): ?>
-                    <span class="badge bg-primary ms-1">Ich</span>
-                  <?php endif; ?>
                   <small class="text-muted ms-1"><?= h(date('d.m.Y', strtotime($sub->subscriberEnrollTimestamp))) ?></small>
                 </span>
                 <?php if ($sub->creatorUserId === Session::getUserId()): ?>
