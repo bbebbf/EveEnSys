@@ -40,7 +40,6 @@
         </li>
       <?php else: ?>
         <a class="nav-link" href="/login">Anmelden</a>
-        <a class="nav-link" href="/register">Registrieren</a>
       <?php endif; ?>
     </div>
   </div>
