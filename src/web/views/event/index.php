@@ -23,9 +23,6 @@
               <?= format_event_date($event->eventDate) ?>
             </span>
             <span>
-              <?php if (!$event->eventIsVisible): ?>
-                <span class="badge text-bg-warning"><small>Versteckt</small></span>
-              <?php endif; ?>
               <?php if ($isAdmin): ?>
                 <div class="mt-2 position-relative" style="z-index: 2;">
                   <form method="post" action="/events/<?= h($event->eventGuid) ?>/toggle-visible">
@@ -35,6 +32,8 @@
                     </button>
                   </form>
                 </div>
+              <?php elseif (!$event->eventIsVisible): ?>
+                <span class="badge text-bg-warning"><small>Versteckt</small></span>
               <?php endif; ?>
             </span>
           </div>

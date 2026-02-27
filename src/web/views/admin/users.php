@@ -5,10 +5,9 @@
     <thead>
       <tr>
         <th>Name</th>
-        <th>E-Mail</th>
+        <th>E-Mail-Adresse</th>
         <th>Aktiv</th>
         <th>Rolle</th>
-        <th>Letzter Login</th>
         <th></th>
       </tr>
     </thead>
@@ -26,10 +25,9 @@
           </td>
           <td>
             <?php if ($u->userRole >= 1): ?>
-              <span class="badge bg-danger">Administrator</span>
+              <span class="badge bg-danger">Admin</span>
             <?php endif; ?>
           </td>
-          <td><?= h($u->userLastLogin ?? '—') ?></td>
           <td>
             <?php if ($u->userId <> Session::getUserId()): ?>
               <form method="post" action="/admin/users/<?= h($u->userGuid) ?>/toggle-admin">

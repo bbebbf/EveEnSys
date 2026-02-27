@@ -219,7 +219,7 @@ class EventController
         }
 
         $guid = $this->eventRepo->create(Session::getUserId(), $data);
-        Session::setFlash('success', 'Veranstaltung erfolgreich erstellt.');
+        Session::setFlash('success', 'Veranstaltung erfolgreich erstellt. Nach einer Prüfung wird sie innerhalb der nächsten Stunden für andere sichtbar sein.');
         ControllerTools::redirect('/events/' . $guid);
     }
 
