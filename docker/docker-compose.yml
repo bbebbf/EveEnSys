@@ -47,13 +47,13 @@ services:
     restart: unless-stopped
     environment:
       TZ: ${TZ}
-      APACHE_DOCUMENT_ROOT: "/var/www/html/public"
+      APACHE_DOCUMENT_ROOT: "/var/www/web/public"
       DB_HOST:
       DB_USER:
       DB_PASSWORD:
       DB_NAME:
     volumes:
-      - "../src/web:/var/www/html:Z"
+      - "../src:/var/www:Z"
     ports:
       - "8082:80"
     depends_on:

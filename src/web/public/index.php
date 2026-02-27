@@ -4,7 +4,7 @@ declare(strict_types=1);
 define('APP_ROOT', dirname(__DIR__));
 
 // Load app config
-$_appConfigFile = APP_ROOT . '/_config/app-config.json';
+$_appConfigFile = dirname(APP_ROOT) . '/_config/app-config.json';
 $_appConfig = false;
 $_appConfig_valid = false;
 if (file_exists($_appConfigFile)) {
