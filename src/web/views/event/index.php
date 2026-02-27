@@ -61,7 +61,7 @@
               &nbsp;<i class="bi bi-geo-alt"></i> <?= h($event->eventLocation) ?>
             <?php endif; ?>
             </span>
-            <span>
+            <span class="ms-2 text-body-tertiary">
               <?= h($event->creatorName ?? 'Unbekannt') ?>
             </span>
           </div>
