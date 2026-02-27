@@ -12,7 +12,7 @@ class EventRepository
             'SELECT e.*, u.user_name AS creator_name
                FROM event e
                JOIN `user` u ON e.creator_user_id = u.user_id
-              WHERE e.event_date >= NOW()
+              WHERE DATE_ADD(e.event_date, INTERVAL 15 MINUTE) >= NOW()
                 AND e.event_is_visible = 1
               ORDER BY e.event_date ASC
               LIMIT ?'
@@ -33,7 +33,7 @@ class EventRepository
         $sql = 'SELECT e.*, u.user_name AS creator_name
                FROM event e
                JOIN `user` u ON e.creator_user_id = u.user_id
-              WHERE e.event_date >= NOW()'
+              WHERE DATE_ADD(e.event_date, INTERVAL 15 MINUTE) >= NOW()'
              . ($visibleOnly ? ' AND e.event_is_visible = 1' : '')
              . ' ORDER BY e.event_date ASC';
         $result = $this->db->query($sql);
