@@ -28,6 +28,8 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="/events/my"><i class="bi bi-calendar-event"></i> Meine Veranstaltungen</a></li>
+              <li><a class="dropdown-item" href="/events/enrolled"><i class="bi bi-card-checklist"></i> Meine Anmeldungen</a></li>
+              <div class="dropdown-divider"></div>
               <li><a class="dropdown-item" href="/events/all"><i class="bi bi-calendar-week"></i> Alle Veranstaltungen</a></li>
 
               <?php if (Session::isAdmin()): ?>
@@ -37,7 +39,6 @@
 
               <div class="dropdown-divider"></div>
               <li><a class="dropdown-item" href="/profile/<?= h(Session::getUserGuid()) ?>"><i class="bi bi-person-square"></i> Profil &amp; Passwort</a></li>
-              <div class="dropdown-divider"></div>
               <form method="post" action="/logout" class="dropdown-item">
                 <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
                 <button type="submit" class="btn border-0 p-0 w-100 text-start"><i class="bi bi-x-circle-fill"></i> Abmelden</button>

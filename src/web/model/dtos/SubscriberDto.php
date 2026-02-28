@@ -10,6 +10,9 @@ class SubscriberDto
         public readonly int     $creatorUserId,
         public readonly bool    $subscriberIsCreator,
         public readonly ?string $subscriberName,
-        public readonly string  $subscriberEnrollTimestamp,
+        public readonly \DateTimeImmutable $subscriberEnrollTimestamp,
+        public readonly ?string $eventGuid  = null,
+        public readonly ?string $eventTitle = null,
+        public readonly ?\DateTimeImmutable $eventDate = null,
     ) {}
 }

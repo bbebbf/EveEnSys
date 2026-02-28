@@ -54,6 +54,16 @@ class EventController
         ]);
     }
 
+    public function indexEnrolled(): void
+    {
+        Session::requireLogin();
+        $enrollments = $this->eventRepo->findEnrolledByUser(Session::getUserId());
+        View::render('event/enrolled', [
+            'pageTitle'   => 'Meine Anmeldungen',
+            'enrollments' => $enrollments,
+        ]);
+    }
+
     public function show(string $guid): void
     {
         $event     = $this->eventRepo->findByGuid($guid) ?? ControllerTools::abort_NotFound_404();

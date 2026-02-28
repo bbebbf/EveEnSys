@@ -73,6 +73,7 @@ $router->get('/',                      fn() => (new EventController($db))->home(
 $router->get('/events',                fn() => (new EventController($db))->index());
 $router->get('/events/all',            fn() => (new EventController($db))->indexAll());
 $router->get('/events/my',             fn() => (new EventController($db))->indexMy());
+$router->get('/events/enrolled',       fn() => (new EventController($db))->indexEnrolled());
 $router->get('/events/create',         fn() => (new EventController($db))->showCreate());
 $router->post('/events/create',        fn() => (new EventController($db))->create($req));
 $router->get('/events/{guid}',           fn($p) => (new EventController($db))->show($p['guid']));

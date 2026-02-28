@@ -92,7 +92,7 @@
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span>
                   <?= h($sub->subscriberName ?? 'Unbekannt') ?>
-                  <small class="text-muted ms-1"><?= h(date('d.m.Y', strtotime($sub->subscriberEnrollTimestamp))) ?></small>
+                  <small class="text-muted ms-1"><?= h($sub->subscriberEnrollTimestamp->format('d.m.Y')) ?></small>
                 </span>
                 <?php if ($sub->creatorUserId === Session::getUserId()): ?>
                   <a href="/events/<?= h($event->eventGuid) ?>/unenroll/<?= h($sub->subscriberGuid) ?>"
