@@ -1,4 +1,11 @@
-<h2 class="mb-4">Benutzerverwaltung</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>
+    <?= h($pageTitle) ?>
+    <?php if (count($users) > 0): ?>
+      <span class="badge rounded-pill bg-secondary fs-6 ms-2 align-middle"><?= count($users) ?></span>
+    <?php endif; ?>
+  </h2>
+</div>
 
 <div class="table-responsive">
   <table class="table table-striped align-middle">
