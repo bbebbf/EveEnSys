@@ -35,5 +35,18 @@
     <p class="text-center">
       Noch kein Konto? <a href="/register">Registrieren</a>
     </p>
+
+    <?php if (!empty($oidcProviderInfos)): ?>
+      <div class="d-grid mt-4 gap-2">
+        <?php foreach ($oidcProviderInfos as $provider): ?>
+          <a href="/auth/oidc/<?= h($provider->providerKey) ?>/login" class="btn btn-outline-secondary">
+            <?php if (!is_null($provider->imageSvg)): ?>
+              <img src="data:image/svg+xml;base64,<?= base64_encode($provider->imageSvg) ?>" alt="<?= h($provider->label) ?>" style="height: 1.5em; vertical-align: middle;">
+            <?php endif; ?>
+            Mit <?= h($provider->label) ?> anmelden
+          </a>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
   </div>
 </div>

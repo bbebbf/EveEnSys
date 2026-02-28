@@ -94,6 +94,50 @@ class Session
         return hash_equals($_SESSION['csrf_token'], $token);
     }
 
+    // --- OIDC helpers ---
+
+    public static function setOidcPending(string $nonce, string $state, string $providerKey): void
+    {
+        $_SESSION['oidc_nonce']    = $nonce;
+        $_SESSION['oidc_state']    = $state;
+        $_SESSION['oidc_provider'] = $providerKey;
+    }
+
+    public static function setOidcLinkUserId(int $userId): void
+    {
+        $_SESSION['oidc_link_user_id'] = $userId;
+    }
+
+    public static function getOidcState(): string
+    {
+        return $_SESSION['oidc_state'] ?? '';
+    }
+
+    public static function getOidcProvider(): string
+    {
+        return $_SESSION['oidc_provider'] ?? '';
+    }
+
+    public static function getOidcNonce(): string
+    {
+        return $_SESSION['oidc_nonce'] ?? '';
+    }
+
+    public static function getOidcLinkUserId(): ?int
+    {
+        return isset($_SESSION['oidc_link_user_id']) ? (int)$_SESSION['oidc_link_user_id'] : null;
+    }
+
+    public static function clearOidcData(): void
+    {
+        unset(
+            $_SESSION['oidc_nonce'],
+            $_SESSION['oidc_state'],
+            $_SESSION['oidc_provider'],
+            $_SESSION['oidc_link_user_id']
+        );
+    }
+
     public static function setFlash(string $key, string $message): void
     {
         $_SESSION['flash'][$key] = $message;

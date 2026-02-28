@@ -6,12 +6,14 @@ class AuthController
     private UserRepository $userRepo;
     private PasswordResetRepository $resetRepo;
     private ActivationTokenRepository $activationRepo;
+    private OidcProviderRepository $oidcProviderRepo;
 
     public function __construct(private mysqli $db)
     {
-        $this->userRepo       = new UserRepository($db);
-        $this->resetRepo      = new PasswordResetRepository($db);
-        $this->activationRepo = new ActivationTokenRepository($db);
+        $this->userRepo         = new UserRepository($db);
+        $this->resetRepo        = new PasswordResetRepository($db);
+        $this->activationRepo   = new ActivationTokenRepository($db);
+        $this->oidcProviderRepo = new OidcProviderRepository($db);
     }
 
     public function showRegister(): void
@@ -121,7 +123,13 @@ class AuthController
     public function showLogin(): void
     {
         Session::requireGuest();
-        View::render('auth/login', ['pageTitle' => 'Anmelden', 'errors' => [], 'old' => []]);
+        $providerRepo = new OidcProviderRepository($this->db);
+        View::render('auth/login', [
+            'pageTitle'         => 'Anmelden', 
+            'errors'            => [],
+            'old'               => [],
+            'oidcProviderInfos' => $providerRepo->findAllActiveInfos()
+        ]);
     }
 
     public function login(Request $req): void
@@ -138,7 +146,7 @@ class AuthController
 
         $user = $this->userRepo->findByEmail($email);
 
-        if (!$user || !password_verify($pwd, $user->userPasswd)) {
+        if (!$user || $user->userPasswd === null || !password_verify($pwd, $user->userPasswd)) {
             $errors['general'] = 'Ungültige E-Mail-Adresse oder falsches Passwort.';
         } elseif (!$user->userIsActive) {
             $errors['general'] = 'Das Konto ist nicht aktiv.';
@@ -268,13 +276,7 @@ class AuthController
         if ($guid !== Session::getUserGuid()) {
             ControllerTools::abort_Forbidden_403();
         }
-        $user = $this->userRepo->findByGuid($guid);
-        View::render('profile/edit', [
-            'pageTitle'     => 'Profil',
-            'user'          => $user,
-            'nameErrors'    => [],
-            'pwdErrors'     => [],
-        ]);
+        $this->renderProfileEditPage($guid, [], []);
     }
 
     public function updateName(Request $req, string $guid): void
@@ -298,13 +300,7 @@ class AuthController
         }
 
         if (!empty($errors)) {
-            $user = $this->userRepo->findByGuid($guid);
-            View::render('profile/edit', [
-                'pageTitle'  => 'Profil',
-                'user'       => $user,
-                'nameErrors' => $errors,
-                'pwdErrors'  => [],
-            ]);
+            $this->renderProfileEditPage($guid, $errors, []);
             return;
         }
 
@@ -332,6 +328,10 @@ class AuthController
 
         $user = $this->userRepo->findByGuid($guid);
 
+        if ($user->userPasswd === null) {
+            ControllerTools::abort_Forbidden_403();
+        }
+
         if (!password_verify($currentPwd, $user->userPasswd)) {
             $errors['current_password'] = 'Das aktuelle Passwort ist falsch.';
         }
@@ -349,12 +349,7 @@ class AuthController
         }
 
         if (!empty($errors)) {
-            View::render('profile/edit', [
-                'pageTitle'  => 'Profil',
-                'user'       => $user,
-                'nameErrors' => [],
-                'pwdErrors'  => $errors,
-            ]);
+            $this->renderProfileEditPage($guid, [], $errors);
             return;
         }
 
@@ -434,6 +429,7 @@ class AuthController
             'pageTitle' => 'Profil löschen',
             'user'      => $user,
             'errors'    => [],
+            'oidcOnly'  => ($user->userPasswd === null),
         ]);
     }
 
@@ -460,7 +456,7 @@ class AuthController
             ControllerTools::redirect('/profile/' . $guid);
         }
 
-        if (!password_verify($password, $user->userPasswd)) {
+        if ($user->userPasswd !== null && !password_verify($password, $user->userPasswd)) {
             $errors['password'] = 'Das Passwort ist falsch.';
         }
 
@@ -469,16 +465,19 @@ class AuthController
                 'pageTitle' => 'Profil löschen',
                 'user'      => $user,
                 'errors'    => $errors,
+                'oidcOnly'  => ($user->userPasswd === null),
             ]);
             return;
         }
 
-        $eventRepo = new EventRepository($this->db);
+        $eventRepo        = new EventRepository($this->db);
+        $oidcIdentityRepo = new OidcIdentityRepository($this->db);
         $eventRepo->deleteSubscribersForUserEvents($user->userId);
         $eventRepo->deleteSubscribersByCreator($user->userId);
         $eventRepo->deleteAllByUser($user->userId);
         $this->resetRepo->deleteByUser($user->userId);
         $this->activationRepo->deleteByUser($user->userId);
+        $oidcIdentityRepo->deleteByUser($user->userId);
         $this->userRepo->delete($user->userId);
 
         Session::logout();
@@ -501,5 +500,20 @@ class AuthController
     private function getNoReplyAddress(): string
     {
         return APP_TITLE_SHORT . ' <noreply@' . $_SERVER['HTTP_HOST'] . '>';
+    }
+
+    private function renderProfileEditPage($userGuid, $nameErrors, $pwdErrors): void
+    {
+        $user             = $this->userRepo->findByGuid($userGuid);
+        $providerRepo     = new OidcProviderRepository($this->db);
+        $identityRepo     = new OidcIdentityRepository($this->db);
+        View::render('profile/edit', [
+            'pageTitle'         => 'Profil',
+            'user'              => $user,
+            'nameErrors'        => $nameErrors,
+            'pwdErrors'         => $pwdErrors,
+            'linkedIdentities'  => $identityRepo->findByUserId($user->userId),
+            'oidcProviderInfos' => $providerRepo->findAllActiveInfos(),
+        ]);
     }
 }

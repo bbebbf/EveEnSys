@@ -26,19 +26,25 @@
         <form method="post" action="/profile/<?= h($user->userGuid) ?>/name" novalidate>
           <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
 
-          <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
+          <label for="emailAddress" class="form-label">E-Mail-Adresse</label>
+          <input type="text"
+                 class="form-control"
+                 id="emailAddress" name="emailAddress"
+                 value="<?= h($user->userEmail) ?>"
+                 aria-label="readonly input example" readonly>
+
+          <label for="name" class="form-label">Name</label>
+          <div class="input-group <?= isset($nameErrors['name']) ? 'has-validation' : '' ?>">
             <input type="text"
                    class="form-control <?= isset($nameErrors['name']) ? 'is-invalid' : '' ?>"
                    id="name" name="name"
                    value="<?= h($user->userName) ?>"
                    required maxlength="100">
+            <button type="submit" class="btn btn-primary">Name ändern</button>
             <?php if (isset($nameErrors['name'])): ?>
               <div class="invalid-feedback"><?= h($nameErrors['name']) ?></div>
             <?php endif; ?>
           </div>
-
-          <button type="submit" class="btn btn-primary">Name speichern</button>
         </form>
 
       </div>
@@ -46,6 +52,7 @@
   </div>
 
   <div class="col-md-6">
+    <?php if ($user->userPasswd !== null): ?>
     <?php /* Passwort ändern */ ?>
     <div class="card">
       <div class="card-header"><strong>Passwort ändern</strong></div>
@@ -103,6 +110,35 @@
 
       </div>
     </div>
+    <?php endif; /* userPasswd !== null */ ?>
+
+    <?php if (!empty($linkedIdentities)): ?>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header"><strong>Das Profil ist verknüpft mit:</strong></div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush mb-3">
+            <?php foreach ($linkedIdentities as $identity): ?>
+              <?php $canUnlink = ($user->userPasswd !== null); ?>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                  <?= h($oidcProviderInfos[$identity->providerKey]->label) ?>
+                  <small class="text-muted"> seit <?= format_event_date($identity->linkedAt) ?></small>
+                </span>
+                <?php if ($canUnlink): ?>
+                  <form method="post"
+                        action="/profile/<?= h($user->userGuid) ?>/oidc/<?= h($identity->identityId) ?>/unlink">
+                    <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+                    <button class="btn btn-sm btn-outline-danger">Trennen</button>
+                  </form>
+                <?php endif; ?>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <?php endif; ?>
 
     <?php /* Profil löschen */ ?>
     <div class="card border-danger mt-3">

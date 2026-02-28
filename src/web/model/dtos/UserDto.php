@@ -10,7 +10,7 @@ class UserDto
         public readonly bool    $userIsActive,
         public readonly int     $userRole,
         public readonly string  $userName,
-        public readonly string  $userPasswd,
+        public readonly ?string $userPasswd,
         public readonly ?string $userLastLogin,
     ) {}
 }

@@ -15,6 +15,7 @@ define('APP_TITLE_SHORT', $_appConfig_valid && array_key_exists('AppTitleShort',
 define('APP_IMPRESS_URL', $_appConfig_valid && array_key_exists('AppImpressUrl', $_appConfig) ? $_appConfig['AppImpressUrl'] : '');
 unset($_appConfig);
 
+
 // Security headers
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
@@ -31,17 +32,23 @@ require APP_ROOT . '/core/View.php';
 require APP_ROOT . '/model/dtos/UserDto.php';
 require APP_ROOT . '/model/dtos/EventDto.php';
 require APP_ROOT . '/model/dtos/SubscriberDto.php';
+require APP_ROOT . '/model/dtos/OidcIdentityDto.php';
+require APP_ROOT . '/model/dtos/OidcProviderDto.php';
+require APP_ROOT . '/model/dtos/OidcProviderInfoDto.php';
 
 // Load repositories
 require APP_ROOT . '/model/repositories/UserRepository.php';
 require APP_ROOT . '/model/repositories/EventRepository.php';
 require APP_ROOT . '/model/repositories/PasswordResetRepository.php';
 require APP_ROOT . '/model/repositories/ActivationTokenRepository.php';
+require APP_ROOT . '/model/repositories/OidcIdentityRepository.php';
+require APP_ROOT . '/model/repositories/OidcProviderRepository.php';
 
 // Load controllers
 require APP_ROOT . '/controllers/ControllerTools.php';
 require APP_ROOT . '/controllers/AuthController.php';
 require APP_ROOT . '/controllers/EventController.php';
+require APP_ROOT . '/controllers/OidcController.php';
 
 // Global output escaping helper
 function h(mixed $value): string
@@ -95,6 +102,11 @@ $router->get('/activate-account',      fn() => (new AuthController($db))->activa
 $router->get('/login',                 fn() => (new AuthController($db))->showLogin());
 $router->post('/login',                fn() => (new AuthController($db))->login($req));
 $router->post('/logout',               fn() => (new AuthController($db))->logout());
+$router->get('/auth/oidc/{providerId}/login',    fn($p) => (new OidcController($db))->redirect($p['providerId'], 'login'));
+$router->get('/auth/oidc/{providerId}/link',     fn($p) => (new OidcController($db))->redirect($p['providerId'], 'link'));
+$router->get('/auth/oidc/{providerId}/callback', fn($p) => (new OidcController($db))->callback($req, $p['providerId']));
+$router->post('/profile/{guid}/oidc/{identityId}/unlink',
+    fn($p) => (new OidcController($db))->unlinkIdentity($req, $p['guid'], (int)$p['identityId']));
 
 try {
     $router->dispatch();

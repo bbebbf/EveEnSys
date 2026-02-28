@@ -33,6 +33,7 @@
         <form method="post" action="/profile/<?= h($user->userGuid) ?>/delete" novalidate>
           <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
 
+          <?php if (!$oidcOnly): ?>
           <div class="mb-3">
             <label for="password" class="form-label">Passwort zur Bestätigung</label>
             <input type="password"
@@ -43,6 +44,9 @@
               <div class="invalid-feedback"><?= h($errors['password']) ?></div>
             <?php endif; ?>
           </div>
+          <?php else: ?>
+          <p class="text-muted fst-italic mb-3">Sie sind ausschließlich über einen externen Anbieter angemeldet. Keine Passwort-Bestätigung erforderlich.</p>
+          <?php endif; ?>
 
           <div class="d-flex gap-2">
             <button type="submit" class="btn btn-danger">Ja, Profil löschen</button>

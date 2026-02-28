@@ -56,6 +56,18 @@ class UserRepository
         return $this->db->insert_id;
     }
 
+    public function createOidc(string $name, string $email): int
+    {
+        $guid = $this->generateGuid();
+        $stmt = $this->db->prepare(
+            "INSERT INTO `user` (user_guid, user_email, user_is_active, user_role, user_name, user_passwd)
+             VALUES (?, ?, b'0', 0, ?, NULL)"
+        );
+        $stmt->bind_param('sss', $guid, $email, $name);
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
+
     public function activate(int $userId): void
     {
         $stmt = $this->db->prepare(
@@ -167,7 +179,7 @@ class UserRepository
             userIsActive:  (bool)$row['user_is_active'],
             userRole:      (int)$row['user_role'],
             userName:      $row['user_name'],
-            userPasswd:    $row['user_passwd'],
+            userPasswd:    $row['user_passwd'] ?? null,
             userLastLogin: $row['user_last_login'],
         );
     }
