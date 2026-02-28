@@ -1,5 +1,10 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h2><?= h($pageTitle) ?></h2>
+  <h2>
+    <?= h($pageTitle) ?>
+    <?php if (count($events) > 0): ?>
+      <span class="badge rounded-pill bg-secondary fs-6 ms-2 align-middle"><?= count($events) ?></span>
+    <?php endif; ?>
+  </h2>
   <?php if (Session::isLoggedIn()): ?>
     <a href="/events/create" class="btn btn-primary">+ Veranstaltung erstellen</a>
   <?php endif; ?>

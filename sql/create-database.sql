@@ -73,21 +73,6 @@ CREATE TABLE `subscriber` (
   CONSTRAINT `subscriber_user_FK` FOREIGN KEY (`creator_user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- ees_db.oidc_identity definition
-CREATE TABLE `oidc_identity` (
-  `oidc_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) unsigned NOT NULL,
-  `oidc_provider_id` int(10) unsigned NOT NULL,
-  `oidc_provider_sub` varchar(255) NOT NULL,
-  `oidc_linked_at` datetime NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`oidc_id`),
-  UNIQUE KEY `oidc_identity_provider_sub_UQ` (`oidc_provider_id`,`oidc_provider_sub`),
-  KEY `oidc_identity_user_FK` (`user_id`),
-  CONSTRAINT `oidc_identity_oidc_provider_FK` FOREIGN KEY (`oidc_provider_id`) REFERENCES `oidc_provider` (`oidc_provider_id`),
-  CONSTRAINT `oidc_identity_user_FK` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
 -- ees_db.oidc_provider definition
 CREATE TABLE `oidc_provider` (
   `oidc_provider_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -102,3 +87,17 @@ CREATE TABLE `oidc_provider` (
   `oidc_provider_scopes` varchar(500) NOT NULL,
   PRIMARY KEY (`oidc_provider_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ees_db.oidc_identity definition
+CREATE TABLE `oidc_identity` (
+  `oidc_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `oidc_provider_id` int(10) unsigned NOT NULL,
+  `oidc_provider_sub` varchar(255) NOT NULL,
+  `oidc_linked_at` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`oidc_id`),
+  UNIQUE KEY `oidc_identity_provider_sub_UQ` (`oidc_provider_id`,`oidc_provider_sub`),
+  KEY `oidc_identity_user_FK` (`user_id`),
+  CONSTRAINT `oidc_identity_oidc_provider_FK` FOREIGN KEY (`oidc_provider_id`) REFERENCES `oidc_provider` (`oidc_provider_id`),
+  CONSTRAINT `oidc_identity_user_FK` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
