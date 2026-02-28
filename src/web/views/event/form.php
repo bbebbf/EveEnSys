@@ -109,7 +109,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
         </div>
 
         <div class="col-md-6 mb-3">
-          <label for="event_max_subscriber" class="form-label">Max. teilnehmende Personen</label>
+          <label for="event_max_subscriber" class="form-label">Max. Teilnehmerzahl</label>
           <input type="number"
                  class="form-control <?= isset($errors['event_max_subscriber']) ? 'is-invalid' : '' ?>"
                  id="event_max_subscriber" name="event_max_subscriber"

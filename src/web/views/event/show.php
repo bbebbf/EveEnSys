@@ -33,7 +33,7 @@
       <?php endif; ?>
 
       <?php if ($event->eventMaxSubscriber !== null): ?>
-        <dt class="col-sm-3">Max. teilnehmende Personen</dt>
+        <dt class="col-sm-3">Max. Teilnehmerzahl</dt>
         <dd class="col-sm-9"><?= h($event->eventMaxSubscriber) ?></dd>
       <?php endif; ?>
 
