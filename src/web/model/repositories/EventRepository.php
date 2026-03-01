@@ -112,8 +112,8 @@ class EventRepository
     {
         $guid = $this->generateGuid();
         $stmt = $this->db->prepare(
-            'INSERT INTO event (event_guid, creator_user_id, event_title, event_description, event_date, event_location, event_duration_hours, event_max_subscriber)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+            "INSERT INTO event (event_guid, creator_user_id, event_is_new, event_title, event_description, event_date, event_location, event_duration_hours, event_max_subscriber)
+             VALUES (?, ?, b'1', ?, ?, ?, ?, ?, ?)"
         );
         $stmt->bind_param(
             'sissssdi',
@@ -160,10 +160,16 @@ class EventRepository
 
     public function setVisible(int $eventId, bool $visible): void
     {
-        $val  = $visible ? 1 : 0;
-        $stmt = $this->db->prepare('UPDATE event SET event_is_visible = ? WHERE event_id = ?');
-        $stmt->bind_param('ii', $val, $eventId);
-        $stmt->execute();
+        if ($visible) {
+          $stmt = $this->db->prepare('UPDATE event SET event_is_new = 0, event_is_visible = 1 WHERE event_id = ?');
+          $stmt->bind_param('i', $eventId);
+          $stmt->execute();
+        }
+        else {
+          $stmt = $this->db->prepare('UPDATE event SET event_is_visible = 0 WHERE event_id = ?');
+          $stmt->bind_param('i', $eventId);
+          $stmt->execute();
+        }
     }
 
     public function isOwner(int $eventId, int $userId): bool
@@ -366,6 +372,7 @@ class EventRepository
             eventId:            (int)$row['event_id'],
             eventGuid:          $row['event_guid'],
             creatorUserId:      (int)$row['creator_user_id'],
+            eventIsNew:         (bool)$row['event_is_new'],
             eventIsVisible:     (bool)$row['event_is_visible'],
             eventTitle:         $row['event_title'],
             eventDescription:   $row['event_description'] ?? null,

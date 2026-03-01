@@ -8,7 +8,7 @@ class UserRepository
     public function findByEmail(string $email): ?UserDto
     {
         $stmt = $this->db->prepare(
-            'SELECT user_id, user_guid, user_email, user_is_active, user_role, user_name, user_passwd, user_last_login
+            'SELECT user_id, user_guid, user_email, user_is_new, user_is_active, user_role, user_name, user_passwd, user_last_login
                FROM `user`
               WHERE user_email = ?'
         );
@@ -21,7 +21,7 @@ class UserRepository
     public function findById(int $id): ?UserDto
     {
         $stmt = $this->db->prepare(
-            'SELECT user_id, user_guid, user_email, user_is_active, user_role, user_name, user_passwd, user_last_login
+            'SELECT user_id, user_guid, user_email, user_is_new, user_is_active, user_role, user_name, user_passwd, user_last_login
                FROM `user`
               WHERE user_id = ?'
         );
@@ -34,7 +34,7 @@ class UserRepository
     public function findByGuid(string $guid): ?UserDto
     {
         $stmt = $this->db->prepare(
-            'SELECT user_id, user_guid, user_email, user_is_active, user_role, user_name, user_passwd, user_last_login
+            'SELECT user_id, user_guid, user_email, user_is_new, user_is_active, user_role, user_name, user_passwd, user_last_login
                FROM `user`
               WHERE user_guid = ?'
         );
@@ -48,8 +48,8 @@ class UserRepository
     {
         $guid = $this->generateGuid();
         $stmt = $this->db->prepare(
-            "INSERT INTO `user` (user_guid, user_email, user_is_active, user_role, user_name, user_passwd)
-             VALUES (?, ?, b'0', 0, ?, ?)"
+            "INSERT INTO `user` (user_guid, user_email, user_is_new, user_is_active, user_role, user_name, user_passwd)
+             VALUES (?, ?, b'1', b'0', 0, ?, ?)"
         );
         $stmt->bind_param('ssss', $guid, $email, $name, $hashedPwd);
         $stmt->execute();
@@ -60,8 +60,8 @@ class UserRepository
     {
         $guid = $this->generateGuid();
         $stmt = $this->db->prepare(
-            "INSERT INTO `user` (user_guid, user_email, user_is_active, user_role, user_name, user_passwd)
-             VALUES (?, ?, b'0', 0, ?, NULL)"
+            "INSERT INTO `user` (user_guid, user_email, user_is_new, user_is_active, user_role, user_name, user_passwd)
+             VALUES (?, ?, b'1', b'0', 0, ?, NULL)"
         );
         $stmt->bind_param('sss', $guid, $email, $name);
         $stmt->execute();
@@ -71,7 +71,7 @@ class UserRepository
     public function activate(int $userId): void
     {
         $stmt = $this->db->prepare(
-            "UPDATE `user` SET user_is_active = b'1' WHERE user_id = ?"
+            "UPDATE `user` SET user_is_active = b'1', user_is_new = b'0' WHERE user_id = ?"
         );
         $stmt->bind_param('i', $userId);
         $stmt->execute();
@@ -116,6 +116,17 @@ class UserRepository
         $stmt->execute();
     }
 
+    public function setActive(int $userId, bool $active): void
+    {
+        if ($active) {
+            $stmt = $this->db->prepare("UPDATE `user` SET user_is_active = b'1' WHERE user_id = ?");
+        } else {
+            $stmt = $this->db->prepare("UPDATE `user` SET user_is_active = b'0' WHERE user_id = ?");
+        }
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+    }
+
     public function setRole(int $userId, int $role): void
     {
         $stmt = $this->db->prepare('UPDATE `user` SET user_role = ? WHERE user_id = ?');
@@ -139,7 +150,7 @@ class UserRepository
     public function findAll(): array
     {
         $result = $this->db->query(
-            'SELECT user_id, user_guid, user_email, user_is_active, user_role, user_name, user_passwd, user_last_login
+            'SELECT user_id, user_guid, user_email, user_is_new, user_is_active, user_role, user_name, user_passwd, user_last_login
                FROM `user`
               ORDER BY user_name ASC'
         );
@@ -176,6 +187,7 @@ class UserRepository
             userId:        (int)$row['user_id'],
             userGuid:      $row['user_guid'],
             userEmail:     $row['user_email'],
+            userIsNew:     (bool)$row['user_is_new'],
             userIsActive:  (bool)$row['user_is_active'],
             userRole:      (int)$row['user_role'],
             userName:      $row['user_name'],

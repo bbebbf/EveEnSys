@@ -13,7 +13,8 @@
       <tr>
         <th>Name</th>
         <th>E-Mail-Adresse</th>
-        <th>Aktiv</th>
+        <th>Status</th>
+        <th></th>
         <th>Rolle</th>
         <th></th>
       </tr>
@@ -24,10 +25,26 @@
           <td><?= html_out($u->userName) ?></td>
           <td><?= html_out($u->userEmail) ?></td>
           <td>
-            <?php if ($u->userIsActive): ?>
-              <span class="badge bg-success">Ja</span>
+            <?php if ($u->userIsNew): ?>
+              <span class="badge bg-warning">Neu</span>
+            <?php elseif ($u->userIsActive): ?>
+              <span class="badge bg-success">Aktiv</span>
             <?php else: ?>
-              <span class="badge bg-secondary">Nein</span>
+              <span class="badge bg-secondary">Inaktiv</span>
+            <?php endif; ?>
+          </td>
+          <td>
+            <?php if ($u->userId <> Session::getUserId()): ?>
+              <div class="d-flex gap-2">
+                <form method="post" action="/admin/users/<?= html_out($u->userGuid) ?>/toggle-active">
+                  <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
+                  <?php if ($u->userIsActive): ?>
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">Deaktivieren</button>
+                  <?php elseif (!$u->userIsNew): ?>
+                    <button type="submit" class="btn btn-outline-success btn-sm">Aktivieren</button>
+                  <?php endif; ?>
+                </form>
+              </div>
             <?php endif; ?>
           </td>
           <td>
@@ -37,16 +54,16 @@
           </td>
           <td>
             <?php if ($u->userId <> Session::getUserId()): ?>
-              <form method="post" action="/admin/users/<?= html_out($u->userGuid) ?>/toggle-admin">
-                <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
-                <?php if ($u->userRole >= 1): ?>
-                  <button type="submit" class="btn btn-outline-primary btn-sm">Admin entziehen</button>
-                <?php else: ?>
-                  <?php if ($u->userIsActive): ?>
-                      <button type="submit" class="btn btn-outline-primary btn-sm">Zum Admin ernennen</button>
+              <div class="d-flex gap-2">
+                <form method="post" action="/admin/users/<?= html_out($u->userGuid) ?>/toggle-admin">
+                  <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
+                  <?php if ($u->userRole >= 1): ?>
+                    <button type="submit" class="btn btn-outline-primary btn-sm">Admin entziehen</button>
+                  <?php elseif ($u->userIsActive): ?>
+                    <button type="submit" class="btn btn-outline-primary btn-sm">Zum Admin ernennen</button>
                   <?php endif; ?>
-                <?php endif; ?>
-              </form>
+                </form>
+              </div>
             <?php endif; ?>
           </td>
         </tr>

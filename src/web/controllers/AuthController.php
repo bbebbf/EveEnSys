@@ -411,6 +411,47 @@ class AuthController
         ControllerTools::redirect('/admin/users');
     }
 
+    public function toggleActive(Request $req, string $guid): void
+    {
+        Session::requireLogin();
+        if (!Session::isAdmin()) {
+            ControllerTools::abort_Forbidden_403();
+        }
+        if (!Session::validateCsrf($req->post('_csrf', ''))) {
+            ControllerTools::abort_Forbidden_403();
+        }
+
+        $user = $this->userRepo->findByGuid($guid);
+        if ($user === null) {
+            ControllerTools::abort_NotFound_404();
+        }
+
+        if ($user->userIsActive) {
+            if ($user->userId === Session::getUserId()) {
+                Session::setFlash('error', 'Sie können sich selbst nicht deaktivieren.');
+                ControllerTools::redirect('/admin/users');
+                return;
+            }
+            if ($user->userRole >= 1 && $this->userRepo->countAdmins() <= 1) {
+                Session::setFlash('error', 'Der einzige Administrator kann nicht deaktiviert werden.');
+                ControllerTools::redirect('/admin/users');
+                return;
+            }
+            $this->userRepo->setActive($user->userId, false);
+            Session::setFlash('success', $user->userName . ' wurde deaktiviert.');
+        } else {
+            if ($user->userIsNew) {
+                Session::setFlash('error', 'Neue Benutzer müssen sich über den Aktivierungslink aktivieren.');
+                ControllerTools::redirect('/admin/users');
+                return;
+            }
+            $this->userRepo->setActive($user->userId, true);
+            Session::setFlash('success', $user->userName . ' wurde reaktiviert.');
+        }
+
+        ControllerTools::redirect('/admin/users');
+    }
+
     public function showDeleteProfile(string $guid): void
     {
         Session::requireLogin();

@@ -7,6 +7,7 @@ class UserDto
         public readonly int     $userId,
         public readonly string  $userGuid,
         public readonly string  $userEmail,
+        public readonly bool    $userIsNew,
         public readonly bool    $userIsActive,
         public readonly int     $userRole,
         public readonly string  $userName,

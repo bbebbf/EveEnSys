@@ -70,6 +70,7 @@ $router->get('/events/{guid}/unenroll/{subGuid}',    fn($p) => (new EventControl
 $router->post('/events/{guid}/unenroll/{subGuid}',   fn($p) => (new EventController($db))->unenroll($req, $p['guid'], $p['subGuid']));
 $router->get('/admin/users',                              fn() => (new AuthController($db))->showAdminUsers());
 $router->post('/admin/users/{guid}/toggle-admin',         fn($p) => (new AuthController($db))->toggleAdminRole($req, $p['guid']));
+$router->post('/admin/users/{guid}/toggle-active',        fn($p) => (new AuthController($db))->toggleActive($req, $p['guid']));
 $router->get('/profile/{guid}',                fn($p) => (new AuthController($db))->showProfile($p['guid']));
 $router->post('/profile/{guid}/name',          fn($p) => (new AuthController($db))->updateName($req, $p['guid']));
 $router->post('/profile/{guid}/password',      fn($p) => (new AuthController($db))->updatePassword($req, $p['guid']));
