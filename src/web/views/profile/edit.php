@@ -17,20 +17,20 @@
           <div class="alert alert-danger">
             <ul class="mb-0">
               <?php foreach ($nameErrors as $e): ?>
-                <li><?= h($e) ?></li>
+                <li><?= html_out($e) ?></li>
               <?php endforeach; ?>
             </ul>
           </div>
         <?php endif; ?>
 
-        <form method="post" action="/profile/<?= h($user->userGuid) ?>/name" novalidate>
-          <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+        <form method="post" action="/profile/<?= html_out($user->userGuid) ?>/name" novalidate>
+          <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
 
           <label for="emailAddress" class="form-label">E-Mail-Adresse</label>
           <input type="text"
                  class="form-control"
                  id="emailAddress" name="emailAddress"
-                 value="<?= h($user->userEmail) ?>"
+                 value="<?= html_out($user->userEmail) ?>"
                  aria-label="readonly input example" readonly>
 
           <label for="name" class="form-label">Name</label>
@@ -38,11 +38,11 @@
             <input type="text"
                    class="form-control <?= isset($nameErrors['name']) ? 'is-invalid' : '' ?>"
                    id="name" name="name"
-                   value="<?= h($user->userName) ?>"
+                   value="<?= html_out($user->userName) ?>"
                    required maxlength="100">
             <button type="submit" class="btn btn-primary">Name ändern</button>
             <?php if (isset($nameErrors['name'])): ?>
-              <div class="invalid-feedback"><?= h($nameErrors['name']) ?></div>
+              <div class="invalid-feedback"><?= html_out($nameErrors['name']) ?></div>
             <?php endif; ?>
           </div>
         </form>
@@ -62,14 +62,14 @@
           <div class="alert alert-danger">
             <ul class="mb-0">
               <?php foreach ($pwdErrors as $e): ?>
-                <li><?= h($e) ?></li>
+                <li><?= html_out($e) ?></li>
               <?php endforeach; ?>
             </ul>
           </div>
         <?php endif; ?>
 
-        <form method="post" action="/profile/<?= h($user->userGuid) ?>/password" novalidate>
-          <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+        <form method="post" action="/profile/<?= html_out($user->userGuid) ?>/password" novalidate>
+          <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
 
           <div class="mb-3">
             <label for="current_password" class="form-label">Aktuelles Passwort</label>
@@ -78,7 +78,7 @@
                    id="current_password" name="current_password"
                    required>
             <?php if (isset($pwdErrors['current_password'])): ?>
-              <div class="invalid-feedback"><?= h($pwdErrors['current_password']) ?></div>
+              <div class="invalid-feedback"><?= html_out($pwdErrors['current_password']) ?></div>
             <?php endif; ?>
           </div>
 
@@ -89,7 +89,7 @@
                    id="new_password" name="new_password"
                    required minlength="8">
             <?php if (isset($pwdErrors['new_password'])): ?>
-              <div class="invalid-feedback"><?= h($pwdErrors['new_password']) ?></div>
+              <div class="invalid-feedback"><?= html_out($pwdErrors['new_password']) ?></div>
             <?php endif; ?>
             <div class="form-text">Mind. 8 Zeichen, mit Groß- und Kleinbuchstaben sowie Zahlen.</div>
           </div>
@@ -101,7 +101,7 @@
                    id="new_password_confirm" name="new_password_confirm"
                    required>
             <?php if (isset($pwdErrors['new_password_confirm'])): ?>
-              <div class="invalid-feedback"><?= h($pwdErrors['new_password_confirm']) ?></div>
+              <div class="invalid-feedback"><?= html_out($pwdErrors['new_password_confirm']) ?></div>
             <?php endif; ?>
           </div>
 
@@ -122,13 +122,13 @@
               <?php $canUnlink = ($user->userPasswd !== null); ?>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span>
-                  <?= h($oidcProviderInfos[$identity->providerKey]->label) ?>
-                  <small class="text-muted"> seit <?= format_event_date($identity->linkedAt) ?></small>
+                  <?= html_out($oidcProviderInfos[$identity->providerKey]->label) ?>
+                  <small class="text-muted"> seit <?= default_datetime_out($identity->linkedAt) ?></small>
                 </span>
                 <?php if ($canUnlink): ?>
                   <form method="post"
-                        action="/profile/<?= h($user->userGuid) ?>/oidc/<?= h($identity->identityId) ?>/unlink">
-                    <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+                        action="/profile/<?= html_out($user->userGuid) ?>/oidc/<?= html_out($identity->identityId) ?>/unlink">
+                    <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
                     <button class="btn btn-sm btn-outline-danger">Trennen</button>
                   </form>
                 <?php endif; ?>
@@ -145,7 +145,7 @@
       <div class="card-header bg-danger text-white"><strong>Profil löschen</strong></div>
       <div class="card-body">
         <p class="text-danger small mb-2">Diese Aktion löscht Ihr Konto komplett und kann nicht rückgängig gemacht werden.</p>
-        <a href="/profile/<?= h($user->userGuid) ?>/delete" class="btn btn-outline-danger btn-sm">Profil löschen</a>
+        <a href="/profile/<?= html_out($user->userGuid) ?>/delete" class="btn btn-outline-danger btn-sm">Profil löschen</a>
       </div>
     </div>
   </div>

@@ -4,8 +4,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mt-4">
   <div class="container">
     <div class="navbar-nav mx-auto align-items-center">
-      <?php if (strlen(APP_IMPRESS_URL) > 0): ?>
-        <a class="nav-link" href="<?= APP_IMPRESS_URL ?>">Impressum</a>
+      <?php if (strlen(APP_CONFIG->getAppImpressUrl()) > 0): ?>
+        <a class="nav-link" href="<?= APP_CONFIG->getAppImpressUrl() ?>">Impressum</a>
       <?php else: ?>
         <a class="nav-link" href="#">Kein Impressum</a>
       <?php endif; ?>

@@ -4,41 +4,41 @@
     <nav aria-label="breadcrumb" class="mb-3">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/events">Veranstaltungen</a></li>
-        <li class="breadcrumb-item active"><?= h($event->eventTitle) ?></li>
+        <li class="breadcrumb-item active"><?= html_out($event->eventTitle) ?></li>
       </ol>
     </nav>
 
     <div class="d-flex justify-content-between align-items-start mb-2">
-      <h2><?= h($event->eventTitle) ?></h2>
+      <h2><?= html_out($event->eventTitle) ?></h2>
       <?php if (Session::isLoggedIn() && Session::getUserId() === $event->creatorUserId): ?>
         <div class="btn-group ms-3">
-          <a href="/events/<?= h($event->eventGuid) ?>/edit" class="btn btn-sm btn-outline-secondary">Bearbeiten</a>
-          <a href="/events/<?= h($event->eventGuid) ?>/delete" class="btn btn-sm btn-outline-danger">Löschen</a>
+          <a href="/events/<?= html_out($event->eventGuid) ?>/edit" class="btn btn-sm btn-outline-secondary">Bearbeiten</a>
+          <a href="/events/<?= html_out($event->eventGuid) ?>/delete" class="btn btn-sm btn-outline-danger">Löschen</a>
         </div>
       <?php endif; ?>
     </div>
 
     <dl class="row mb-4">
       <dt class="col-sm-3">Datum &amp; Uhrzeit</dt>
-      <dd class="col-sm-9"><?= format_event_date($event->eventDate) ?></dd>
+      <dd class="col-sm-9"><?= event_date_out($event->eventDate) ?></dd>
 
       <?php if ($event->eventLocation !== null): ?>
         <dt class="col-sm-3">Veranstaltungsort</dt>
-        <dd class="col-sm-9"><?= h($event->eventLocation) ?></dd>
+        <dd class="col-sm-9"><?= html_out($event->eventLocation) ?></dd>
       <?php endif; ?>
 
       <?php if ($event->eventDurationHours !== null): ?>
         <dt class="col-sm-3">Dauer</dt>
-        <dd class="col-sm-9"><?= h($event->eventDurationHours) ?> Stunde(n)</dd>
+        <dd class="col-sm-9"><?= html_out($event->eventDurationHours) ?> Stunde(n)</dd>
       <?php endif; ?>
 
       <?php if ($event->eventMaxSubscriber !== null): ?>
         <dt class="col-sm-3">Max. Teilnehmerzahl</dt>
-        <dd class="col-sm-9"><?= h($event->eventMaxSubscriber) ?></dd>
+        <dd class="col-sm-9"><?= html_out($event->eventMaxSubscriber) ?></dd>
       <?php endif; ?>
 
       <dt class="col-sm-3">Veranstalter</dt>
-      <dd class="col-sm-9"><?= h($event->creatorName ?? 'Unbekannt') ?></dd>
+      <dd class="col-sm-9"><?= html_out($event->creatorName ?? 'Unbekannt') ?></dd>
 
       <?php if ($isAdmin || $isCreator): ?>
         <dt class="col-sm-3">Sichtbarkeit</dt>
@@ -49,8 +49,8 @@
             <span class="badge bg-warning text-dark">Versteckt</span>
           <?php endif; ?>
           <?php if ($isAdmin): ?>
-            <form method="post" action="/events/<?= h($event->eventGuid) ?>/toggle-visible" class="d-inline ms-2">
-              <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+            <form method="post" action="/events/<?= html_out($event->eventGuid) ?>/toggle-visible" class="d-inline ms-2">
+              <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
               <button type="submit" class="btn btn-sm <?= $event->eventIsVisible ? 'btn-outline-warning' : 'btn-outline-success' ?>">
                 <?= $event->eventIsVisible ? 'Verstecken' : 'Sichtbar machen' ?>
               </button>
@@ -62,7 +62,7 @@
 
     <?php if ($event->eventDescription !== null): ?>
       <h5>Beschreibung</h5>
-      <p class="text-muted"><?= nl2br(h($event->eventDescription)) ?></p>
+      <p class="text-muted"><?= nl2br(html_out($event->eventDescription)) ?></p>
     <?php endif; ?>
 
   </div>
@@ -76,10 +76,10 @@
         <strong>Angemeldete Teilnehmer</strong>
         <?php if ($event->eventMaxSubscriber !== null): ?>
           <span class="badge <?= $isFull ? 'bg-danger' : 'bg-secondary' ?>">
-            <?= h($subscriberCount) ?>/<?= h($event->eventMaxSubscriber) ?>
+            <?= html_out($subscriberCount) ?>/<?= html_out($event->eventMaxSubscriber) ?>
           </span>
         <?php elseif ($subscriberCount > 0): ?>
-          <span class="badge bg-secondary"><?= h($subscriberCount) ?></span>
+          <span class="badge bg-secondary"><?= html_out($subscriberCount) ?></span>
         <?php endif; ?>
       </div>
 
@@ -91,11 +91,11 @@
             <?php foreach ($subscribers as $sub): ?>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span>
-                  <?= h($sub->subscriberName ?? 'Unbekannt') ?>
-                  <small class="text-muted ms-1"><?= h($sub->subscriberEnrollTimestamp->format('d.m.Y')) ?></small>
+                  <?= html_out($sub->subscriberName ?? 'Unbekannt') ?>
+                  <small class="text-muted ms-1"><?= html_out($sub->subscriberEnrollTimestamp->format('d.m.Y')) ?></small>
                 </span>
                 <?php if ($sub->creatorUserId === Session::getUserId()): ?>
-                  <a href="/events/<?= h($event->eventGuid) ?>/unenroll/<?= h($sub->subscriberGuid) ?>"
+                  <a href="/events/<?= html_out($event->eventGuid) ?>/unenroll/<?= html_out($sub->subscriberGuid) ?>"
                      class="btn btn-sm btn-outline-danger">Abmelden</a>
                 <?php endif; ?>
               </li>
@@ -108,8 +108,8 @@
             <p class="text-danger mb-0">Diese Veranstaltung ist ausgebucht.</p>
           <?php else: ?>
             <?php if (!$isEnrolledAsSelf): ?>
-              <form method="post" action="/events/<?= h($event->eventGuid) ?>/enroll" class="mb-3">
-                <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+              <form method="post" action="/events/<?= html_out($event->eventGuid) ?>/enroll" class="mb-3">
+                <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
                 <input type="hidden" name="enroll_type" value="self">
                 <button type="submit" class="btn btn-primary btn-sm w-100">Selbst anmelden</button>
               </form>
@@ -117,8 +117,8 @@
               <p class="text-success mb-3"><small>Sie sind für diese Veranstaltung angemeldet.</small></p>
             <?php endif; ?>
 
-            <form method="post" action="/events/<?= h($event->eventGuid) ?>/enroll">
-              <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+            <form method="post" action="/events/<?= html_out($event->eventGuid) ?>/enroll">
+              <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
               <input type="hidden" name="enroll_type" value="other">
               <div class="input-group input-group-sm">
                 <input type="text" name="subscriber_name" class="form-control"

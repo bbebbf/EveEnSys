@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h2>
-    <?= h($pageTitle) ?>
+    <?= html_out($pageTitle) ?>
     <?php if (count($events) > 0): ?>
       <span class="badge rounded-pill bg-secondary fs-6 ms-2 align-middle"><?= count($events) ?></span>
     <?php endif; ?>
@@ -25,13 +25,13 @@
           <div class="card-header d-flex justify-content-between align-items-center">
             <span>
               <i class="bi bi-calendar-event"></i>
-              <?= format_event_date($event->eventDate) ?>
+              <?= event_date_out($event->eventDate) ?>
             </span>
             <span>
               <?php if ($isAdmin): ?>
                 <div class="mt-2 position-relative" style="z-index: 2;">
-                  <form method="post" action="/events/<?= h($event->eventGuid) ?>/toggle-visible">
-                    <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+                  <form method="post" action="/events/<?= html_out($event->eventGuid) ?>/toggle-visible">
+                    <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
                     <button type="submit" class="btn btn-sm <?= $event->eventIsVisible ? 'btn-outline-warning' : 'btn-outline-success' ?>">
                       <?= $event->eventIsVisible ? 'Verstecken' : 'Sichtbar machen' ?>
                     </button>
@@ -44,30 +44,30 @@
           </div>
           <div class="card-body">
             <h5 class="card-title d-flex justify-content-between">
-              <a href="/events/<?= h($event->eventGuid) ?>" class="text-decoration-none stretched-link">
-                <?= h($event->eventTitle) ?>
+              <a href="/events/<?= html_out($event->eventGuid) ?>" class="text-decoration-none stretched-link">
+                <?= html_out($event->eventTitle) ?>
               </a>
             </h5>
             <?php if ($event->eventDescription !== null): ?>
               <p class="card-text text-muted small">
-                <?= h(mb_strimwidth($event->eventDescription, 0, 120, '…')) ?>
+                <?= html_out(mb_strimwidth($event->eventDescription, 0, 120, '…')) ?>
               </p>
             <?php endif; ?>
           </div>
           <div class="card-footer text-muted small d-flex justify-content-between align-items-center">
             <span>
             <?php if ($event->eventDurationHours !== null): ?>
-              &nbsp;<i class="bi bi-clock-history"></i> <?= h($event->eventDurationHours) ?> h
+              &nbsp;<i class="bi bi-clock-history"></i> <?= html_out($event->eventDurationHours) ?> h
             <?php endif; ?>
             <?php if ($event->eventMaxSubscriber !== null): ?>
-              &nbsp;<i class="bi bi-people"></i> max. <?= h($event->eventMaxSubscriber) ?>
+              &nbsp;<i class="bi bi-people"></i> max. <?= html_out($event->eventMaxSubscriber) ?>
             <?php endif; ?>
             <?php if ($event->eventLocation !== null): ?>
-              &nbsp;<i class="bi bi-geo-alt"></i> <?= h($event->eventLocation) ?>
+              &nbsp;<i class="bi bi-geo-alt"></i> <?= html_out($event->eventLocation) ?>
             <?php endif; ?>
             </span>
             <span class="ms-2 text-body-tertiary">
-              <?= h($event->creatorName ?? 'Unbekannt') ?>
+              <?= html_out($event->creatorName ?? 'Unbekannt') ?>
             </span>
           </div>
         </div>

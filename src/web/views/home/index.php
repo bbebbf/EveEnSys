@@ -28,29 +28,29 @@
         <div class="card h-100 shadow-sm">
           <div class="card-header">
             <i class="bi bi-calendar-event"></i>
-            <?= format_event_date($event->eventDate) ?>
+            <?= event_date_out($event->eventDate) ?>
           </div>
           <div class="card-body">
             <h5 class="card-title d-flex justify-content-between">
-              <a href="/events/<?= h($event->eventGuid) ?>" class="text-decoration-none stretched-link">
-                <?= h($event->eventTitle) ?>
+              <a href="/events/<?= html_out($event->eventGuid) ?>" class="text-decoration-none stretched-link">
+                <?= html_out($event->eventTitle) ?>
               </a>
             </h5>
             <?php if ($event->eventDescription !== null): ?>
               <p class="card-text text-muted small">
-                <?= h(mb_strimwidth($event->eventDescription, 0, 120, '…')) ?>
+                <?= html_out(mb_strimwidth($event->eventDescription, 0, 120, '…')) ?>
               </p>
             <?php endif; ?>
           </div>
           <div class="card-footer text-muted small">
             <?php if ($event->eventDurationHours !== null): ?>
-              &nbsp;<i class="bi bi-clock-history"></i> <?= h($event->eventDurationHours) ?> h
+              &nbsp;<i class="bi bi-clock-history"></i> <?= html_out($event->eventDurationHours) ?> h
             <?php endif; ?>
             <?php if ($event->eventMaxSubscriber !== null): ?>
-              &nbsp;<i class="bi bi-people"></i> max. <?= h($event->eventMaxSubscriber) ?>
+              &nbsp;<i class="bi bi-people"></i> max. <?= html_out($event->eventMaxSubscriber) ?>
             <?php endif; ?>
             <?php if ($event->eventLocation !== null): ?>
-              &nbsp;<i class="bi bi-geo-alt"></i> <?= h($event->eventLocation) ?>
+              &nbsp;<i class="bi bi-geo-alt"></i> <?= html_out($event->eventLocation) ?>
             <?php endif; ?>
           </div>
         </div>

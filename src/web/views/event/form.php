@@ -19,7 +19,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
     <li class="breadcrumb-item"><a href="/events">Veranstaltungen</a></li>
     <?php if ($isEdit): ?>
       <li class="breadcrumb-item">
-        <a href="/events/<?= h($event->eventGuid) ?>"><?= h($event->eventTitle) ?></a>
+        <a href="/events/<?= html_out($event->eventGuid) ?>"><?= html_out($event->eventTitle) ?></a>
       </li>
     <?php endif; ?>
     <li class="breadcrumb-item active"><?= $isEdit ? 'Bearbeiten' : 'Veranstaltung erstellen' ?></li>
@@ -32,7 +32,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
   <div class="alert alert-danger">
     <ul class="mb-0">
       <?php foreach ($errors as $error): ?>
-        <li><?= h($error) ?></li>
+        <li><?= html_out($error) ?></li>
       <?php endforeach; ?>
     </ul>
   </div>
@@ -40,18 +40,18 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
 
 <div class="row">
   <div class="col-md-8">
-    <form method="post" action="<?= h($action) ?>" novalidate>
-      <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+    <form method="post" action="<?= html_out($action) ?>" novalidate>
+      <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
 
       <div class="mb-3">
         <label for="event_title" class="form-label">Titel <span class="text-danger">*</span></label>
         <input type="text"
                class="form-control <?= isset($errors['event_title']) ? 'is-invalid' : '' ?>"
                id="event_title" name="event_title"
-               value="<?= h($val('event_title', 'eventTitle')) ?>"
+               value="<?= html_out($val('event_title', 'eventTitle')) ?>"
                required maxlength="150" autofocus>
         <?php if (isset($errors['event_title'])): ?>
-          <div class="invalid-feedback"><?= h($errors['event_title']) ?></div>
+          <div class="invalid-feedback"><?= html_out($errors['event_title']) ?></div>
         <?php endif; ?>
       </div>
 
@@ -69,10 +69,10 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
         <input type="datetime-local"
                class="form-control <?= isset($errors['event_date']) ? 'is-invalid' : '' ?>"
                id="event_date" name="event_date"
-               value="<?= h($dateValue) ?>"
+               value="<?= html_out($dateValue) ?>"
                required>
         <?php if (isset($errors['event_date'])): ?>
-          <div class="invalid-feedback"><?= h($errors['event_date']) ?></div>
+          <div class="invalid-feedback"><?= html_out($errors['event_date']) ?></div>
         <?php endif; ?>
       </div>
 
@@ -81,10 +81,10 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
         <input type="text"
                class="form-control <?= isset($errors['event_location']) ? 'is-invalid' : '' ?>"
                id="event_location" name="event_location"
-               value="<?= h($val('event_location', 'eventLocation')) ?>"
+               value="<?= html_out($val('event_location', 'eventLocation')) ?>"
                maxlength="150">
         <?php if (isset($errors['event_location'])): ?>
-          <div class="invalid-feedback"><?= h($errors['event_location']) ?></div>
+          <div class="invalid-feedback"><?= html_out($errors['event_location']) ?></div>
         <?php endif; ?>
       </div>
 
@@ -92,7 +92,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
         <label for="event_description" class="form-label">Beschreibung</label>
         <textarea class="form-control"
                   id="event_description" name="event_description"
-                  rows="6"><?= h($val('event_description', 'eventDescription')) ?></textarea>
+                  rows="6"><?= html_out($val('event_description', 'eventDescription')) ?></textarea>
       </div>
 
       <div class="row">
@@ -101,10 +101,10 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
           <input type="number"
                  class="form-control <?= isset($errors['event_duration_hours']) ? 'is-invalid' : '' ?>"
                  id="event_duration_hours" name="event_duration_hours"
-                 value="<?= h($val('event_duration_hours', 'eventDurationHours')) ?>"
+                 value="<?= html_out($val('event_duration_hours', 'eventDurationHours')) ?>"
                  step="0.5" min="0.5">
           <?php if (isset($errors['event_duration_hours'])): ?>
-            <div class="invalid-feedback"><?= h($errors['event_duration_hours']) ?></div>
+            <div class="invalid-feedback"><?= html_out($errors['event_duration_hours']) ?></div>
           <?php endif; ?>
         </div>
 
@@ -113,10 +113,10 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
           <input type="number"
                  class="form-control <?= isset($errors['event_max_subscriber']) ? 'is-invalid' : '' ?>"
                  id="event_max_subscriber" name="event_max_subscriber"
-                 value="<?= h($val('event_max_subscriber', 'eventMaxSubscriber')) ?>"
+                 value="<?= html_out($val('event_max_subscriber', 'eventMaxSubscriber')) ?>"
                  min="1" step="1">
           <?php if (isset($errors['event_max_subscriber'])): ?>
-            <div class="invalid-feedback"><?= h($errors['event_max_subscriber']) ?></div>
+            <div class="invalid-feedback"><?= html_out($errors['event_max_subscriber']) ?></div>
           <?php endif; ?>
         </div>
       </div>
@@ -126,7 +126,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
           <?= $isEdit ? 'Änderungen speichern' : 'Veranstaltung erstellen' ?>
         </button>
         <?php if ($isEdit): ?>
-          <a href="/events/<?= h($event->eventGuid) ?>" class="btn btn-outline-secondary">Abbrechen</a>
+          <a href="/events/<?= html_out($event->eventGuid) ?>" class="btn btn-outline-secondary">Abbrechen</a>
         <?php else: ?>
           <a href="/events" class="btn btn-outline-secondary">Abbrechen</a>
         <?php endif; ?>

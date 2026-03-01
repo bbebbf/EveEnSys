@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h2>
-    <?= h($pageTitle) ?>
+    <?= html_out($pageTitle) ?>
     <?php if (count($enrollments) > 0): ?>
       <span class="badge rounded-pill bg-secondary fs-6 ms-2 align-middle"><?= count($enrollments) ?></span>
     <?php endif; ?>
@@ -28,21 +28,21 @@
         <?php foreach ($enrollments as $enrollment): ?>
           <tr>
             <td class="text-nowrap">
-              <?= h(format_event_date($enrollment->eventDate)) ?>
+              <?= html_out(event_date_out($enrollment->eventDate)) ?>
             </td>
             <td>
-              <a href="/events/<?= h($enrollment->eventGuid) ?>" class="text-decoration-none fw-semibold">
-                <?= h($enrollment->eventTitle) ?>
+              <a href="/events/<?= html_out($enrollment->eventGuid) ?>" class="text-decoration-none fw-semibold">
+                <?= html_out($enrollment->eventTitle) ?>
               </a>
             </td>
             <td>
-              <?= h($enrollment->subscriberName) ?>
+              <?= html_out($enrollment->subscriberName) ?>
             </td>
             <td class="text-nowrap text-muted small">
-              <?= h($enrollment->subscriberEnrollTimestamp->format('d.m.Y H:i \U\h\r')) ?>
+              <?= html_out($enrollment->subscriberEnrollTimestamp->format('d.m.Y H:i \U\h\r')) ?>
             </td>
             <td class="text-end">
-              <a href="/events/<?= h($enrollment->eventGuid) ?>/unenroll/<?= h($enrollment->subscriberGuid) ?>"
+              <a href="/events/<?= html_out($enrollment->eventGuid) ?>/unenroll/<?= html_out($enrollment->subscriberGuid) ?>"
                  class="btn btn-sm btn-outline-danger">
                 Abmelden
               </a>

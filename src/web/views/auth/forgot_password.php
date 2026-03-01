@@ -7,7 +7,7 @@
     </p>
 
     <form method="post" action="/forgot-password" novalidate>
-      <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+      <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
 
       <div class="mb-3">
         <label for="email" class="form-label">E-Mail-Adresse</label>

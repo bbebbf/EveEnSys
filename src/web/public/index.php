@@ -3,19 +3,6 @@ declare(strict_types=1);
 
 define('APP_ROOT', dirname(__DIR__));
 
-// Load app config
-$_appConfigFile = dirname(APP_ROOT) . '/_config/app-config.json';
-$_appConfig = false;
-$_appConfig_valid = false;
-if (file_exists($_appConfigFile)) {
-    $_appConfig = json_decode(file_get_contents($_appConfigFile), true);
-}
-$_appConfig_valid = is_array($_appConfig);
-define('APP_TITLE_SHORT', $_appConfig_valid && array_key_exists('AppTitleShort', $_appConfig) ? $_appConfig['AppTitleShort'] : 'No App Title');
-define('APP_IMPRESS_URL', $_appConfig_valid && array_key_exists('AppImpressUrl', $_appConfig) ? $_appConfig['AppImpressUrl'] : '');
-unset($_appConfig);
-
-
 // Security headers
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
@@ -23,10 +10,12 @@ header('Referrer-Policy: strict-origin-when-cross-origin');
 
 // Load infrastructure
 require APP_ROOT . '/core/db.php';
+require APP_ROOT . '/core/AppConfig.php';
 require APP_ROOT . '/core/Session.php';
 require APP_ROOT . '/core/Request.php';
 require APP_ROOT . '/core/Router.php';
 require APP_ROOT . '/core/View.php';
+require APP_ROOT . '/core/Globals.php';
 
 // Load DTOs
 require APP_ROOT . '/model/dtos/UserDto.php';
@@ -50,20 +39,14 @@ require APP_ROOT . '/controllers/AuthController.php';
 require APP_ROOT . '/controllers/EventController.php';
 require APP_ROOT . '/controllers/OidcController.php';
 
-// Global output escaping helper
-function h(mixed $value): string
-{
-    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
-}
-
-// Format an event date for display (e.g. "22.02.2026 um 14:30 Uhr")
-function format_event_date(\DateTimeImmutable $eventDate): string
-{
-    return $eventDate !== null ? $eventDate->format('d.m. \u\m H:i \U\h\r') : '';
-}
-
 Session::start();
 
+// Load app config
+$_appConfig = new AppConfig();
+define('APP_CONFIG', $_appConfig);
+unset($_appConfig);
+
+// Connect to DB and initialize router
 $db  = db_connect();
 $req = new Request();
 $router = new Router($req);

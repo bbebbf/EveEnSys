@@ -1,6 +1,6 @@
 <nav aria-label="breadcrumb" class="mb-3">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/profile/<?= h($user->userGuid) ?>">Profil</a></li>
+    <li class="breadcrumb-item"><a href="/profile/<?= html_out($user->userGuid) ?>">Profil</a></li>
     <li class="breadcrumb-item active">Löschen</li>
   </ol>
 </nav>
@@ -12,7 +12,7 @@
         <strong>Profil löschen bestätigen</strong>
       </div>
       <div class="card-body">
-        <p>Möchten Sie Ihr Konto <strong><?= h($user->userName) ?></strong> wirklich dauerhaft löschen?</p>
+        <p>Möchten Sie Ihr Konto <strong><?= html_out($user->userName) ?></strong> wirklich dauerhaft löschen?</p>
         <p class="text-danger">Diese Aktion löscht Ihr Konto komplett und kann nicht rückgängig gemacht werden.</p>
         <ul class="text-danger">
             <li>Alle Ihre Veranstaltungen werden gelöscht.</li>
@@ -24,14 +24,14 @@
           <div class="alert alert-danger">
             <ul class="mb-0">
               <?php foreach ($errors as $e): ?>
-                <li><?= h($e) ?></li>
+                <li><?= html_out($e) ?></li>
               <?php endforeach; ?>
             </ul>
           </div>
         <?php endif; ?>
 
-        <form method="post" action="/profile/<?= h($user->userGuid) ?>/delete" novalidate>
-          <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+        <form method="post" action="/profile/<?= html_out($user->userGuid) ?>/delete" novalidate>
+          <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
 
           <?php if (!$oidcOnly): ?>
           <div class="mb-3">
@@ -41,7 +41,7 @@
                    id="password" name="password"
                    required autofocus>
             <?php if (isset($errors['password'])): ?>
-              <div class="invalid-feedback"><?= h($errors['password']) ?></div>
+              <div class="invalid-feedback"><?= html_out($errors['password']) ?></div>
             <?php endif; ?>
           </div>
           <?php else: ?>
@@ -50,7 +50,7 @@
 
           <div class="d-flex gap-2">
             <button type="submit" class="btn btn-danger">Ja, Profil löschen</button>
-            <a href="/profile/<?= h($user->userGuid) ?>" class="btn btn-outline-secondary">Abbrechen</a>
+            <a href="/profile/<?= html_out($user->userGuid) ?>" class="btn btn-outline-secondary">Abbrechen</a>
           </div>
         </form>
       </div>

@@ -1,20 +1,20 @@
 <h2 class="mb-4">Anmelden</h2>
 
 <?php if (isset($errors['general'])): ?>
-  <div class="alert alert-danger"><?= h($errors['general']) ?></div>
+  <div class="alert alert-danger"><?= html_out($errors['general']) ?></div>
 <?php endif; ?>
 
 <div class="row justify-content-center">
   <div class="col-md-6">
     <form method="post" action="/login" novalidate>
-      <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+      <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
 
       <div class="mb-3">
         <label for="email" class="form-label">E-Mail-Adresse</label>
         <input type="email"
                class="form-control"
                id="email" name="email"
-               value="<?= h($old['email'] ?? '') ?>"
+               value="<?= html_out($old['email'] ?? '') ?>"
                required autofocus>
       </div>
 
@@ -39,11 +39,11 @@
     <?php if (!empty($oidcProviderInfos)): ?>
       <div class="d-grid mt-4 gap-2">
         <?php foreach ($oidcProviderInfos as $provider): ?>
-          <a href="/auth/oidc/<?= h($provider->providerKey) ?>/login" class="btn btn-outline-secondary">
+          <a href="/auth/oidc/<?= html_out($provider->providerKey) ?>/login" class="btn btn-outline-secondary">
             <?php if (!is_null($provider->imageSvg)): ?>
-              <img src="data:image/svg+xml;base64,<?= base64_encode($provider->imageSvg) ?>" alt="<?= h($provider->label) ?>" style="height: 1.5em; vertical-align: middle;">
+              <img src="data:image/svg+xml;base64,<?= base64_encode($provider->imageSvg) ?>" alt="<?= html_out($provider->label) ?>" style="height: 1.5em; vertical-align: middle;">
             <?php endif; ?>
-            Mit <?= h($provider->label) ?> anmelden
+            Mit <?= html_out($provider->label) ?> anmelden
           </a>
         <?php endforeach; ?>
       </div>

@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h2>
-    <?= h($pageTitle) ?>
+    <?= html_out($pageTitle) ?>
     <?php if (count($users) > 0): ?>
       <span class="badge rounded-pill bg-secondary fs-6 ms-2 align-middle"><?= count($users) ?></span>
     <?php endif; ?>
@@ -21,8 +21,8 @@
     <tbody>
       <?php foreach ($users as $u): ?>
         <tr>
-          <td><?= h($u->userName) ?></td>
-          <td><?= h($u->userEmail) ?></td>
+          <td><?= html_out($u->userName) ?></td>
+          <td><?= html_out($u->userEmail) ?></td>
           <td>
             <?php if ($u->userIsActive): ?>
               <span class="badge bg-success">Ja</span>
@@ -37,8 +37,8 @@
           </td>
           <td>
             <?php if ($u->userId <> Session::getUserId()): ?>
-              <form method="post" action="/admin/users/<?= h($u->userGuid) ?>/toggle-admin">
-                <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
+              <form method="post" action="/admin/users/<?= html_out($u->userGuid) ?>/toggle-admin">
+                <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
                 <?php if ($u->userRole >= 1): ?>
                   <button type="submit" class="btn btn-outline-primary btn-sm">Admin entziehen</button>
                 <?php else: ?>

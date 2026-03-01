@@ -7,15 +7,15 @@
       <div class="alert alert-danger">
         <ul class="mb-0">
           <?php foreach ($errors as $e): ?>
-            <li><?= h($e) ?></li>
+            <li><?= html_out($e) ?></li>
           <?php endforeach; ?>
         </ul>
       </div>
     <?php endif; ?>
 
     <form method="post" action="/reset-password" novalidate>
-      <input type="hidden" name="_csrf" value="<?= h(Session::getCsrfToken()) ?>">
-      <input type="hidden" name="token" value="<?= h($token) ?>">
+      <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
+      <input type="hidden" name="token" value="<?= html_out($token) ?>">
 
       <div class="mb-3">
         <label for="new_password" class="form-label">Neues Passwort</label>
@@ -24,7 +24,7 @@
                id="new_password" name="new_password"
                required minlength="8" autofocus>
         <?php if (isset($errors['new_password'])): ?>
-          <div class="invalid-feedback"><?= h($errors['new_password']) ?></div>
+          <div class="invalid-feedback"><?= html_out($errors['new_password']) ?></div>
         <?php endif; ?>
         <div class="form-text">Mind. 8 Zeichen, mit Groß- und Kleinbuchstaben sowie Zahlen.</div>
       </div>
@@ -36,7 +36,7 @@
                id="new_password_confirm" name="new_password_confirm"
                required>
         <?php if (isset($errors['new_password_confirm'])): ?>
-          <div class="invalid-feedback"><?= h($errors['new_password_confirm']) ?></div>
+          <div class="invalid-feedback"><?= html_out($errors['new_password_confirm']) ?></div>
         <?php endif; ?>
       </div>
 
