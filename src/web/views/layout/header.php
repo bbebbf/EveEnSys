@@ -38,7 +38,7 @@
               <?php endif; ?>
 
               <div class="dropdown-divider"></div>
-              <li><a class="dropdown-item" href="/profile/<?= html_out(Session::getUserGuid()) ?>"><i class="bi bi-person-square"></i> Profil &amp; Passwort</a></li>
+              <li><a class="dropdown-item" href="/profile/<?= html_out(Session::getUserGuid()) ?>"><i class="bi bi-person-square"></i> Mein Profil</a></li>
               <form method="post" action="/logout" class="dropdown-item">
                 <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
                 <button type="submit" class="btn border-0 p-0 w-100 text-start"><i class="bi bi-x-circle-fill"></i> Abmelden</button>

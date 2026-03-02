@@ -21,7 +21,11 @@
     </thead>
     <tbody>
       <?php foreach ($users as $u): ?>
-        <tr>
+        <?php if ($u->userId == Session::getUserId()): ?>
+          <tr class="table-primary">
+        <?php else: ?>
+          <tr>
+        <?php endif; ?>
           <td><?= html_out($u->userName) ?></td>
           <td><?= html_out($u->userEmail) ?></td>
           <td>

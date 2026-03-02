@@ -25,15 +25,24 @@
         </tr>
       </thead>
       <tbody>
+        <?php $prev_eventGuid = ""; ?>
         <?php foreach ($enrollments as $enrollment): ?>
           <tr>
             <td class="text-nowrap">
-              <?= html_out(event_date_out($enrollment->eventDate)) ?>
+              <?php if ($prev_eventGuid != $enrollment->eventGuid): ?>
+                <?= html_out(event_date_out($enrollment->eventDate)) ?>
+              <?php else: ?>
+                &nbsp;
+              <?php endif; ?>
             </td>
             <td>
-              <a href="/events/<?= html_out($enrollment->eventGuid) ?>" class="text-decoration-none fw-semibold">
-                <?= html_out($enrollment->eventTitle) ?>
-              </a>
+              <?php if ($prev_eventGuid != $enrollment->eventGuid): ?>
+                <a href="/events/<?= html_out($enrollment->eventGuid) ?>" class="text-decoration-none fw-semibold">
+                  <?= html_out($enrollment->eventTitle) ?>
+                </a>
+              <?php else: ?>
+                &nbsp;
+              <?php endif; ?>
             </td>
             <td>
               <?= html_out($enrollment->subscriberName) ?>
@@ -48,6 +57,7 @@
               </a>
             </td>
           </tr>
+          <?php $prev_eventGuid = $enrollment->eventGuid; ?>
         <?php endforeach; ?>
       </tbody>
     </table>
