@@ -24,9 +24,10 @@
       <div class="card-footer d-flex gap-2">
         <form method="post" action="/events/<?= html_out($event->eventGuid) ?>/unenroll/<?= html_out($subscriber->subscriberGuid) ?>">
           <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
+          <input type="hidden" name="source" value="<?= html_out($source) ?>">
           <button type="submit" class="btn btn-danger">Ja, abmelden</button>
         </form>
-        <a href="/events/<?= html_out($event->eventGuid) ?>" class="btn btn-outline-secondary">Abbrechen</a>
+        <a href="<?= $cancelUrl ?>" class="btn btn-outline-secondary">Abbrechen</a>
       </div>
     </div>
   </div>

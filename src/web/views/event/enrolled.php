@@ -51,7 +51,7 @@
               <?= html_out($enrollment->subscriberEnrollTimestamp->format('d.m.Y H:i \U\h\r')) ?>
             </td>
             <td class="text-end">
-              <a href="/events/<?= html_out($enrollment->eventGuid) ?>/unenroll/<?= html_out($enrollment->subscriberGuid) ?>"
+              <a href="/events/<?= html_out($enrollment->eventGuid) ?>/unenroll/<?= html_out($enrollment->subscriberGuid) ?>?source=enrolled"
                  class="btn btn-sm btn-outline-danger">
                 Abmelden
               </a>

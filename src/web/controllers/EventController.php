@@ -140,7 +140,7 @@ class EventController
         ControllerTools::redirect('/events/' . $guid);
     }
 
-    public function showUnenroll(string $guid, string $subscriberGuid): void
+    public function showUnenroll(Request $req, string $guid, string $subscriberGuid): void
     {
         Session::requireLogin();
         $event      = $this->eventRepo->findByGuid($guid) ?? ControllerTools::abort_NotFound_404();
@@ -150,10 +150,15 @@ class EventController
             ControllerTools::abort_Forbidden_403();
         }
 
+        $source    = $req->get('source') === 'enrolled' ? 'enrolled' : '';
+        $cancelUrl = $source === 'enrolled' ? '/events/enrolled' : '/events/' . $event->eventGuid;
+
         View::render('event/confirm_unenroll', [
             'pageTitle'  => 'Abmeldung bestätigen',
             'event'      => $event,
             'subscriber' => $subscriber,
+            'source'     => $source,
+            'cancelUrl'  => $cancelUrl,
         ]);
     }
 
@@ -174,7 +179,8 @@ class EventController
             Session::setFlash('success', 'Anmeldung entfernt.');
         }
 
-        ControllerTools::redirect('/events/' . $guid);
+        $redirectUrl = $req->post('source') === 'enrolled' ? '/events/enrolled' : '/events/' . $guid;
+        ControllerTools::redirect($redirectUrl);
     }
 
     public function toggleVisible(Request $req, string $guid): void
