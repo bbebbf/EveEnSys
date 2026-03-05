@@ -8,6 +8,9 @@ interface OidcIdentityRepositoryInterface
     /** @return OidcIdentityDto[] */
     public function findByUserId(int $userId): array;
 
+    /** @return array<int, OidcIdentityDto[]> keyed by user_id */
+    public function findAllGroupedByUserId(): array;
+
     public function create(int $userId, int $providerId, string $sub): void;
 
     public function deleteById(int $identityId, int $userId): void;

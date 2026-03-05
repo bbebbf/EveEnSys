@@ -13,6 +13,7 @@
       <tr>
         <th>Name</th>
         <th>E-Mail-Adresse</th>
+        <th>Anmeldung</th>
         <th>Status</th>
         <th></th>
         <th>Rolle</th>
@@ -28,6 +29,16 @@
         <?php endif; ?>
           <td><?= html_out($u->userName) ?></td>
           <td><?= html_out($u->userEmail) ?></td>
+          <td>
+            <?php if ($u->userPasswd !== null): ?>
+              <span class="badge bg-secondary">lokal</span>
+            <?php endif; ?>
+            <?php foreach ($oidcByUser[$u->userId] ?? [] as $identity): ?>
+              <span class="badge bg-info text-dark">
+                <?= html_out($oidcProviderInfos[$identity->providerKey]->label ?? $identity->providerKey) ?>
+              </span>
+            <?php endforeach; ?>
+          </td>
           <td>
             <?php if ($u->userIsNew): ?>
               <span class="badge bg-warning">Neu</span>

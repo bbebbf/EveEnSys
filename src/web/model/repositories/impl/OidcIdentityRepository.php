@@ -37,6 +37,23 @@ class OidcIdentityRepository implements OidcIdentityRepositoryInterface
         return array_map(fn($r) => $this->mapRow($r), $rows);
     }
 
+    /** @return array<int, OidcIdentityDto[]> */
+    public function findAllGroupedByUserId(): array
+    {
+        $result = $this->db->query(
+            'SELECT i.oidc_id, i.user_id, i.oidc_provider_id, p.oidc_provider_key,
+                    i.oidc_provider_sub, i.oidc_linked_at
+               FROM oidc_identity i
+               JOIN oidc_provider p ON p.oidc_provider_id = i.oidc_provider_id
+              ORDER BY i.user_id, i.oidc_linked_at ASC'
+        );
+        $grouped = [];
+        foreach ($result->fetch_all(MYSQLI_ASSOC) as $row) {
+            $grouped[(int)$row['user_id']][] = $this->mapRow($row);
+        }
+        return $grouped;
+    }
+
     public function create(int $userId, int $providerId, string $sub): void
     {
         $stmt = $this->db->prepare(

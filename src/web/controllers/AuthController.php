@@ -362,12 +362,16 @@ class AuthController
         if (!$this->session->isAdmin()) {
             $this->response->abort403();
         }
-        $users      = $this->userRepo->findAll();
-        $adminCount = $this->userRepo->countAdmins();
+        $users            = $this->userRepo->findAll();
+        $adminCount       = $this->userRepo->countAdmins();
+        $oidcByUser       = $this->oidcIdentityRepo->findAllGroupedByUserId();
+        $oidcProviderInfos = $this->oidcProviderRepo->findAllActiveInfos();
         $this->view->render('admin/users', [
-            'pageTitle'  => 'Benutzerverwaltung',
-            'users'      => $users,
-            'adminCount' => $adminCount,
+            'pageTitle'         => 'Benutzerverwaltung',
+            'users'             => $users,
+            'adminCount'        => $adminCount,
+            'oidcByUser'        => $oidcByUser,
+            'oidcProviderInfos' => $oidcProviderInfos,
         ]);
     }
 
