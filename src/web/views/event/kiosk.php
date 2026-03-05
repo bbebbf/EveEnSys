@@ -279,8 +279,8 @@
     if (!container || !url) return;
     new QRCode(container, {
       text: url,
-      width: 220,
-      height: 220,
+      width: 300,
+      height: 300,
       colorDark: '#c9d1d9',
       colorLight: '#0d1117',
       correctLevel: QRCode.CorrectLevel.M
