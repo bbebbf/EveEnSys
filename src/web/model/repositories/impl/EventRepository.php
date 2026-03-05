@@ -8,16 +8,17 @@ class EventRepository implements EventRepositoryInterface
     /** @return EventDto[] */
     public function findUpcoming(int $limit): array
     {
+        $delayedStartMinutes = APP_CONFIG->getDelayedStartMinutes();
         $stmt = $this->db->prepare(
             'SELECT e.*, u.user_name AS creator_name
                FROM event e
                JOIN `user` u ON e.creator_user_id = u.user_id
-              WHERE DATE_ADD(e.event_date, INTERVAL 15 MINUTE) >= NOW()
+              WHERE DATE_ADD(e.event_date, INTERVAL ? MINUTE) >= NOW()
                 AND e.event_is_visible = 1
               ORDER BY e.event_date ASC
               LIMIT ?'
         );
-        $stmt->bind_param('i', $limit);
+        $stmt->bind_param('ii', $delayedStartMinutes, $limit);
         $stmt->execute();
         $events = [];
         $result = $stmt->get_result();
@@ -30,14 +31,18 @@ class EventRepository implements EventRepositoryInterface
     /** @return EventDto[] */
     public function findAllUpcoming(bool $visibleOnly = true): array
     {
+        $delayedStartMinutes = APP_CONFIG->getDelayedStartMinutes();
         $sql = 'SELECT e.*, u.user_name AS creator_name
                FROM event e
                JOIN `user` u ON e.creator_user_id = u.user_id
-              WHERE DATE_ADD(e.event_date, INTERVAL 15 MINUTE) >= NOW()'
+              WHERE DATE_ADD(e.event_date, INTERVAL ? MINUTE) >= NOW()'
              . ($visibleOnly ? ' AND e.event_is_visible = 1' : '')
              . ' ORDER BY e.event_date ASC';
-        $result = $this->db->query($sql);
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('i', $delayedStartMinutes);
+        $stmt->execute();
         $events = [];
+        $result = $stmt->get_result();
         while ($row = $result->fetch_assoc()) {
             $events[] = $this->mapEventRow($row);
         }

@@ -273,16 +273,41 @@ class EventControllerTest extends TestCase
         $this->controller->enroll(new \Request(), 'abc');
     }
 
+    public function test_enroll_on_past_event_sets_error_flash_and_redirects(): void
+    {
+        $_POST = ['_csrf' => 'tok', 'enroll_type' => 'self'];
+        $pastEvent = $this->makeEvent(
+            eventId:   5,
+            eventGuid: 'abc',
+            eventIsVisible: true,
+            eventDate: new \DateTimeImmutable('2000-01-01 10:00:00'),
+        );
+
+        $this->session->method('validateCsrf')->willReturn(true);
+        $this->session->method('getUserId')->willReturn(7);
+        $this->eventRepo->method('findByGuid')->willReturn($pastEvent);
+        $this->session->expects($this->once())
+            ->method('setFlash')
+            ->with('error', 'Anmeldungen für vergangene Veranstaltungen sind nicht möglich.');
+        $this->eventRepo->expects($this->never())->method('createSubscriber');
+
+        $this->expectException(RedirectException::class);
+        $this->expectExceptionMessage('/events/abc');
+
+        $this->controller->enroll(new \Request(), 'abc');
+    }
+
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 
     private function makeEvent(
-        int     $eventId         = 1,
-        string  $eventGuid       = 'abc',
-        int     $creatorUserId   = 1,
-        bool    $eventIsVisible  = true,
-        ?int    $eventMaxSubscriber = null,
+        int                  $eventId            = 1,
+        string               $eventGuid          = 'abc',
+        int                  $creatorUserId      = 1,
+        bool                 $eventIsVisible     = true,
+        ?int                 $eventMaxSubscriber = null,
+        \DateTimeImmutable   $eventDate          = new \DateTimeImmutable('2026-06-01 10:00:00'),
     ): \EventDto {
         return new \EventDto(
             eventId:            $eventId,
@@ -292,7 +317,7 @@ class EventControllerTest extends TestCase
             eventIsVisible:     $eventIsVisible,
             eventTitle:         'Test Event',
             eventDescription:   null,
-            eventDate:          new \DateTimeImmutable('2026-06-01 10:00:00'),
+            eventDate:          $eventDate,
             eventLocation:      null,
             eventDurationHours: null,
             eventMaxSubscriber: $eventMaxSubscriber,

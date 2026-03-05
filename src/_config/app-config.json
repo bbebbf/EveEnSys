@@ -2,5 +2,6 @@
     "AppTitleShort": "WdB26",
     "AppTitleLong": "Wochen der Begegnung 2026",
     "AppImpressUrl": "https://www.gemeinschaft-filsum.de/impressum",
-    "KioskSlideDurationSec": 1
+    "KioskSlideDurationSec": 5,
+    "DelayedStartMinutes": 15
 }

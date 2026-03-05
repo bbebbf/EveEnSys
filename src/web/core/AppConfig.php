@@ -35,6 +35,27 @@ class AppConfig
         return 8000;
     }
 
+    public function getDelayedStartMinutes(): int
+    {
+        if (is_array($this->config) && array_key_exists('DelayedStartMinutes', $this->config)) {
+            return (int)$this->config['DelayedStartMinutes'];
+        }
+        return 0;
+    }
+
+    public function getDelayedCurrentDateTime(): DateTime
+    {
+        $delayMinutes = $this->getDelayedStartMinutes();
+        $currentDatetime = new DateTime();
+        if ($delayMinutes > 0) {
+            $currentDatetime = $currentDatetime->add(new DateInterval('PT' . $delayMinutes . 'M'));
+        }
+        elseif ($delayMinutes < 0) {
+            $currentDatetime = $currentDatetime->sub(new DateInterval('PT' . abs($delayMinutes) . 'M'));
+        }
+        return $currentDatetime;
+    }
+
     private function get_str_value(string $key, string $default = ''): string
     {
         if (is_array($this->config) && array_key_exists($key, $this->config)) {

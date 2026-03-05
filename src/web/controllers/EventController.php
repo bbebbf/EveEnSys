@@ -110,7 +110,11 @@ class EventController
             $this->response->redirect('/events/' . $guid);
         }
 
-        $type = $req->post('enroll_type', '');
+        $delayedCurrentDatetime = APP_CONFIG->getDelayedCurrentDateTime();
+        if ($event->eventDate < $delayedCurrentDatetime) {
+            $this->session->setFlash('error', 'Anmeldungen für vergangene Veranstaltungen sind nicht möglich.');
+            $this->response->redirect('/events/' . $guid);
+        }
 
         if ($event->eventMaxSubscriber !== null) {
             $count = $this->eventRepo->countSubscribers($event->eventId);
@@ -120,6 +124,7 @@ class EventController
             }
         }
 
+        $type = $req->post('enroll_type', '');
         if ($type === 'self') {
             if ($this->eventRepo->isUserEnrolledAsSelf($event->eventId, $userId)) {
                 $this->session->setFlash('error', 'Sie sind bereits für diese Veranstaltung angemeldet.');

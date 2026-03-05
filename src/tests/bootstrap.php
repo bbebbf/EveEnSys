@@ -3,6 +3,13 @@ declare(strict_types=1);
 
 $srcRoot = dirname(__DIR__) . '/web';
 
+// APP_ROOT is expected by AppConfig to locate the optional app-config.json.
+// In tests the config file won't be found, so AppConfig returns safe defaults
+// (no delay → getDelayedCurrentDateTime() returns the real current time).
+define('APP_ROOT', __DIR__ . '/../web/public');
+require $srcRoot . '/core/AppConfig.php';
+define('APP_CONFIG', new AppConfig());
+
 // DTOs
 require $srcRoot . '/model/dtos/UserDto.php';
 require $srcRoot . '/model/dtos/EventDto.php';

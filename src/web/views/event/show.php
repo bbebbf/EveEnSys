@@ -68,6 +68,7 @@
 
   <div class="col-lg-4">
     <?php
+      $isInThePast = $event->eventDate < APP_CONFIG->getDelayedCurrentDateTime();
       $isFull = $event->eventMaxSubscriber !== null && $subscriberCount >= $event->eventMaxSubscriber;
     ?>
     <div class="card">
@@ -103,7 +104,9 @@
         </ul>
 
         <div class="card-body">
-          <?php if ($isFull): ?>
+          <?php if ($isInThePast): ?>
+            <p class="text-danger mb-0">Anmeldungen für vergangene Veranstaltungen sind nicht möglich.</p>
+          <?php elseif ($isFull): ?>
             <p class="text-danger mb-0">Diese Veranstaltung ist ausgebucht.</p>
           <?php else: ?>
             <?php if (!$isEnrolledAsSelf): ?>
