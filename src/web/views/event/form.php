@@ -76,7 +76,9 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
         <input type="datetime-local"
                class="form-control <?= isset($errors['event_date']) ? 'is-invalid' : '' ?>"
                id="event_date" name="event_date"
-               value="<?= html_out($dateValue) ?>"
+               value="<?= $dateValue ?>"
+               <?= $minEventDate !== null ? 'min="' . $minEventDate . '"' : '' ?>
+               <?= $maxEventDate !== null ? 'max="' . $maxEventDate . '"' : '' ?>
                required>
         <?php if (isset($errors['event_date'])): ?>
           <div class="invalid-feedback"><?= html_out($errors['event_date']) ?></div>

@@ -218,10 +218,12 @@ class EventController
     {
         $this->session->requireLogin();
         $this->view->render('event/form', [
-            'pageTitle' => 'Veranstaltung erstellen',
-            'event'     => null,
-            'errors'    => [],
-            'old'       => [],
+            'pageTitle'    => 'Veranstaltung erstellen',
+            'event'        => null,
+            'errors'       => [],
+            'old'          => [],
+            'minEventDate' => $this->getMinEventDateStr(),
+            'maxEventDate' => $this->getMaxEventDateStr(),
         ]);
     }
 
@@ -237,10 +239,12 @@ class EventController
 
         if (!empty($errors)) {
             $this->view->render('event/form', [
-                'pageTitle' => 'Create Event',
-                'event'     => null,
-                'errors'    => $errors,
-                'old'       => $_POST,
+                'pageTitle'    => 'Veranstaltung erstellen',
+                'event'        => null,
+                'errors'       => $errors,
+                'old'          => $_POST,
+                'minEventDate' => $this->getMinEventDateStr(),
+                'maxEventDate' => $this->getMaxEventDateStr(),
             ]);
             return;
         }
@@ -260,10 +264,12 @@ class EventController
         }
 
         $this->view->render('event/form', [
-            'pageTitle' => 'Veranstaltung bearbeiten',
-            'event'     => $event,
-            'errors'    => [],
-            'old'       => [],
+            'pageTitle'    => 'Veranstaltung bearbeiten',
+            'event'        => $event,
+            'errors'       => [],
+            'old'          => [],
+            'minEventDate' => $this->getMinEventDateStr(),
+            'maxEventDate' => $this->getMaxEventDateStr(),
         ]);
     }
 
@@ -285,10 +291,12 @@ class EventController
 
         if (!empty($errors)) {
             $this->view->render('event/form', [
-                'pageTitle' => 'Edit Event',
-                'event'     => $event,
-                'errors'    => $errors,
-                'old'       => $_POST,
+                'pageTitle'    => 'Veranstaltung bearbeiten',
+                'event'        => $event,
+                'errors'       => $errors,
+                'old'          => $_POST,
+                'minEventDate' => $this->getMinEventDateStr(),
+                'maxEventDate' => $this->getMaxEventDateStr(),
             ]);
             return;
         }
@@ -364,6 +372,10 @@ class EventController
                ?: DateTime::createFromFormat('Y-m-d H:i:s', $dateRaw);
             if (!$dt) {
                 $errors['event_date'] = 'Bitte geben Sie ein gültiges Datum und eine gültige Uhrzeit ein.';
+            } elseif ($dt < $this->getMinEventDate()) {
+                $errors['event_date'] = 'Das Datum muss mindestens ' . event_date_out($this->getMinEventDate()) . ' sein.';
+            } elseif ($dt > $this->getMaxEventDate()) {
+                $errors['event_date'] = 'Das Datum darf höchstens ' . event_date_out($this->getMaxEventDate()) . ' sein.';
             } else {
                 $eventDate = $dt->format('Y-m-d H:i:s');
             }
@@ -398,5 +410,38 @@ class EventController
                 'event_max_subscriber'  => $maxSub,
             ],
         ];
+    }
+
+    private function getMinEventDate(): DateTime
+    {
+        $dt = new DateTime();
+        $eventDateFrom = APP_CONFIG->getEventDateRangeFrom();
+        if ($eventDateFrom !== null) {
+            $dt = max($dt, $eventDateFrom);
+        }
+        return $dt;
+    }
+
+    private function getMinEventDateStr(): string
+    {
+        $dt = $this->getMinEventDate();
+        return $dt !== null ? $dt->format('Y-m-d\TH:i') : '';
+    }
+
+    private function getMaxEventDate(): DateTime
+    {
+        $dt = new DateTime();
+        $dt->modify('+6 months');
+        $eventDateTo = APP_CONFIG->getEventDateRangeTo();
+        if ($eventDateTo !== null) {
+            $dt = min($dt, $eventDateTo);
+        }
+        return $dt;
+    }
+
+    private function getMaxEventDateStr(): string
+    {
+        $dt = $this->getMaxEventDate();
+        return $dt !== null ? $dt->format('Y-m-d\TH:i') : '';
     }
 }

@@ -61,6 +61,26 @@ class AppConfig
         return $this->get_str_value('Timezone', 'Europe/Berlin');
     }
 
+    public function getEventDateRangeFrom(): ?DateTime
+    {
+        $value = $this->get_str_value('EventDateRangeFrom');
+        if ($value === '') {
+            return null;
+        }
+        $dt = DateTime::createFromFormat('Y-m-d\TH:i', $value);
+        return $dt !== false ? $dt : null;
+    }
+
+    public function getEventDateRangeTo(): ?DateTime
+    {
+        $value = $this->get_str_value('EventDateRangeTo');
+        if ($value === '') {
+            return null;
+        }
+        $dt = DateTime::createFromFormat('Y-m-d\TH:i', $value);
+        return $dt !== false ? $dt : null;
+    }
+
     private function get_str_value(string $key, string $default = ''): string
     {
         if (is_array($this->config) && array_key_exists($key, $this->config)) {
