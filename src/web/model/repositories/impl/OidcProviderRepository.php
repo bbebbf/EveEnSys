@@ -26,6 +26,7 @@ class OidcProviderRepository implements OidcProviderRepositoryInterface
             $dto = $this->mapRowInfo($row);
             $dtos[$dto->providerKey] = $dto;
         }
+        $result->free();
         return $dtos;
     }
 
@@ -41,7 +42,10 @@ class OidcProviderRepository implements OidcProviderRepositoryInterface
         );
         $stmt->bind_param('s', $providerKey);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
         return $row ? $this->mapRow($row) : null;
     }
 

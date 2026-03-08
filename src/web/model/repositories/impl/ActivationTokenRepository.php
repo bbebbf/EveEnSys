@@ -23,6 +23,7 @@ class ActivationTokenRepository implements ActivationTokenRepositoryInterface
         );
         $stmt->bind_param('is', $userId, $tokenHash);
         $stmt->execute();
+        $stmt->close();
 
         return $rawToken;
     }
@@ -44,7 +45,10 @@ class ActivationTokenRepository implements ActivationTokenRepositoryInterface
         );
         $stmt->bind_param('s', $tokenHash);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
 
         return $row ?: null;
     }
@@ -56,6 +60,7 @@ class ActivationTokenRepository implements ActivationTokenRepositoryInterface
         );
         $stmt->bind_param('i', $tokenId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function deleteByUser(int $userId): void
@@ -63,5 +68,6 @@ class ActivationTokenRepository implements ActivationTokenRepositoryInterface
         $stmt = $this->db->prepare('DELETE FROM activation_token WHERE user_id = ?');
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+        $stmt->close();
     }
 }

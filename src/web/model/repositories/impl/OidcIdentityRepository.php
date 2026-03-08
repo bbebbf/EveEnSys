@@ -16,7 +16,10 @@ class OidcIdentityRepository implements OidcIdentityRepositoryInterface
         );
         $stmt->bind_param('is', $providerId, $sub);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
         return $row ? $this->mapRow($row) : null;
     }
 
@@ -33,7 +36,10 @@ class OidcIdentityRepository implements OidcIdentityRepositoryInterface
         );
         $stmt->bind_param('i', $userId);
         $stmt->execute();
-        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $result = $stmt->get_result();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $result->free();
+        $stmt->close();
         return array_map(fn($r) => $this->mapRow($r), $rows);
     }
 
@@ -51,6 +57,7 @@ class OidcIdentityRepository implements OidcIdentityRepositoryInterface
         foreach ($result->fetch_all(MYSQLI_ASSOC) as $row) {
             $grouped[(int)$row['user_id']][] = $this->mapRow($row);
         }
+        $result->free();
         return $grouped;
     }
 
@@ -61,6 +68,7 @@ class OidcIdentityRepository implements OidcIdentityRepositoryInterface
         );
         $stmt->bind_param('iis', $userId, $providerId, $sub);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function deleteById(int $identityId, int $userId): void
@@ -70,6 +78,7 @@ class OidcIdentityRepository implements OidcIdentityRepositoryInterface
         );
         $stmt->bind_param('ii', $identityId, $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function deleteByUser(int $userId): void
@@ -77,6 +86,7 @@ class OidcIdentityRepository implements OidcIdentityRepositoryInterface
         $stmt = $this->db->prepare('DELETE FROM oidc_identity WHERE user_id = ?');
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function countByUser(int $userId): int
@@ -86,7 +96,11 @@ class OidcIdentityRepository implements OidcIdentityRepositoryInterface
         );
         $stmt->bind_param('i', $userId);
         $stmt->execute();
-        return (int)$stmt->get_result()->fetch_row()[0];
+        $result = $stmt->get_result();
+        $count = (int)$result->fetch_row()[0];
+        $result->free();
+        $stmt->close();
+        return $count;
     }
 
     private function mapRow(array $row): OidcIdentityDto

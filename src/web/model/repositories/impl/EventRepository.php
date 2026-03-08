@@ -25,6 +25,9 @@ class EventRepository implements EventRepositoryInterface
         while ($row = $result->fetch_assoc()) {
             $events[] = $this->mapEventRow($row);
         }
+        $result->free();
+        $stmt->close();
+
         return $events;
     }
 
@@ -46,6 +49,9 @@ class EventRepository implements EventRepositoryInterface
         while ($row = $result->fetch_assoc()) {
             $events[] = $this->mapEventRow($row);
         }
+        $result->free();
+        $stmt->close();
+
         return $events;
     }
 
@@ -62,6 +68,8 @@ class EventRepository implements EventRepositoryInterface
         while ($row = $result->fetch_assoc()) {
             $events[] = $this->mapEventRow($row);
         }
+        $result->free();
+
         return $events;
     }
 
@@ -82,6 +90,9 @@ class EventRepository implements EventRepositoryInterface
         while ($row = $result->fetch_assoc()) {
             $events[] = $this->mapEventRow($row);
         }
+        $result->free();
+        $stmt->close();
+
         return $events;
     }
 
@@ -95,7 +106,11 @@ class EventRepository implements EventRepositoryInterface
         );
         $stmt->bind_param('i', $id);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
+
         return $row ? $this->mapEventRow($row) : null;
     }
 
@@ -109,7 +124,11 @@ class EventRepository implements EventRepositoryInterface
         );
         $stmt->bind_param('s', $guid);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
+
         return $row ? $this->mapEventRow($row) : null;
     }
 
@@ -132,6 +151,8 @@ class EventRepository implements EventRepositoryInterface
             $data['event_max_subscriber']
         );
         $stmt->execute();
+        $stmt->close();
+
         return $guid;
     }
 
@@ -154,6 +175,7 @@ class EventRepository implements EventRepositoryInterface
             $eventId
         );
         $stmt->execute();
+        $stmt->close();
     }
 
     public function delete(int $eventId): void
@@ -161,6 +183,7 @@ class EventRepository implements EventRepositoryInterface
         $stmt = $this->db->prepare('DELETE FROM event WHERE event_id = ?');
         $stmt->bind_param('i', $eventId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function setVisible(int $eventId, bool $visible): void
@@ -169,11 +192,13 @@ class EventRepository implements EventRepositoryInterface
           $stmt = $this->db->prepare('UPDATE event SET event_is_new = 0, event_is_visible = 1 WHERE event_id = ?');
           $stmt->bind_param('i', $eventId);
           $stmt->execute();
+          $stmt->close();
         }
         else {
           $stmt = $this->db->prepare('UPDATE event SET event_is_visible = 0 WHERE event_id = ?');
           $stmt->bind_param('i', $eventId);
           $stmt->execute();
+          $stmt->close();
         }
     }
 
@@ -184,7 +209,11 @@ class EventRepository implements EventRepositoryInterface
         );
         $stmt->bind_param('ii', $eventId, $userId);
         $stmt->execute();
-        return (bool)$stmt->get_result()->fetch_row()[0];
+        $result = $stmt->get_result();
+        $isOwner = (bool)$result->fetch_row()[0];
+        $result->free();
+        $stmt->close();
+        return $isOwner;
     }
 
     public function deleteSubscribersByEvent(int $eventId): void
@@ -192,6 +221,7 @@ class EventRepository implements EventRepositoryInterface
         $stmt = $this->db->prepare('DELETE FROM subscriber WHERE event_id = ?');
         $stmt->bind_param('i', $eventId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function deleteSubscribersForUserEvents(int $userId): void
@@ -201,6 +231,7 @@ class EventRepository implements EventRepositoryInterface
         );
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function deleteSubscribersByCreator(int $userId): void
@@ -208,6 +239,7 @@ class EventRepository implements EventRepositoryInterface
         $stmt = $this->db->prepare('DELETE FROM subscriber WHERE creator_user_id = ?');
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function deleteAllByUser(int $userId): void
@@ -215,6 +247,7 @@ class EventRepository implements EventRepositoryInterface
         $stmt = $this->db->prepare('DELETE FROM event WHERE creator_user_id = ?');
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     /** @return SubscriberDto[] */
@@ -236,6 +269,8 @@ class EventRepository implements EventRepositoryInterface
         while ($row = $result->fetch_assoc()) {
             $rows[] = $this->mapSubscriberRow($row);
         }
+        $result->free();
+        $stmt->close();
         return $rows;
     }
 
@@ -271,6 +306,9 @@ class EventRepository implements EventRepositoryInterface
                 eventDate:                 new \DateTimeImmutable($row['event_date']),
             );
         }
+        $result->free();
+        $stmt->close();
+
         return $rows;
     }
 
@@ -279,7 +317,11 @@ class EventRepository implements EventRepositoryInterface
         $stmt = $this->db->prepare('SELECT COUNT(*) FROM subscriber WHERE event_id = ?');
         $stmt->bind_param('i', $eventId);
         $stmt->execute();
-        return (int)$stmt->get_result()->fetch_row()[0];
+        $result = $stmt->get_result();
+        $count = (int)$result->fetch_row()[0];
+        $result->free();
+        $stmt->close();
+        return $count;
     }
 
     public function isUserEnrolledAsSelf(int $eventId, int $userId): bool
@@ -289,7 +331,11 @@ class EventRepository implements EventRepositoryInterface
         );
         $stmt->bind_param('ii', $eventId, $userId);
         $stmt->execute();
-        return (bool)$stmt->get_result()->fetch_row()[0];
+        $result = $stmt->get_result();
+        $isEnrolled = (bool)$result->fetch_row()[0];
+        $result->free();
+        $stmt->close();
+        return $isEnrolled;
     }
 
     public function createSubscriber(int $eventId, int $creatorUserId, bool $isCreator, ?string $name): void
@@ -303,6 +349,7 @@ class EventRepository implements EventRepositoryInterface
         );
         $stmt->bind_param('siiiss', $guid, $eventId, $creatorUserId, $isCreatorInt, $name, $now);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function findSubscriberByGuid(string $subscriberGuid): ?SubscriberDto
@@ -317,7 +364,10 @@ class EventRepository implements EventRepositoryInterface
         );
         $stmt->bind_param('s', $subscriberGuid);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
         return $row ? $this->mapSubscriberRow($row) : null;
     }
 
@@ -328,7 +378,9 @@ class EventRepository implements EventRepositoryInterface
         );
         $stmt->bind_param('si', $subscriberGuid, $creatorUserId);
         $stmt->execute();
-        return $stmt->affected_rows > 0;
+        $isDeleted = $stmt->affected_rows > 0;
+        $stmt->close();
+        return $isDeleted;
     }
 
     private function generateGuid(): string

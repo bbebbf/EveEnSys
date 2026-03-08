@@ -14,7 +14,10 @@ class UserRepository implements UserRepositoryInterface
         );
         $stmt->bind_param('s', $email);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
         return $row ? $this->mapRow($row) : null;
     }
 
@@ -27,7 +30,10 @@ class UserRepository implements UserRepositoryInterface
         );
         $stmt->bind_param('i', $id);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
         return $row ? $this->mapRow($row) : null;
     }
 
@@ -40,7 +46,10 @@ class UserRepository implements UserRepositoryInterface
         );
         $stmt->bind_param('s', $guid);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
         return $row ? $this->mapRow($row) : null;
     }
 
@@ -53,7 +62,9 @@ class UserRepository implements UserRepositoryInterface
         );
         $stmt->bind_param('ssss', $guid, $email, $name, $hashedPwd);
         $stmt->execute();
-        return $this->db->insert_id;
+        $insertId = $this->db->insert_id;
+        $stmt->close();
+        return $insertId;
     }
 
     public function createOidc(string $name, string $email): int
@@ -65,7 +76,9 @@ class UserRepository implements UserRepositoryInterface
         );
         $stmt->bind_param('sss', $guid, $email, $name);
         $stmt->execute();
-        return $this->db->insert_id;
+        $insertId = $this->db->insert_id;
+        $stmt->close();
+        return $insertId;
     }
 
     public function activate(int $userId): void
@@ -75,6 +88,7 @@ class UserRepository implements UserRepositoryInterface
         );
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+        $stmt->close();
 
         // Promote to admin if no admin exists yet
         if ($this->countAdmins() === 0) {
@@ -89,6 +103,7 @@ class UserRepository implements UserRepositoryInterface
         );
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function updateName(int $userId, string $name): void
@@ -98,6 +113,7 @@ class UserRepository implements UserRepositoryInterface
         );
         $stmt->bind_param('si', $name, $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function updatePassword(int $userId, string $hashedPwd): void
@@ -107,6 +123,7 @@ class UserRepository implements UserRepositoryInterface
         );
         $stmt->bind_param('si', $hashedPwd, $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function removePassword(int $userId): void
@@ -116,6 +133,7 @@ class UserRepository implements UserRepositoryInterface
         );
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function delete(int $userId): void
@@ -123,6 +141,7 @@ class UserRepository implements UserRepositoryInterface
         $stmt = $this->db->prepare('DELETE FROM `user` WHERE user_id = ?');
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function setActive(int $userId, bool $active): void
@@ -134,6 +153,7 @@ class UserRepository implements UserRepositoryInterface
         }
         $stmt->bind_param('i', $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function setRole(int $userId, int $role): void
@@ -141,18 +161,23 @@ class UserRepository implements UserRepositoryInterface
         $stmt = $this->db->prepare('UPDATE `user` SET user_role = ? WHERE user_id = ?');
         $stmt->bind_param('ii', $role, $userId);
         $stmt->execute();
+        $stmt->close();
     }
 
     public function countAdmins(): int
     {
         $result = $this->db->query("SELECT COUNT(*) FROM `user` WHERE user_is_active = b'1' AND user_role >= 1");
-        return (int)$result->fetch_row()[0];
+        $count = (int)$result->fetch_row()[0];
+        $result->free();
+        return $count;
     }
 
     public function countAll(): int
     {
         $result = $this->db->query("SELECT COUNT(*) FROM `user`");
-        return (int)$result->fetch_row()[0];
+        $count = (int)$result->fetch_row()[0];
+        $result->free();
+        return $count;
     }
 
     /** @return UserDto[] */
@@ -167,6 +192,7 @@ class UserRepository implements UserRepositoryInterface
         while ($row = $result->fetch_assoc()) {
             $users[] = $this->mapRow($row);
         }
+        $result->free();
         return $users;
     }
 
@@ -183,10 +209,15 @@ class UserRepository implements UserRepositoryInterface
             }
             $stmt->bind_param('s', $guid);
             $stmt->execute();
-            if ((int)$stmt->get_result()->fetch_row()[0] === 0) {
+            $result = $stmt->get_result();
+            $count = (int)$result->fetch_row()[0];
+            $result->free();
+            if ($count === 0) {
+                $stmt->close();
                 return $guid;
             }
         }
+        $stmt->close();
         throw new \RuntimeException('Failed to generate unique user GUID');
     }
 
