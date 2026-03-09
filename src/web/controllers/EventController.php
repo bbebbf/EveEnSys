@@ -151,28 +151,6 @@ class EventController
         $this->response->redirect('/events/' . $guid);
     }
 
-    public function showUnenroll(Request $req, string $guid, string $subscriberGuid): void
-    {
-        $this->session->requireLogin();
-        $event      = $this->eventRepo->findByGuid($guid) ?? $this->response->abort404();
-        $subscriber = $this->eventRepo->findSubscriberByGuid($subscriberGuid) ?? $this->response->abort404();
-
-        if ($subscriber->creatorUserId !== $this->session->getUserId()) {
-            $this->response->abort403();
-        }
-
-        $source    = $req->get('source') === 'enrolled' ? 'enrolled' : '';
-        $cancelUrl = $source === 'enrolled' ? '/events/enrolled' : '/events/' . $event->eventGuid;
-
-        $this->view->render('event/confirm_unenroll', [
-            'pageTitle'  => 'Abmeldung bestätigen',
-            'event'      => $event,
-            'subscriber' => $subscriber,
-            'source'     => $source,
-            'cancelUrl'  => $cancelUrl,
-        ]);
-    }
-
     public function unenroll(Request $req, string $guid, string $subscriberGuid): void
     {
         $this->session->requireLogin();
@@ -304,21 +282,6 @@ class EventController
         $this->eventRepo->update($event->eventId, $data);
         $this->session->setFlash('success', 'Veranstaltung erfolgreich aktualisiert.');
         $this->response->redirect('/events/' . $guid);
-    }
-
-    public function showDelete(string $guid): void
-    {
-        $this->session->requireLogin();
-        $event = $this->eventRepo->findByGuid($guid) ?? $this->response->abort404();
-
-        if (!$this->eventRepo->isOwner($event->eventId, $this->session->getUserId())) {
-            $this->response->abort403();
-        }
-
-        $this->view->render('event/confirm_delete', [
-            'pageTitle' => 'Veranstaltung löschen',
-            'event'     => $event,
-        ]);
     }
 
     public function delete(Request $req, string $guid): void

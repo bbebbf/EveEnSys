@@ -51,10 +51,14 @@
               <?= html_out($enrollment->subscriberEnrollTimestamp->format('d.m.Y H:i \U\h\r')) ?>
             </td>
             <td class="text-end">
-              <a href="/events/<?= html_out($enrollment->eventGuid) ?>/unenroll/<?= html_out($enrollment->subscriberGuid) ?>?source=enrolled"
-                 class="btn btn-sm btn-outline-danger">
-                Abmelden
-              </a>
+              <?php
+                $unenrollSubscriberGuid = $enrollment->subscriberGuid;
+                $unenrollEventGuid      = $enrollment->eventGuid;
+                $unenrollSubscriberName = $enrollment->subscriberName;
+                $unenrollSource         = 'enrolled';
+                $unenrollEventInfo      = $enrollment->eventTitle . ' — ' . event_date_out($enrollment->eventDate);
+                include APP_ROOT . '/views/event/_unenroll_modal.php';
+              ?>
             </td>
           </tr>
           <?php $prev_eventGuid = $enrollment->eventGuid; ?>

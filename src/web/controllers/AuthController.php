@@ -454,28 +454,6 @@ class AuthController
         $this->response->redirect('/admin/users');
     }
 
-    public function showDeleteProfile(string $guid): void
-    {
-        $this->session->requireLogin();
-        if ($guid !== $this->session->getUserGuid()) {
-            $this->response->abort403();
-        }
-        $user = $this->userRepo->findByGuid($guid);
-        if ($user->userRole >= 1
-            && $this->userRepo->countAdmins() === 1
-            && $this->userRepo->countAll() > 1
-        ) {
-            $this->session->setFlash('error', 'Ihr Konto kann nicht gelöscht werden, solange Sie der einzige Administrator sind. Ernennen Sie zuerst einen anderen Administrator.');
-            $this->response->redirect('/profile/' . $guid);
-        }
-        $this->view->render('profile/confirm_delete', [
-            'pageTitle' => 'Profil löschen',
-            'user'      => $user,
-            'errors'    => [],
-            'oidcOnly'  => ($user->userPasswd === null),
-        ]);
-    }
-
     public function deleteProfile(Request $req, string $guid): void
     {
         $this->session->requireLogin();
@@ -504,12 +482,7 @@ class AuthController
         }
 
         if (!empty($errors)) {
-            $this->view->render('profile/confirm_delete', [
-                'pageTitle' => 'Profil löschen',
-                'user'      => $user,
-                'errors'    => $errors,
-                'oidcOnly'  => ($user->userPasswd === null),
-            ]);
+            $this->renderProfileEditPage($guid, [], [], $errors);
             return;
         }
 
@@ -543,7 +516,7 @@ class AuthController
         return APP_CONFIG->getAppTitleShort() . ' <noreply@' . $_SERVER['HTTP_HOST'] . '>';
     }
 
-    private function renderProfileEditPage(string $userGuid, array $nameErrors, array $pwdErrors): void
+    private function renderProfileEditPage(string $userGuid, array $nameErrors, array $pwdErrors, array $deleteErrors = []): void
     {
         $user = $this->userRepo->findByGuid($userGuid);
         $this->view->render('profile/edit', [
@@ -551,6 +524,7 @@ class AuthController
             'user'              => $user,
             'nameErrors'        => $nameErrors,
             'pwdErrors'         => $pwdErrors,
+            'deleteErrors'      => $deleteErrors,
             'linkedIdentities'  => $this->oidcIdentityRepo->findByUserId($user->userId),
             'oidcProviderInfos' => $this->oidcProviderRepo->findAllActiveInfos(),
         ]);

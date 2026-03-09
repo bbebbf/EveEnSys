@@ -13,7 +13,12 @@
       <?php if (Session::isLoggedIn() && Session::getUserId() === $event->creatorUserId): ?>
         <div class="btn-group ms-3">
           <a href="/events/<?= html_out($event->eventGuid) ?>/edit" class="btn btn-sm btn-outline-secondary">Bearbeiten</a>
-          <a href="/events/<?= html_out($event->eventGuid) ?>/delete" class="btn btn-sm btn-outline-danger">Löschen</a>
+          <?php
+            $deleteEventGuid  = $event->eventGuid;
+            $deleteEventTitle = $event->eventTitle;
+            $deleteEventDate  = $event->eventDate;
+            include APP_ROOT . '/views/event/_delete_modal.php';
+          ?>
         </div>
       <?php endif; ?>
     </div>
@@ -95,8 +100,12 @@
                   <small class="text-muted ms-1"><?= html_out($sub->subscriberEnrollTimestamp->format('d.m.Y')) ?></small>
                 </span>
                 <?php if ($sub->creatorUserId === Session::getUserId()): ?>
-                  <a href="/events/<?= html_out($event->eventGuid) ?>/unenroll/<?= html_out($sub->subscriberGuid) ?>"
-                     class="btn btn-sm btn-outline-danger">Abmelden</a>
+                  <?php
+                    $unenrollSubscriberGuid = $sub->subscriberGuid;
+                    $unenrollEventGuid      = $event->eventGuid;
+                    $unenrollSubscriberName = $sub->subscriberName ?? 'Unbekannt';
+                    include APP_ROOT . '/views/event/_unenroll_modal.php';
+                  ?>
                 <?php endif; ?>
               </li>
             <?php endforeach; ?>
