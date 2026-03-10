@@ -16,9 +16,23 @@
     <a href="/events/create" class="btn btn-outline-primary">Jetzt erstellen</a>
   </div>
 <?php else: ?>
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  <?php if (count($events) > APP_CONFIG->getSearchbarStartsAtItemCount()): ?>
+  <div class="mb-4">
+    <input type="search" id="event-search" class="form-control" placeholder="Veranstaltungen durchsuchen …" autocomplete="off">
+  </div>
+  <?php endif; ?>
+  <div id="no-search-results" class="text-center text-muted py-5 d-none">
+    <p class="fs-5">Keine Veranstaltungen gefunden.</p>
+  </div>
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="event-cards">
     <?php foreach ($events as $event): ?>
-      <div class="col">
+      <?php
+        $searchData = mb_strtolower($event->eventTitle .
+            ' ' . ($event->eventDescription ?? '') .
+            ' ' . ($event->eventLocation ?? '') .
+            ' ' . ($event->creatorName ?? ''));
+      ?>
+      <div class="col" data-search="<?= html_out($searchData) ?>">
 
 
         <div class="card h-100 shadow-sm">
@@ -76,4 +90,23 @@
       </div>
     <?php endforeach; ?>
   </div>
+  <script>
+    (function () {
+      const input = document.getElementById('event-search');
+      if (!input) return;
+      const grid  = document.getElementById('event-cards');
+      const noResults = document.getElementById('no-search-results');
+      input.addEventListener('input', function () {
+        const term = this.value.toLowerCase().trim();
+        let visible = 0;
+        grid.querySelectorAll('.col[data-search]').forEach(function (col) {
+          const match = !term || col.dataset.search.includes(term);
+          col.classList.toggle('d-none', !match);
+          if (match) visible++;
+        });
+        noResults.classList.toggle('d-none', visible > 0);
+        grid.classList.toggle('d-none', visible === 0);
+      });
+    })();
+  </script>
 <?php endif; ?>

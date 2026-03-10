@@ -7,7 +7,16 @@
   </h2>
 </div>
 
-<div class="table-responsive">
+<?php if (count($users) > APP_CONFIG->getSearchbarStartsAtItemCount()): ?>
+<div class="mb-4">
+  <input type="search" id="user-search" class="form-control" placeholder="Benutzer suchen …" autocomplete="off">
+</div>
+<?php endif; ?>
+<div id="no-search-results" class="text-center text-muted py-5 d-none">
+  <p class="fs-5">Keine Benutzer gefunden.</p>
+</div>
+
+<div class="table-responsive" id="user-table">
   <table class="table table-striped align-middle">
     <thead>
       <tr>
@@ -22,10 +31,16 @@
     </thead>
     <tbody>
       <?php foreach ($users as $u): ?>
+        <?php
+          $oidcLabels = array_map(fn($id) => $oidcProviderInfos[$id->providerKey]->label ?? $id->providerKey, $oidcByUser[$u->userId] ?? []);
+          $searchData = mb_strtolower($u->userName
+            . ' ' . $u->userEmail
+            . ' ' . implode(' ', $oidcLabels));
+        ?>
         <?php if ($u->userId == Session::getUserId()): ?>
-          <tr class="table-primary">
+          <tr class="table-primary" data-search="<?= html_out($searchData) ?>">
         <?php else: ?>
-          <tr>
+          <tr data-search="<?= html_out($searchData) ?>">
         <?php endif; ?>
           <td><?= html_out($u->userName) ?></td>
           <td><?= html_out($u->userEmail) ?></td>
@@ -86,3 +101,22 @@
     </tbody>
   </table>
 </div>
+<script>
+  (function () {
+    const input = document.getElementById('user-search');
+    if (!input) return;
+    const table = document.getElementById('user-table');
+    const noResults = document.getElementById('no-search-results');
+    input.addEventListener('input', function () {
+      const term = this.value.toLowerCase().trim();
+      let visible = 0;
+      table.querySelectorAll('tr[data-search]').forEach(function (row) {
+        const match = !term || row.dataset.search.includes(term);
+        row.classList.toggle('d-none', !match);
+        if (match) visible++;
+      });
+      noResults.classList.toggle('d-none', visible > 0);
+      table.classList.toggle('d-none', visible === 0);
+    });
+  })();
+</script>

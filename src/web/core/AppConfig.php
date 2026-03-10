@@ -81,6 +81,14 @@ class AppConfig
         return $dt !== false ? $dt : null;
     }
 
+    public function getSearchbarStartsAtItemCount(): int
+    {
+        if (is_array($this->config) && array_key_exists('SearchbarStartsAtItemCount', $this->config)) {
+            return max(0, (int)$this->config['SearchbarStartsAtItemCount']);
+        }
+        return 1000000;
+    }
+
     private function get_str_value(string $key, string $default = ''): string
     {
         if (is_array($this->config) && array_key_exists($key, $this->config)) {

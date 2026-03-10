@@ -6,6 +6,7 @@
     "KioskSlideDurationSec": 15,
     "DelayedStartMinutes": 15,
     "EventDateRangeFrom": "",
-    "EventDateRangeTo": ""
+    "EventDateRangeTo": "",
+    "SearchbarStartsAtItemCount": 6
 }
  
