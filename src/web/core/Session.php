@@ -43,10 +43,11 @@ class Session
     public static function login(UserDto $user): void
     {
         session_regenerate_id(true);
-        $_SESSION['user_id']   = $user->userId;
-        $_SESSION['user_guid'] = $user->userGuid;
-        $_SESSION['user_name'] = $user->userName;
-        $_SESSION['user_role'] = $user->userRole;
+        $_SESSION['user_id']    = $user->userId;
+        $_SESSION['user_guid']  = $user->userGuid;
+        $_SESSION['user_name']  = $user->userName;
+        $_SESSION['user_email'] = $user->userEmail;
+        $_SESSION['user_role']  = $user->userRole;
         if (!isset($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
@@ -71,6 +72,11 @@ class Session
     public static function getUserName(): ?string
     {
         return $_SESSION['user_name'] ?? null;
+    }
+
+    public static function getUserEmail(): ?string
+    {
+        return $_SESSION['user_email'] ?? null;
     }
 
     public static function setUserName(string $name): void

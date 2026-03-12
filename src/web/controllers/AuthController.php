@@ -13,6 +13,7 @@ class AuthController
         private SessionInterface $session,
         private ViewInterface $view,
         private ResponseInterface $response,
+        private EmailSender $emailSender,
     ) {}
 
     public function showRegister(): void
@@ -81,17 +82,7 @@ class AuthController
         $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
         $link    = $baseUrl . '/activate-account?token=' . urlencode($rawToken);
 
-        $subject = APP_CONFIG->getAppTitleShort() . '-Konto aktivieren';
-        $body    = "Hallo {$name},\r\n\r\n"
-            . "Vielen Dank für Ihre Registrierung bei " . APP_CONFIG->getAppTitleShort() . ".\r\n\r\n"
-            . "Klicken Sie auf den folgenden Link, um Ihr Konto zu aktivieren (gültig für 24 Stunden):\r\n"
-            . $link . "\r\n\r\n"
-            . "Falls Sie sich nicht registriert haben, können Sie diese E-Mail ignorieren.\r\n";
-
-        $headers = "From: " . $this->getNoReplyAddress() . "\r\n"
-            . "Content-Type: text/plain; charset=UTF-8\r\n";
-
-        mail($email, $subject, $body, $headers);
+        $this->emailSender->sendAccountActivationEmail($email, $name, $link);
 
         $this->response->redirect('/activation-sent');
     }
@@ -187,17 +178,7 @@ class AuthController
             $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
             $link    = $baseUrl . '/reset-password?token=' . urlencode($rawToken);
 
-            $subject = APP_CONFIG->getAppTitleShort() . '-Passwort zurücksetzen';
-            $body    = "Hallo {$user->userName},\r\n\r\n"
-                . "Sie haben eine Passwortzurücksetzung für Ihr " . APP_CONFIG->getAppTitleShort() . "-Konto angefordert.\r\n\r\n"
-                . "Klicken Sie auf den folgenden Link, um ein neues Passwort festzulegen (gültig für 1 Stunde):\r\n"
-                . $link . "\r\n\r\n"
-                . "Falls Sie diese Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.\r\n";
-
-            $headers = "From: " . $this->getNoReplyAddress() . "\r\n"
-                . "Content-Type: text/plain; charset=UTF-8\r\n";
-
-            mail($user->userEmail, $subject, $body, $headers);
+            $this->emailSender->sendPasswordResetEmail($user->userEmail, $user->userName, $link);
         }
 
         // Always show the same message to prevent user enumeration
@@ -523,6 +504,8 @@ class AuthController
             return;
         }
 
+        $this->emailSender->sendProfileDeletedEmail($user->userEmail, $user->userName);
+
         $this->eventRepo->deleteSubscribersForUserEvents($user->userId);
         $this->eventRepo->deleteSubscribersByCreator($user->userId);
         $this->eventRepo->deleteAllByUser($user->userId);
@@ -546,11 +529,6 @@ class AuthController
 
         $this->session->logout();
         $this->response->redirect('/login');
-    }
-
-    private function getNoReplyAddress(): string
-    {
-        return APP_CONFIG->getAppTitleShort() . ' <noreply@' . $_SERVER['HTTP_HOST'] . '>';
     }
 
     private function renderProfileEditPage(string $userGuid, array $nameErrors, array $pwdErrors, array $deleteErrors = []): void

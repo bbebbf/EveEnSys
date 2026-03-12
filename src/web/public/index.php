@@ -52,6 +52,9 @@ require APP_ROOT . '/model/repositories/impl/OidcIdentityRepository.php';
 require APP_ROOT . '/model/repositories/impl/OidcProviderRepository.php';
 
 // Load controllers
+require APP_ROOT . '/tools/Email.php';
+require APP_ROOT . '/tools/EmailSender.php';
+
 require APP_ROOT . '/controllers/ControllerTools.php';
 require APP_ROOT . '/controllers/AuthController.php';
 require APP_ROOT . '/controllers/EventController.php';
@@ -85,9 +88,12 @@ $session  = new AppSession();
 $view     = new AppView();
 $response = new AppResponse();
 
+$noReplyAddress = APP_CONFIG->getAppTitleShort() . ' <noreply@' . $_SERVER['HTTP_HOST'] . '>';
+$emailSender    = new EmailSender($noReplyAddress);
+
 // Instantiate controllers
-$authController  = new AuthController($userRepo, $resetRepo, $activationRepo, $oidcProviderRepo, $eventRepo, $oidcIdentityRepo, $session, $view, $response);
-$eventController = new EventController($eventRepo, $session, $view, $response);
+$authController  = new AuthController($userRepo, $resetRepo, $activationRepo, $oidcProviderRepo, $eventRepo, $oidcIdentityRepo, $session, $view, $response, $emailSender);
+$eventController = new EventController($eventRepo, $session, $view, $response, $emailSender);
 $oidcProvisioner = new OidcUserProvisioner($userRepo, $oidcIdentityRepo);
 $oidcController  = new OidcController($userRepo, $oidcIdentityRepo, $oidcProviderRepo, $oidcProvisioner, $session, $view, $response);
 

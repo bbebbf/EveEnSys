@@ -8,6 +8,7 @@ class EventController
         private SessionInterface $session,
         private ViewInterface $view,
         private ResponseInterface $response,
+        private EmailSender $emailSender,
     ) {}
 
     public function kiosk(): void
@@ -124,6 +125,10 @@ class EventController
             }
         }
 
+        $scheme    = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $eventLink = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/events/' . $guid;
+        $eventDate = event_date_out($event->eventDate);
+
         $type = $req->post('enroll_type', '');
         if ($type === 'self') {
             if ($this->eventRepo->isUserEnrolledAsSelf($event->eventId, $userId)) {
@@ -131,6 +136,14 @@ class EventController
                 $this->response->redirect('/events/' . $guid);
             }
             $this->eventRepo->createSubscriber($event->eventId, $userId, true, null);
+            $this->emailSender->sendEnrolledEmail(
+                $this->session->getUserEmail(),
+                $this->session->getUserName(),
+                $this->session->getUserName(),
+                $event->eventTitle,
+                $eventDate,
+                $eventLink,
+            );
             $this->session->setFlash('success', 'Sie wurden erfolgreich angemeldet.');
         } elseif ($type === 'other') {
             $name = trim($req->post('subscriber_name', ''));
@@ -143,6 +156,14 @@ class EventController
                 $this->response->redirect('/events/' . $guid);
             }
             $this->eventRepo->createSubscriber($event->eventId, $userId, false, $name);
+            $this->emailSender->sendEnrolledEmail(
+                $this->session->getUserEmail(),
+                $this->session->getUserName(),
+                $name,
+                $event->eventTitle,
+                $eventDate,
+                $eventLink,
+            );
             $this->session->setFlash('success', $name . ' wurde erfolgreich angemeldet.');
         } else {
             $this->response->redirect('/events/' . $guid);
@@ -159,13 +180,22 @@ class EventController
             $this->response->abort403();
         }
 
-        $event   = $this->eventRepo->findByGuid($guid) ?? $this->response->abort404();
-        $userId  = $this->session->getUserId();
-        $isAdmin = $this->session->isAdmin();
+        $event      = $this->eventRepo->findByGuid($guid) ?? $this->response->abort404();
+        $userId     = $this->session->getUserId();
+        $isAdmin    = $this->session->isAdmin();
+        $subscriber = $this->eventRepo->findSubscriberByGuid($subscriberGuid);
 
         if (!$this->eventRepo->deleteSubscriber($subscriberGuid, $userId, $isAdmin)) {
             $this->session->setFlash('error', 'Anmeldung nicht gefunden oder Sie haben keine Berechtigung, sie zu entfernen.');
         } else {
+            if ($subscriber !== null) {
+                $this->emailSender->sendUnenrolledEmail(
+                    $this->session->getUserEmail(),
+                    $this->session->getUserName(),
+                    $subscriber->subscriberName ?? $this->session->getUserName(),
+                    $event->eventTitle,
+                );
+            }
             $this->session->setFlash('success', 'Anmeldung entfernt.');
         }
 
@@ -229,6 +259,18 @@ class EventController
         }
 
         $guid = $this->eventRepo->create($this->session->getUserId(), $data);
+
+        $scheme    = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $eventLink = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/events/' . $guid;
+        $eventDate = event_date_out(new DateTimeImmutable($data['event_date']));
+        $this->emailSender->sendEventCreatedEmail(
+            $this->session->getUserEmail(),
+            $this->session->getUserName(),
+            $data['event_title'],
+            $eventDate,
+            $eventLink,
+        );
+
         $this->session->setFlash('success', 'Veranstaltung erfolgreich erstellt. Nach einer Prüfung wird sie innerhalb der nächsten Stunden für andere sichtbar sein.');
         $this->response->redirect('/events/' . $guid);
     }
@@ -301,6 +343,12 @@ class EventController
 
         $this->eventRepo->deleteSubscribersByEvent($event->eventId);
         $this->eventRepo->delete($event->eventId);
+
+        $this->emailSender->sendEventDeletedEmail(
+            $this->session->getUserEmail(),
+            $this->session->getUserName(),
+            $event->eventTitle,
+        );
 
         $this->session->setFlash('success', 'Veranstaltung gelöscht.');
         $this->response->redirect('/events');

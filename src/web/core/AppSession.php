@@ -15,6 +15,7 @@ class AppSession implements SessionInterface
     public function getUserId(): ?int      { return Session::getUserId(); }
     public function getUserGuid(): ?string { return Session::getUserGuid(); }
     public function getUserName(): ?string { return Session::getUserName(); }
+    public function getUserEmail(): ?string { return Session::getUserEmail(); }
     public function setUserName(string $name): void { Session::setUserName($name); }
 
     public function validateCsrf(string $token): bool           { return Session::validateCsrf($token); }

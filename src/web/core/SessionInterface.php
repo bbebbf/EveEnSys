@@ -18,6 +18,7 @@ interface SessionInterface
     public function getUserId(): ?int;
     public function getUserGuid(): ?string;
     public function getUserName(): ?string;
+    public function getUserEmail(): ?string;
     public function setUserName(string $name): void;
 
     public function validateCsrf(string $token): bool;
