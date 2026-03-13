@@ -65,10 +65,9 @@ class EmailSender
             ->send();
     }
 
-    public function sendEnrolledEmail(string $toEmail, string $toName, string $enrolleeName, string $eventTitle, string $eventDate, string $eventLink, EventDto $event): bool
+    public function sendEnrolledEmail(string $toEmail, string $toName, string $enrolleeName, bool $isSelf, string $eventTitle, string $eventDate, string $eventLink, EventDto $event): bool
     {
         $appTitle = APP_CONFIG->getAppTitleShort();
-        $isSelf   = $enrolleeName === $toName;
         $who      = $isSelf ? 'Sie wurden' : "\"{$enrolleeName}\" wurde";
 
         return (new Email())
@@ -88,10 +87,9 @@ class EmailSender
             ->send();
     }
 
-    public function sendUnenrolledEmail(string $toEmail, string $toName, string $enrolleeName, string $eventTitle): bool
+    public function sendUnenrolledEmail(string $toEmail, string $toName, string $enrolleeName, bool $isSelf, string $eventTitle): bool
     {
         $appTitle = APP_CONFIG->getAppTitleShort();
-        $isSelf   = $enrolleeName === $toName;
         $who      = $isSelf ? 'Sie wurden' : "\"{$enrolleeName}\" wurde";
 
         return (new Email())

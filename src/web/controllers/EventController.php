@@ -140,6 +140,7 @@ class EventController
                 $this->session->getUserEmail(),
                 $this->session->getUserName(),
                 $this->session->getUserName(),
+                true,
                 $event->eventTitle,
                 $eventDate,
                 $eventLink,
@@ -161,6 +162,7 @@ class EventController
                 $this->session->getUserEmail(),
                 $this->session->getUserName(),
                 $name,
+                false,
                 $event->eventTitle,
                 $eventDate,
                 $eventLink,
@@ -195,6 +197,7 @@ class EventController
                     $this->session->getUserEmail(),
                     $this->session->getUserName(),
                     $subscriber->subscriberName ?? $this->session->getUserName(),
+                    $subscriber->subscriberIsCreator,
                     $event->eventTitle,
                 );
             }
