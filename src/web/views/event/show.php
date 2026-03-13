@@ -125,7 +125,7 @@
                 <button type="submit" class="btn btn-primary btn-sm w-100">Selbst anmelden</button>
               </form>
             <?php else: ?>
-              <p class="text-success mb-3"><small>Sie sind für diese Veranstaltung angemeldet.</small></p>
+              <p class="text-success mb-3"><small>Du bist für diese Veranstaltung angemeldet.</small></p>
             <?php endif; ?>
 
             <form method="post" action="/events/<?= html_out($event->eventGuid) ?>/enroll">

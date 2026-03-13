@@ -144,7 +144,7 @@
     <div class="card border-danger mt-3">
       <div class="card-header bg-danger text-white"><strong>Profil löschen</strong></div>
       <div class="card-body">
-        <p class="text-danger small mb-2">Diese Aktion löscht Ihr Konto komplett und kann nicht rückgängig gemacht werden.</p>
+        <p class="text-danger small mb-2">Diese Aktion löscht dein Konto komplett und kann nicht rückgängig gemacht werden.</p>
         <?php
           $deleteUserGuid  = $user->userGuid;
           $deleteUserName  = $user->userName;

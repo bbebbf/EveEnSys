@@ -3,8 +3,8 @@
 <div class="row justify-content-center">
   <div class="col-md-6 text-center">
     <p class="text-muted">
-      Registrierung erfolgreich! Ein Aktivierungslink wurde an Ihre E-Mail-Adresse gesendet.
-      Bitte klicken Sie auf den Link, um Ihr Konto zu aktivieren, bevor Sie sich anmelden.
+      Registrierung erfolgreich! Ein Aktivierungslink wurde an deine E-Mail-Adresse gesendet.
+      Bitte klicke auf den Link, um dein Konto zu aktivieren, bevor du dich anmeldest.
     </p>
     <p class="text-muted">
       Der Link ist 24 Stunden gültig.

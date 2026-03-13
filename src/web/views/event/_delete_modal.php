@@ -14,7 +14,7 @@
       <form method="post" action="/events/<?= html_out($deleteEventGuid) ?>/delete">
         <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
         <div class="modal-body">
-          <p>Möchten Sie die folgende Veranstaltung wirklich dauerhaft löschen?</p>
+          <p>Möchtest du die folgende Veranstaltung wirklich dauerhaft löschen?</p>
           <p class="fw-bold"><?= html_out($deleteEventTitle) ?></p>
           <p class="text-muted small">Geplant: <?= event_date_out($deleteEventDate) ?></p>
           <p class="text-danger small mb-0">Diese Aktion kann nicht rückgängig gemacht werden.</p>

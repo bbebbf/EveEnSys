@@ -15,10 +15,10 @@ class EmailSender
         $appTitle = APP_CONFIG->getAppTitleShort();
 
         $content = $this->paragraph("Hallo {$toName},")
-            . $this->paragraph("Vielen Dank für Ihre Registrierung bei {$appTitle}.")
-            . $this->paragraph("Klicken Sie auf die Schaltfläche, um Ihr Konto zu aktivieren. Der Link ist <strong>24 Stunden</strong> gültig.")
+            . $this->paragraph("Vielen Dank für deine Registrierung bei {$appTitle}.")
+            . $this->paragraph("Klicke auf die Schaltfläche, um dein Konto zu aktivieren. Der Link ist <strong>24 Stunden</strong> gültig.")
             . $this->button($activationLink, 'Konto aktivieren')
-            . $this->paragraph('Falls Sie sich nicht registriert haben, können Sie diese E-Mail ignorieren.', true);
+            . $this->paragraph('Falls du dich nicht registriert hast, kannst du diese E-Mail ignorieren.', true);
 
         return (new Email())
             ->setFrom($this->noReplyAddress)
@@ -33,7 +33,7 @@ class EmailSender
         $appTitle = APP_CONFIG->getAppTitleShort();
 
         $content = $this->paragraph("Hallo {$toName},")
-            . $this->paragraph('Ihre Veranstaltung wurde erfolgreich erstellt.')
+            . $this->paragraph('Deine Veranstaltung wurde erfolgreich erstellt.')
             . $this->details(['Titel' => $eventTitle, 'Datum' => $eventDate])
             . $this->button($eventLink, 'Zur Veranstaltung');
 
@@ -51,7 +51,7 @@ class EmailSender
         $appTitle = APP_CONFIG->getAppTitleShort();
 
         $content = $this->paragraph("Hallo {$toName},")
-            . $this->paragraph("Ihre Veranstaltung <strong>" . htmlspecialchars($eventTitle) . "</strong> wurde gelöscht.");
+            . $this->paragraph("Deine Veranstaltung <strong>" . htmlspecialchars($eventTitle) . "</strong> wurde gelöscht.");
 
         return (new Email())
             ->setFrom($this->noReplyAddress)
@@ -64,7 +64,7 @@ class EmailSender
     public function sendEnrolledEmail(string $toEmail, string $toName, string $enrolleeName, bool $isSelf, string $eventTitle, string $eventDate, string $eventLink, EventDto $event): bool
     {
         $appTitle = APP_CONFIG->getAppTitleShort();
-        $who      = $isSelf ? 'Sie wurden' : '<strong>' . htmlspecialchars($enrolleeName) . '</strong> wurde';
+        $who      = $isSelf ? 'Du wurdest' : '<strong>' . htmlspecialchars($enrolleeName) . '</strong> wurde';
 
         $content = $this->paragraph("Hallo {$toName},")
             . $this->paragraph("{$who} erfolgreich für die folgende Veranstaltung angemeldet:")
@@ -83,7 +83,7 @@ class EmailSender
     public function sendUnenrolledEmail(string $toEmail, string $toName, string $enrolleeName, bool $isSelf, string $eventTitle): bool
     {
         $appTitle = APP_CONFIG->getAppTitleShort();
-        $who      = $isSelf ? 'Sie wurden' : '<strong>' . htmlspecialchars($enrolleeName) . '</strong> wurde';
+        $who      = $isSelf ? 'Du wurdest' : '<strong>' . htmlspecialchars($enrolleeName) . '</strong> wurde';
 
         $content = $this->paragraph("Hallo {$toName},")
             . $this->paragraph("{$who} von der folgenden Veranstaltung abgemeldet:")
@@ -102,7 +102,7 @@ class EmailSender
         $appTitle = APP_CONFIG->getAppTitleShort();
 
         $content = $this->paragraph("Hallo {$toName},")
-            . $this->paragraph("Ihr Profil bei {$appTitle} wurde gelöscht. Alle Ihre Daten wurden entfernt.");
+            . $this->paragraph("Dein Profil bei {$appTitle} wurde gelöscht. Alle deine Daten wurden entfernt.");
 
         return (new Email())
             ->setFrom($this->noReplyAddress)
@@ -117,10 +117,10 @@ class EmailSender
         $appTitle = APP_CONFIG->getAppTitleShort();
 
         $content = $this->paragraph("Hallo {$toName},")
-            . $this->paragraph("Sie haben eine Passwortzurücksetzung für Ihr {$appTitle}-Konto angefordert.")
-            . $this->paragraph("Klicken Sie auf die Schaltfläche, um ein neues Passwort festzulegen. Der Link ist <strong>1 Stunde</strong> gültig.")
+            . $this->paragraph("Du hast eine Passwortzurücksetzung für dein {$appTitle}-Konto angefordert.")
+            . $this->paragraph("Klicke auf die Schaltfläche, um ein neues Passwort festzulegen. Der Link ist <strong>1 Stunde</strong> gültig.")
             . $this->button($resetLink, 'Passwort zurücksetzen')
-            . $this->paragraph('Falls Sie diese Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.', true);
+            . $this->paragraph('Falls du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren.', true);
 
         return (new Email())
             ->setFrom($this->noReplyAddress)

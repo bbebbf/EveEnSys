@@ -20,7 +20,7 @@ $unenrollEventInfo ??= null;
           <input type="hidden" name="source" value="<?= html_out($unenrollSource) ?>">
         <?php endif; ?>
         <div class="modal-body">
-          <p>Möchten Sie die folgende Person wirklich abmelden?</p>
+          <p>Möchtest du die folgende Person wirklich abmelden?</p>
           <p class="fw-bold"><?= html_out($unenrollSubscriberName) ?></p>
           <?php if ($unenrollEventInfo !== null): ?>
             <p class="text-muted small"><?= html_out($unenrollEventInfo) ?></p>

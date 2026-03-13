@@ -9,7 +9,7 @@
 
 <?php if (empty($enrollments)): ?>
   <div class="text-center text-muted py-5">
-    <p class="fs-5">Sie haben sich noch für keine Veranstaltung angemeldet.</p>
+    <p class="fs-5">Du hast dich noch für keine Veranstaltung angemeldet.</p>
     <a href="/events" class="btn btn-outline-primary">Veranstaltungen anzeigen</a>
   </div>
 <?php else: ?>

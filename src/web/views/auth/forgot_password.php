@@ -3,7 +3,7 @@
 <div class="row justify-content-center">
   <div class="col-md-6">
     <p class="text-muted">
-      Geben Sie die E-Mail-Adresse Ihres Kontos ein und ein Link zum Zurücksetzen Ihres Passworts wird an diese E-Mail-Adresse gesendet.
+      Gib die E-Mail-Adresse deines Kontos ein und ein Link zum Zurücksetzen deines Passworts wird an diese E-Mail-Adresse gesendet.
     </p>
 
     <form method="post" action="/forgot-password" novalidate>

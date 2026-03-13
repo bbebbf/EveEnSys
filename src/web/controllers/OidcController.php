@@ -60,7 +60,7 @@ class OidcController
         $returnedState = $req->get('state', '');
         $storedState   = $this->session->getOidcState();
         if ($storedState === '' || !hash_equals($storedState, $returnedState)) {
-            $this->session->setFlash('error', 'Ungültige Sitzung. Bitte versuchen Sie es erneut.');
+            $this->session->setFlash('error', 'Ungültige Sitzung. Bitte versuche es erneut.');
             $this->response->redirect('/login');
         }
 
@@ -174,7 +174,7 @@ class OidcController
         $hasPassword = ($user->userPasswd !== null);
 
         if (!$hasPassword && $linkedCount <= 1) {
-            $this->session->setFlash('error', 'Sie können die letzte Anmeldemethode nicht entfernen.');
+            $this->session->setFlash('error', 'Du kannst die letzte Anmeldemethode nicht entfernen.');
             $this->response->redirect('/profile/' . $guid);
         }
 
@@ -210,7 +210,7 @@ class OidcController
         $body = @file_get_contents($url, false, $context);
         if ($body === false) {
             error_log('OIDC: failed to fetch discovery from ' . $url);
-            $this->session->setFlash('error', 'Anmeldeanbieter nicht erreichbar. Bitte versuchen Sie es später erneut.');
+            $this->session->setFlash('error', 'Anmeldeanbieter nicht erreichbar. Bitte versuche es später erneut.');
             $this->response->redirect('/login');
         }
 

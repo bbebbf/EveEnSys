@@ -18,5 +18,5 @@ function event_date_out(\DateTimeInterface $aDate): string
 
 function default_datetime_out(\DateTimeInterface $aDate): string
 {
-    return datetime_out($aDate, 'd.m., H:i:ss');
+    return datetime_out($aDate, 'd.m.y / H:i:s');
 }

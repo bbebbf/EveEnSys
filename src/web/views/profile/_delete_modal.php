@@ -16,11 +16,11 @@ $deleteErrors ??= [];
       <form method="post" action="/profile/<?= html_out($deleteUserGuid) ?>/delete" novalidate>
         <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
         <div class="modal-body">
-          <p>Möchten Sie Ihr Konto <strong><?= html_out($deleteUserName) ?></strong> wirklich dauerhaft löschen?</p>
+          <p>Möchtest du dein Konto <strong><?= html_out($deleteUserName) ?></strong> wirklich dauerhaft löschen?</p>
           <ul class="text-danger small">
-            <li>Alle Ihre Veranstaltungen werden gelöscht.</li>
-            <li>Alle Ihre Anmeldungen zu Veranstaltungen werden gelöscht.</li>
-            <li>Sie verlieren den Zugriff auf alle Funktionen dieser Plattform.</li>
+            <li>Alle deine Veranstaltungen werden gelöscht.</li>
+            <li>Alle deine Anmeldungen zu Veranstaltungen werden gelöscht.</li>
+            <li>Du verlierst den Zugriff auf alle Funktionen dieser Plattform.</li>
           </ul>
 
           <?php if (!empty($deleteErrors)): ?>
@@ -45,7 +45,7 @@ $deleteErrors ??= [];
               <?php endif; ?>
             </div>
           <?php else: ?>
-            <p class="text-muted fst-italic mb-0">Sie sind ausschließlich über einen externen Anbieter angemeldet. Keine Passwort-Bestätigung erforderlich.</p>
+            <p class="text-muted fst-italic mb-0">Du bist ausschließlich über einen externen Anbieter angemeldet. Keine Passwort-Bestätigung erforderlich.</p>
           <?php endif; ?>
         </div>
         <div class="modal-footer">

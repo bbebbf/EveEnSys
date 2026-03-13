@@ -45,7 +45,7 @@ class AuthController
         if ($email === '') {
             $errors['email'] = 'E-Mail-Adresse ist erforderlich.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+            $errors['email'] = 'Bitte gib eine gültige E-Mail-Adresse ein.';
         } elseif (mb_strlen($email) > 100) {
             $errors['email'] = 'Die E-Mail-Adresse darf maximal 100 Zeichen lang sein.';
         } elseif ($this->userRepo->findByEmail($email) !== null) {
@@ -99,14 +99,14 @@ class AuthController
         $record   = $rawToken !== '' ? $this->activationRepo->findValidByToken($rawToken) : null;
 
         if ($record === null) {
-            $this->session->setFlash('error', 'Dieser Aktivierungslink ist ungültig oder abgelaufen. Bitte registrieren Sie sich erneut.');
+            $this->session->setFlash('error', 'Dieser Aktivierungslink ist ungültig oder abgelaufen. Bitte registriere dich erneut.');
             $this->response->redirect('/login');
         }
 
         $this->userRepo->activate((int)$record['user_id']);
         $this->activationRepo->markUsed((int)$record['token_id']);
 
-        $this->session->setFlash('success', 'Konto aktiviert. Sie können sich jetzt anmelden.');
+        $this->session->setFlash('success', 'Konto aktiviert. Du kannst dich jetzt anmelden.');
         $this->response->redirect('/login');
     }
 
@@ -182,7 +182,7 @@ class AuthController
         }
 
         // Always show the same message to prevent user enumeration
-        $this->session->setFlash('success', 'Falls diese E-Mail-Adresse registriert ist, erhalten Sie in Kürze einen Link zum Zurücksetzen.');
+        $this->session->setFlash('success', 'Falls diese E-Mail-Adresse registriert ist, erhältst du in Kürze einen Link zum Zurücksetzen.');
         $this->response->redirect('/forgot-password');
     }
 
@@ -192,7 +192,7 @@ class AuthController
         $record   = $rawToken !== '' ? $this->resetRepo->findValidByToken($rawToken) : null;
 
         if ($record === null) {
-            $this->session->setFlash('error', 'Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.');
+            $this->session->setFlash('error', 'Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen. Bitte fordere einen neuen an.');
             $this->response->redirect('/forgot-password');
         }
 
@@ -213,7 +213,7 @@ class AuthController
         $record   = $rawToken !== '' ? $this->resetRepo->findValidByToken($rawToken) : null;
 
         if ($record === null) {
-            $this->session->setFlash('error', 'Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.');
+            $this->session->setFlash('error', 'Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen. Bitte fordere einen neuen an.');
             $this->response->redirect('/forgot-password');
         }
 
@@ -245,7 +245,7 @@ class AuthController
         $this->userRepo->updatePassword((int)$record['user_id'], password_hash($newPwd, PASSWORD_BCRYPT));
         $this->resetRepo->markUsed((int)$record['reset_id']);
 
-        $this->session->setFlash('success', 'Ihr Passwort wurde zurückgesetzt. Sie können sich jetzt anmelden.');
+        $this->session->setFlash('success', 'Dein Passwort wurde zurückgesetzt. Du kannst dich jetzt anmelden.');
         $this->response->redirect('/login');
     }
 
@@ -373,7 +373,7 @@ class AuthController
 
         if ($user->userRole >= 1) {
             if ($user->userId === $this->session->getUserId()) {
-                $this->session->setFlash('error', 'Sie können sich selbst die Administrator-Rechte nicht entziehen.');
+                $this->session->setFlash('error', 'Du kannst dir selbst die Administrator-Rechte nicht entziehen.');
                 $this->response->redirect('/admin/users');
             }
             if ($this->userRepo->countAdmins() <= 1) {
@@ -411,7 +411,7 @@ class AuthController
 
         if ($user->userIsActive) {
             if ($user->userId === $this->session->getUserId()) {
-                $this->session->setFlash('error', 'Sie können sich selbst nicht deaktivieren.');
+                $this->session->setFlash('error', 'Du kannst dich selbst nicht deaktivieren.');
                 $this->response->redirect('/admin/users');
                 return;
             }
@@ -451,7 +451,7 @@ class AuthController
         }
 
         if ($user->userId === $this->session->getUserId()) {
-            $this->session->setFlash('error', 'Sie können sich selbst nicht löschen. Nutzen Sie dafür Ihr eigenes Profil.');
+            $this->session->setFlash('error', 'Du kannst dich selbst nicht löschen. Nutze dafür dein eigenes Profil.');
             $this->response->redirect('/admin/users');
         }
 
@@ -491,7 +491,7 @@ class AuthController
             && $this->userRepo->countAdmins() === 1
             && $this->userRepo->countAll() > 1
         ) {
-            $this->session->setFlash('error', 'Ihr Konto kann nicht gelöscht werden, solange Sie der einzige Administrator sind. Ernennen Sie zuerst einen anderen Administrator.');
+            $this->session->setFlash('error', 'Dein Konto kann nicht gelöscht werden, solange du der einzige Administrator bist. Ernenne zuerst einen anderen Administrator.');
             $this->response->redirect('/profile/' . $guid);
         }
 
@@ -515,7 +515,7 @@ class AuthController
         $this->userRepo->delete($user->userId);
 
         $this->session->logout();
-        $this->session->setFlash('success', 'Ihr Profil wurde gelöscht.');
+        $this->session->setFlash('success', 'Dein Profil wurde gelöscht.');
         $this->response->redirect('/login');
     }
 

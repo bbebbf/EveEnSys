@@ -14,7 +14,7 @@
       <form method="post" action="/admin/users/<?= html_out($deleteUserGuid) ?>/delete">
         <input type="hidden" name="_csrf" value="<?= html_out(Session::getCsrfToken()) ?>">
         <div class="modal-body">
-          <p>Möchten Sie das Konto <strong><?= html_out($deleteUserName) ?></strong> wirklich dauerhaft löschen?</p>
+          <p>Möchtest du das Konto <strong><?= html_out($deleteUserName) ?></strong> wirklich dauerhaft löschen?</p>
           <ul class="text-danger small">
             <li>Alle Veranstaltungen dieses Benutzers werden gelöscht.</li>
             <li>Alle Anmeldungen dieses Benutzers werden gelöscht.</li>

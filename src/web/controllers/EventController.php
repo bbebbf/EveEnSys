@@ -132,7 +132,7 @@ class EventController
         $type = $req->post('enroll_type', '');
         if ($type === 'self') {
             if ($this->eventRepo->isUserEnrolledAsSelf($event->eventId, $userId)) {
-                $this->session->setFlash('error', 'Sie sind bereits für diese Veranstaltung angemeldet.');
+                $this->session->setFlash('error', 'Du bist bereits für diese Veranstaltung angemeldet.');
                 $this->response->redirect('/events/' . $guid);
             }
             $this->eventRepo->createSubscriber($event->eventId, $userId, true, null);
@@ -146,11 +146,11 @@ class EventController
                 $eventLink,
                 $event,
             );
-            $this->session->setFlash('success', 'Sie wurden erfolgreich angemeldet.');
+            $this->session->setFlash('success', 'Du wurdest erfolgreich angemeldet.');
         } elseif ($type === 'other') {
             $name = trim($req->post('subscriber_name', ''));
             if ($name === '') {
-                $this->session->setFlash('error', 'Bitte geben Sie einen Namen ein.');
+                $this->session->setFlash('error', 'Bitte gib einen Namen ein.');
                 $this->response->redirect('/events/' . $guid);
             }
             if (mb_strlen($name) > 100) {
@@ -190,7 +190,7 @@ class EventController
         $subscriber = $this->eventRepo->findSubscriberByGuid($subscriberGuid);
 
         if (!$this->eventRepo->deleteSubscriber($subscriberGuid, $userId, $isAdmin)) {
-            $this->session->setFlash('error', 'Anmeldung nicht gefunden oder Sie haben keine Berechtigung, sie zu entfernen.');
+            $this->session->setFlash('error', 'Anmeldung nicht gefunden oder du hast keine Berechtigung, sie zu entfernen.');
         } else {
             if ($subscriber !== null) {
                 $this->emailSender->sendUnenrolledEmail(
@@ -392,7 +392,7 @@ class EventController
                ?: DateTime::createFromFormat('Y-m-d H:i', $dateRaw)
                ?: DateTime::createFromFormat('Y-m-d H:i:s', $dateRaw);
             if (!$dt) {
-                $errors['event_date'] = 'Bitte geben Sie ein gültiges Datum und eine gültige Uhrzeit ein.';
+                $errors['event_date'] = 'Bitte gib ein gültiges Datum und eine gültige Uhrzeit ein.';
             } elseif ($dt < $this->getMinEventDate()) {
                 $errors['event_date'] = 'Das Datum muss mindestens ' . event_date_out($this->getMinEventDate()) . ' sein.';
             } elseif ($dt > $this->getMaxEventDate()) {
