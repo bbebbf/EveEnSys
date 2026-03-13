@@ -20,6 +20,7 @@ class AuthControllerTest extends TestCase
     private MockObject       $session;
     private MockObject       $view;
     private FakeResponse     $response;
+    private MockObject       $emailSender;
     private \AuthController  $controller;
 
     protected function setUp(): void
@@ -33,6 +34,7 @@ class AuthControllerTest extends TestCase
         $this->session          = $this->createMock(\SessionInterface::class);
         $this->view             = $this->createMock(\ViewInterface::class);
         $this->response         = new FakeResponse();
+        $this->emailSender      = $this->createMock(\EmailSender::class);
 
         $this->controller = new \AuthController(
             $this->userRepo,
@@ -44,6 +46,7 @@ class AuthControllerTest extends TestCase
             $this->session,
             $this->view,
             $this->response,
+            $this->emailSender,
         );
     }
 
@@ -234,8 +237,8 @@ class AuthControllerTest extends TestCase
 
         $this->userRepo->expects($this->never())->method('delete');
         $this->view->expects($this->once())->method('render')->with(
-            'profile/confirm_delete',
-            $this->callback(fn($d) => isset($d['errors']['password']))
+            'profile/edit',
+            $this->callback(fn($d) => isset($d['deleteErrors']['password']))
         );
 
         $this->controller->deleteProfile(new \Request(), 'guid-x');

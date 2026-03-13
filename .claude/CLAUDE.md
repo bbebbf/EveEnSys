@@ -92,3 +92,7 @@ Three tables in database `ees_db`:
 - User passwords should be at least 8 characters long and must include uppercase and lower case letters and also numbers.
 - The GET URLs to each event must not be guessable. So a GUID be used in URLs instead of the internal database ``event`` table id. The event GUID should be stored in the column ``event.event_guid`` without curly brackets.
 - A "forgot password email" helps to create a new password.
+
+## Unit tests
+
+To execute unit tests run the follwing command ``.\docker\run_phpunit_tests.bat``.

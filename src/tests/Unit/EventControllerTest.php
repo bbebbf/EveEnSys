@@ -12,23 +12,29 @@ use Tests\Fakes\RedirectException;
 class EventControllerTest extends TestCase
 {
     private MockObject        $eventRepo;
+    private MockObject        $userRepo;
     private MockObject        $session;
     private MockObject        $view;
     private FakeResponse      $response;
+    private MockObject        $emailSender;
     private \EventController  $controller;
 
     protected function setUp(): void
     {
-        $this->eventRepo  = $this->createMock(\EventRepositoryInterface::class);
-        $this->session    = $this->createMock(\SessionInterface::class);
-        $this->view       = $this->createMock(\ViewInterface::class);
-        $this->response   = new FakeResponse();
+        $this->eventRepo   = $this->createMock(\EventRepositoryInterface::class);
+        $this->userRepo    = $this->createMock(\UserRepositoryInterface::class);
+        $this->session     = $this->createMock(\SessionInterface::class);
+        $this->view        = $this->createMock(\ViewInterface::class);
+        $this->response    = new FakeResponse();
+        $this->emailSender = $this->createMock(\EmailSender::class);
 
         $this->controller = new \EventController(
             $this->eventRepo,
+            $this->userRepo,
             $this->session,
             $this->view,
             $this->response,
+            $this->emailSender,
         );
     }
 
@@ -208,6 +214,8 @@ class EventControllerTest extends TestCase
 
         $this->session->method('validateCsrf')->willReturn(true);
         $this->session->method('getUserId')->willReturn(7);
+        $this->session->method('getUserEmail')->willReturn('user@example.com');
+        $this->session->method('getUserName')->willReturn('Test User');
         $this->eventRepo->method('findByGuid')->with('abc')->willReturn($event);
         $this->eventRepo->method('isOwner')->with(5, 7)->willReturn(true);
         $this->eventRepo->expects($this->once())->method('deleteSubscribersByEvent')->with(5);
@@ -246,6 +254,8 @@ class EventControllerTest extends TestCase
 
         $this->session->method('validateCsrf')->willReturn(true);
         $this->session->method('getUserId')->willReturn(7);
+        $this->session->method('getUserEmail')->willReturn('user@example.com');
+        $this->session->method('getUserName')->willReturn('Test User');
         $this->eventRepo->method('findByGuid')->willReturn($event);
         $this->eventRepo->method('isUserEnrolledAsSelf')->willReturn(false);
         $this->eventRepo->expects($this->once())->method('createSubscriber')->with(5, 7, true, null);

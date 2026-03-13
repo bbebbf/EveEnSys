@@ -34,6 +34,12 @@ require $srcRoot . '/core/ResponseInterface.php';
 // Request (read-only wrapper around superglobals, no side effects)
 require $srcRoot . '/core/Request.php';
 
+// Globals / helpers
+require $srcRoot . '/core/Globals.php';
+
+// Tools
+require $srcRoot . '/tools/EmailSender.php';
+
 // Controllers
 require $srcRoot . '/controllers/ControllerTools.php';
 require $srcRoot . '/controllers/AuthController.php';
