@@ -7,6 +7,7 @@ class EventRepository implements EventRepositoryInterface
         private mysqli $db,
         private int $delayedStartMinutes,
         private int $newEventsDaysOld,
+        private bool $isNewEventApprovalRequired,
     ) {}
 
     /** @return EventDto[] */
@@ -161,14 +162,17 @@ class EventRepository implements EventRepositoryInterface
     public function create(int $creatorUserId, array $data): string
     {
         $guid = $this->generateGuid();
+        $initialActivatedValue = $this->isNewEventApprovalRequired ?  0 : 1;
         $stmt = $this->db->prepare(
-            "INSERT INTO event (event_guid, creator_user_id, event_is_activated, event_title, event_description, event_date, event_location, event_duration_hours, event_max_subscriber)
-             VALUES (?, ?, b'0', ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO event (event_guid, creator_user_id, event_is_activated, event_is_visible, event_title, event_description, event_date, event_location, event_duration_hours, event_max_subscriber)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
         $stmt->bind_param(
-            'sissssdi',
+            'siiissssdi',
             $guid,
             $creatorUserId,
+            $initialActivatedValue,
+            $initialActivatedValue,
             $data['event_title'],
             $data['event_description'],
             $data['event_date'],

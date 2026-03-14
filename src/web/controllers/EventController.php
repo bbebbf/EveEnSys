@@ -313,7 +313,12 @@ class EventController
             );
         }
 
-        $this->session->setFlash('success', 'Veranstaltung erfolgreich erstellt. Nach einer Prüfung wird sie innerhalb der nächsten Stunden für andere sichtbar sein.');
+        $msg = 'Veranstaltung erfolgreich erstellt.';
+        if ($createdEvent !== null && !$createdEvent->eventIsActivated) {
+             $msg .= ' Nach einer Prüfung wird sie innerhalb der nächsten Stunden für andere sichtbar sein.';
+        }
+
+        $this->session->setFlash('success', $msg);
         $this->response->redirect('/events/' . $guid);
     }
 
@@ -404,7 +409,7 @@ class EventController
             );
         }
 
-        $this->session->setFlash('success', 'Veranstaltung gelöscht.');
+        $this->session->setFlash('success', 'Veranstaltung "' . $event->eventTitle . '" gelöscht.');
         $this->response->redirect($this->getRedirectUrlFromRequest($req));
     }
 

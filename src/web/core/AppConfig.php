@@ -102,6 +102,14 @@ class AppConfig
         return 1000000;
     }
 
+    public function isNewEventApprovalRequired(): bool
+    {
+        if (is_array($this->config) && array_key_exists('NewEventApprovalRequired', $this->config)) {
+            return (bool)$this->config['NewEventApprovalRequired'];
+        }
+        return false;
+    }
+
     private function get_str_value(string $key, string $default = ''): string
     {
         if (is_array($this->config) && array_key_exists($key, $this->config)) {

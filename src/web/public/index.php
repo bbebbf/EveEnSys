@@ -78,7 +78,11 @@ $router = new Router($req);
 
 // Instantiate repositories
 $userRepo         = new UserRepository($db);
-$eventRepo        = new EventRepository($db, APP_CONFIG->getDelayedStartMinutes(), APP_CONFIG->getNewEventsDaysOld());
+$eventRepo        = new EventRepository($db,
+    APP_CONFIG->getDelayedStartMinutes(),
+    APP_CONFIG->getNewEventsDaysOld(),
+    APP_CONFIG->isNewEventApprovalRequired()
+    );
 $resetRepo        = new PasswordResetRepository($db);
 $activationRepo   = new ActivationTokenRepository($db);
 $oidcIdentityRepo = new OidcIdentityRepository($db);
