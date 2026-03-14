@@ -81,6 +81,14 @@ class AppConfig
         return $dt !== false ? $dt : null;
     }
 
+    public function getNewEventsDaysOld(): int
+    {
+        if (is_array($this->config) && array_key_exists('NewEventsDaysOld', $this->config)) {
+            return max(1, (int)$this->config['NewEventsDaysOld']);
+        }
+        return 3;
+    }
+
     public function getMaintenanceBanner(): string
     {
         return $this->get_str_value('MaintenanceBanner', '');

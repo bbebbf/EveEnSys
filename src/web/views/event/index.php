@@ -19,7 +19,7 @@
 
 <?php if (empty($events)): ?>
   <div class="text-center text-muted py-5">
-    <p class="fs-5">Keine bevorstehenden Veranstaltungen.</p>
+    <p class="fs-5">Keine Veranstaltungen.</p>
     <a href="/events/create" class="btn btn-outline-primary">Jetzt erstellen</a>
   </div>
 <?php else: ?>
@@ -47,8 +47,8 @@
             <span>
               <i class="bi bi-calendar-event"></i>
               <?= event_date_out($event->eventDate) ?>
-              <?php if ($event->eventIsNew): ?>
-                <span class="badge bg-success">Neu</span>
+              <?php if (!$event->eventIsActivated): ?>
+                <span class="badge bg-danger">nicht aktiviert</span>
               <?php endif; ?>
             </span>
             <span>

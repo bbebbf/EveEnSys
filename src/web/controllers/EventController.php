@@ -68,15 +68,11 @@ class EventController
     {
         $this->session->requireLogin();
 
-        if (!$this->session->isAdmin()) {
-            $this->response->abort403();
-        }
-
-        $events = $this->eventRepo->findAllNew();
+        $events = $this->eventRepo->findAllNew(!$this->session->isAdmin());
         $this->view->render('event/index', [
             'pageTitle' => 'Neue Veranstaltungen',
             'events'    => $events,
-            'isAdmin'   => true,
+            'isAdmin'   => $this->session->isAdmin(),
             'origin'    => 'new',
         ]);
     }
@@ -259,8 +255,8 @@ class EventController
         $event = $this->eventRepo->findByGuid($guid) ?? $this->response->abort404();
         $this->eventRepo->setVisible($event->eventId, !$event->eventIsVisible);
 
-        $msg = $event->eventIsVisible ? 'Veranstaltung "' . $event->eventTitle . '" ist jetzt versteckt.' :
-                                        'Veranstaltung "' . $event->eventTitle . '" ist jetzt sichtbar.';
+        $newStateText = ($event->eventIsVisible ? 'versteckt' : ($event->eventIsActivated ? '' : 'aktiviert und ') . 'sichtbar');
+        $msg = 'Veranstaltung "' . $event->eventTitle . '" ist jetzt ' . $newStateText . '.';
         $this->session->setFlash('success', $msg);
         $this->response->redirect($this->getRedirectUrlFromRequest($req, $guid));
     }

@@ -13,7 +13,7 @@ interface EventRepositoryInterface
     public function findAll(bool $visibleOnly = true): array;
 
     /** @return EventDto[] */
-    public function findAllNew(): array;
+    public function findAllNew(bool $includeNotActivated): array;
 
     /** @return EventDto[] */
     public function findAllByUser(int $userId): array;

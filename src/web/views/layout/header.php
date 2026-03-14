@@ -38,10 +38,10 @@
               <li><a class="dropdown-item" href="/events/my"><i class="bi bi-calendar-event"></i> Meine Veranstaltungen</a></li>
               <li><a class="dropdown-item" href="/events/enrolled"><i class="bi bi-card-checklist"></i> Meine Anmeldungen</a></li>
               <div class="dropdown-divider"></div>
+              <li><a class="dropdown-item" href="/events/new"><i class="bi bi-stars"></i> Neue Veranstaltungen</a></li>
               <li><a class="dropdown-item" href="/events/all"><i class="bi bi-calendar-week"></i> Alle Veranstaltungen</a></li>
 
               <?php if (Session::isAdmin()): ?>
-                <li><a class="dropdown-item" href="/events/new"><i class="bi bi-stars"></i> Neue Veranstaltungen</a></li>
                 <div class="dropdown-divider"></div>
                 <li><a class="dropdown-item" href="/admin/users"><i class="bi bi-people"></i> Benutzerverwaltung</a></li>
               <?php endif; ?>

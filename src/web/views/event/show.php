@@ -11,8 +11,8 @@
     <div class="d-flex justify-content-between align-items-start mb-2">
       <h2>
         <?= html_out($event->eventTitle) ?>
-        <?php if ($event->eventIsNew): ?>
-          <span class="badge bg-success">Neu</span>
+        <?php if (!$event->eventIsActivated): ?>
+          <span class="badge bg-danger">nicht aktiviert</span>
         <?php endif; ?>
       </h2>
       <?php if ($isAdmin || (Session::isLoggedIn() && Session::getUserId() === $event->creatorUserId)): ?>

@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 class EventRepository implements EventRepositoryInterface
 {
-    public function __construct(private mysqli $db) {}
+    public function __construct(
+        private mysqli $db,
+        private int $delayedStartMinutes,
+        private int $newEventsDaysOld,
+    ) {}
 
     /** @return EventDto[] */
     public function findUpcoming(int $limit): array
     {
-        $delayedStartMinutes = APP_CONFIG->getDelayedStartMinutes();
         $stmt = $this->db->prepare(
             'SELECT e.*, u.user_name AS creator_name
                FROM event e
@@ -18,7 +21,7 @@ class EventRepository implements EventRepositoryInterface
               ORDER BY e.event_date ASC
               LIMIT ?'
         );
-        $stmt->bind_param('ii', $delayedStartMinutes, $limit);
+        $stmt->bind_param('ii', $this->delayedStartMinutes, $limit);
         $stmt->execute();
         $events = [];
         $result = $stmt->get_result();
@@ -34,7 +37,6 @@ class EventRepository implements EventRepositoryInterface
     /** @return EventDto[] */
     public function findAllUpcoming(bool $visibleOnly = true): array
     {
-        $delayedStartMinutes = APP_CONFIG->getDelayedStartMinutes();
         $sql = 'SELECT e.*, u.user_name AS creator_name
                FROM event e
                JOIN `user` u ON e.creator_user_id = u.user_id
@@ -42,7 +44,7 @@ class EventRepository implements EventRepositoryInterface
              . ($visibleOnly ? ' AND e.event_is_visible = 1' : '')
              . ' ORDER BY e.event_date ASC';
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param('i', $delayedStartMinutes);
+        $stmt->bind_param('i', $this->delayedStartMinutes);
         $stmt->execute();
         $events = [];
         $result = $stmt->get_result();
@@ -56,20 +58,25 @@ class EventRepository implements EventRepositoryInterface
     }
 
     /** @return EventDto[] */
-    public function findAllNew(): array
+    public function findAllNew(bool $visibleOnly = true): array
     {
-        $result = $this->db->query(
-            "SELECT e.*, u.user_name AS creator_name
+        $stmt = $this->db->prepare(
+            'SELECT e.*, u.user_name AS creator_name
                FROM event e
                JOIN `user` u ON e.creator_user_id = u.user_id
-              WHERE e.event_is_new = b'1'
-              ORDER BY e.event_date ASC"
+              WHERE e.event_created_date >= DATE_SUB(NOW(), INTERVAL ? DAY)'
+             . ($visibleOnly ? ' AND e.event_is_visible = 1' : '')
+             . ' ORDER BY e.event_date ASC'
         );
+        $stmt->bind_param('i', $this->newEventsDaysOld);
+        $stmt->execute();
         $events = [];
+        $result = $stmt->get_result();
         while ($row = $result->fetch_assoc()) {
             $events[] = $this->mapEventRow($row);
         }
         $result->free();
+        $stmt->close();
 
         return $events;
     }
@@ -155,8 +162,8 @@ class EventRepository implements EventRepositoryInterface
     {
         $guid = $this->generateGuid();
         $stmt = $this->db->prepare(
-            "INSERT INTO event (event_guid, creator_user_id, event_is_new, event_title, event_description, event_date, event_location, event_duration_hours, event_max_subscriber)
-             VALUES (?, ?, b'1', ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO event (event_guid, creator_user_id, event_is_activated, event_title, event_description, event_date, event_location, event_duration_hours, event_max_subscriber)
+             VALUES (?, ?, b'0', ?, ?, ?, ?, ?, ?)"
         );
         $stmt->bind_param(
             'sissssdi',
@@ -208,7 +215,7 @@ class EventRepository implements EventRepositoryInterface
     public function setVisible(int $eventId, bool $visible): void
     {
         if ($visible) {
-          $stmt = $this->db->prepare('UPDATE event SET event_is_new = 0, event_is_visible = 1 WHERE event_id = ?');
+          $stmt = $this->db->prepare('UPDATE event SET event_is_activated = 1, event_is_visible = 1 WHERE event_id = ?');
           $stmt->bind_param('i', $eventId);
           $stmt->execute();
           $stmt->close();
@@ -451,7 +458,7 @@ class EventRepository implements EventRepositoryInterface
             eventId:            (int)$row['event_id'],
             eventGuid:          $row['event_guid'],
             creatorUserId:      (int)$row['creator_user_id'],
-            eventIsNew:         (bool)$row['event_is_new'],
+            eventIsActivated:   (bool)$row['event_is_activated'],
             eventIsVisible:     (bool)$row['event_is_visible'],
             eventTitle:         $row['event_title'],
             eventDescription:   $row['event_description'] ?? null,
@@ -459,6 +466,7 @@ class EventRepository implements EventRepositoryInterface
             eventLocation:      $row['event_location'] ?? null,
             eventDurationHours: isset($row['event_duration_hours']) ? (float)$row['event_duration_hours'] : null,
             eventMaxSubscriber: isset($row['event_max_subscriber']) ? (int)$row['event_max_subscriber'] : null,
+            eventCreatedDate:   isset($row['event_created_date']) ? new \DateTimeImmutable($row['event_created_date']) : null,
             creatorName:        $row['creator_name'] ?? null,
         );
     }

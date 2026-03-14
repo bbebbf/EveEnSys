@@ -7,7 +7,7 @@ class EventDto
         public readonly int     $eventId,
         public readonly string  $eventGuid,
         public readonly int     $creatorUserId,
-        public readonly bool    $eventIsNew,
+        public readonly bool    $eventIsActivated,
         public readonly bool    $eventIsVisible,
         public readonly string  $eventTitle,
         public readonly ?string $eventDescription,
@@ -15,6 +15,7 @@ class EventDto
         public readonly ?string $eventLocation,
         public readonly ?float  $eventDurationHours,
         public readonly ?int    $eventMaxSubscriber,
+        public readonly ?\DateTimeImmutable $eventCreatedDate = null,
         public readonly ?string $creatorName = null,
     ) {}
 }

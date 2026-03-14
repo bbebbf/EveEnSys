@@ -102,7 +102,7 @@ class EventControllerTest extends TestCase
         $this->session->method('isLoggedIn')->willReturn(false);
         $this->view->expects($this->once())->method('render')->with('event/show', $this->anything());
 
-        $this->controller->show('abc');
+        $this->controller->show(new \Request(), 'abc');
     }
 
     public function test_show_aborts_404_when_event_not_found(): void
@@ -112,7 +112,7 @@ class EventControllerTest extends TestCase
         $this->expectException(AbortException::class);
         $this->expectExceptionMessage('HTTP 404');
 
-        $this->controller->show('unknown');
+        $this->controller->show(new \Request(), 'unknown');
     }
 
     public function test_show_aborts_404_for_hidden_event_viewed_by_guest(): void
@@ -126,7 +126,7 @@ class EventControllerTest extends TestCase
         $this->expectException(AbortException::class);
         $this->expectExceptionMessage('HTTP 404');
 
-        $this->controller->show('abc');
+        $this->controller->show(new \Request(), 'abc');
     }
 
     public function test_show_allows_admin_to_view_hidden_event(): void
@@ -140,7 +140,7 @@ class EventControllerTest extends TestCase
         $this->session->method('getUserId')->willReturn(1);
         $this->view->expects($this->once())->method('render')->with('event/show', $this->anything());
 
-        $this->controller->show('abc');
+        $this->controller->show(new \Request(), 'abc');
     }
 
     // -------------------------------------------------------------------------
@@ -323,7 +323,7 @@ class EventControllerTest extends TestCase
             eventId:            $eventId,
             eventGuid:          $eventGuid,
             creatorUserId:      $creatorUserId,
-            eventIsNew:         false,
+            eventIsActivated:   false,
             eventIsVisible:     $eventIsVisible,
             eventTitle:         'Test Event',
             eventDescription:   null,
