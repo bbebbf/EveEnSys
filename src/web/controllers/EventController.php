@@ -61,6 +61,7 @@ class EventController
             'pageTitle' => 'Meine Veranstaltungen',
             'events'    => $events,
             'isAdmin'   => $this->session->isAdmin(),
+            'origin'    => 'my',
         ]);
     }
 
@@ -528,6 +529,7 @@ class EventController
             'upcoming' => '/events',
             'all'      => '/events/all',
             'new'      => '/events/new',
+            'my'       => '/events/my',
             default    => '/events/' . $eventGuid,
         };
     }
