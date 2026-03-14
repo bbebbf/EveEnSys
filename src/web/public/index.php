@@ -104,6 +104,7 @@ $router->get('/kiosk',                 fn() => $eventController->kiosk());
 $router->get('/events',                fn() => $eventController->index());
 $router->get('/events/all',            fn() => $eventController->indexAll());
 $router->get('/events/my',             fn() => $eventController->indexMy());
+$router->get('/events/new',            fn() => $eventController->indexNew());
 $router->get('/events/enrolled',       fn() => $eventController->indexEnrolled());
 $router->get('/events/create',         fn() => $eventController->showCreate());
 $router->post('/events/create',        fn() => $eventController->create($req));

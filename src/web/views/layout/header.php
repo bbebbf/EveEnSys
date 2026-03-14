@@ -41,6 +41,7 @@
               <li><a class="dropdown-item" href="/events/all"><i class="bi bi-calendar-week"></i> Alle Veranstaltungen</a></li>
 
               <?php if (Session::isAdmin()): ?>
+                <li><a class="dropdown-item" href="/events/new"><i class="bi bi-stars"></i> Neue Veranstaltungen</a></li>
                 <div class="dropdown-divider"></div>
                 <li><a class="dropdown-item" href="/admin/users"><i class="bi bi-people"></i> Benutzerverwaltung</a></li>
               <?php endif; ?>

@@ -56,6 +56,25 @@ class EventRepository implements EventRepositoryInterface
     }
 
     /** @return EventDto[] */
+    public function findAllNew(): array
+    {
+        $result = $this->db->query(
+            "SELECT e.*, u.user_name AS creator_name
+               FROM event e
+               JOIN `user` u ON e.creator_user_id = u.user_id
+              WHERE e.event_is_new = b'1'
+              ORDER BY e.event_date ASC"
+        );
+        $events = [];
+        while ($row = $result->fetch_assoc()) {
+            $events[] = $this->mapEventRow($row);
+        }
+        $result->free();
+
+        return $events;
+    }
+
+    /** @return EventDto[] */
     public function findAll(bool $visibleOnly = true): array
     {
         $sql = 'SELECT e.*, u.user_name AS creator_name

@@ -13,6 +13,9 @@ interface EventRepositoryInterface
     public function findAll(bool $visibleOnly = true): array;
 
     /** @return EventDto[] */
+    public function findAllNew(): array;
+
+    /** @return EventDto[] */
     public function findAllByUser(int $userId): array;
 
     public function findById(int $id): ?EventDto;

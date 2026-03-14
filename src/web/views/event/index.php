@@ -47,6 +47,9 @@
             <span>
               <i class="bi bi-calendar-event"></i>
               <?= event_date_out($event->eventDate) ?>
+              <?php if ($event->eventIsNew): ?>
+                <span class="badge bg-success">Neu</span>
+              <?php endif; ?>
             </span>
             <span>
               <?php if ($isAdmin): ?>
@@ -58,8 +61,6 @@
                     </button>
                   </form>
                 </div>
-              <?php elseif (!$event->eventIsVisible): ?>
-                <span class="badge text-bg-warning"><small>Versteckt</small></span>
               <?php endif; ?>
             </span>
           </div>

@@ -9,7 +9,12 @@
     </nav>
 
     <div class="d-flex justify-content-between align-items-start mb-2">
-      <h2><?= html_out($event->eventTitle) ?></h2>
+      <h2>
+        <?= html_out($event->eventTitle) ?>
+        <?php if ($event->eventIsNew): ?>
+          <span class="badge bg-success">Neu</span>
+        <?php endif; ?>
+      </h2>
       <?php if ($isAdmin || (Session::isLoggedIn() && Session::getUserId() === $event->creatorUserId)): ?>
         <div class="btn-group ms-3">
           <a href="/events/<?= html_out($event->eventGuid) ?>/edit" class="btn btn-sm btn-outline-secondary">Bearbeiten</a>

@@ -63,6 +63,23 @@ class EventController
         ]);
     }
 
+    public function indexNew(): void
+    {
+        $this->session->requireLogin();
+
+        if (!$this->session->isAdmin()) {
+            $this->response->abort403();
+        }
+
+        $events = $this->eventRepo->findAllNew();
+        $this->view->render('event/index', [
+            'pageTitle' => 'Neue Veranstaltungen',
+            'events'    => $events,
+            'isAdmin'   => true,
+            'origin'    => 'new',
+        ]);
+    }
+
     public function indexEnrolled(): void
     {
         $this->session->requireLogin();
@@ -390,7 +407,11 @@ class EventController
         }
 
         $this->session->setFlash('success', 'Veranstaltung gelöscht.');
-        $redirectUrl = $req->post('origin') === 'all' ? '/events/all' : '/events';
+        $redirectUrl = match($req->post('origin')) {
+            'all' => '/events/all',
+            'new' => '/events/new',
+            default => '/events',
+        };
         $this->response->redirect($redirectUrl);
     }
 
