@@ -17,8 +17,8 @@
 </div>
 
 <div class="table-responsive" id="user-table">
-  <table class="table table-striped align-middle">
-    <thead>
+  <table class="table table-hover align-middle">
+    <thead class="table-light">
       <tr>
         <th>Name</th>
         <th>E-Mail-Adresse</th>
@@ -36,6 +36,8 @@
         ?>
         <?php if ($u->userId == Session::getUserId()): ?>
           <tr class="table-success" data-search="<?= html_out($searchData) ?>">
+        <?php elseif (!$u->userIsActive && !$u->userIsNew): ?>
+          <tr class="table-warning" data-search="<?= html_out($searchData) ?>">
         <?php else: ?>
           <tr data-search="<?= html_out($searchData) ?>">
         <?php endif; ?>
@@ -43,8 +45,6 @@
             <?= html_out($u->userName) ?>
             <?php if ($u->userIsNew): ?>
               <span class="badge bg-success">Neu</span>
-            <?php elseif (!$u->userIsActive): ?>
-              <span class="badge bg-warning">Inaktiv</span>
             <?php endif; ?>
             <?php if ($u->userRole >= 1): ?>
               <span class="badge bg-primary">Admin</span>
@@ -71,7 +71,7 @@
                     <i class="bi bi-x-circle"></i>
                   </button>
                 <?php elseif (!$u->userIsNew): ?>
-                  <button type="submit" class="btn btn-outline-warning btn-md" title="Benutzer reaktivieren">
+                  <button type="submit" class="btn btn-outline-success btn-md" title="Benutzer reaktivieren">
                     <i class="bi bi-x-circle"></i>
                   </button>
                 <?php else: ?>

@@ -1,12 +1,13 @@
 {
     "Timezone": "Europe/Berlin",
-    "AppTitleShort": "",
-    "AppTitleLong": "",
+    "AppTitleShort": "EvEnSys",
+    "AppTitleLong": "EvEnSys",
     "AppImpressUrl": "",
     "KioskSlideDurationSec": 15,
     "DelayedStartMinutes": 15,
     "EventDateRangeFrom": "",
     "EventDateRangeTo": "",
-    "SearchbarStartsAtItemCount": 6
+    "SearchbarStartsAtItemCount": 6,
+    "NewEventApprovalRequired": false 
 }
  

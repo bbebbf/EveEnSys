@@ -42,13 +42,13 @@
       <div class="col" data-search="<?= html_out($searchData) ?>">
 
 
-        <div class="card h-100 shadow-sm">
+        <div class="card h-100 shadow-sm <?= !$event->eventIsVisible ? 'bg-warning bg-opacity-25' : '' ?>">
           <div class="card-header d-flex justify-content-between align-items-center">
             <span>
               <i class="bi bi-calendar-event"></i>
               <?= event_date_out($event->eventDate) ?>
               <?php if (!$event->eventIsActivated): ?>
-                <span class="badge bg-danger">nicht aktiviert</span>
+                <span class="badge bg-danger me-2">nicht aktiviert</span>
               <?php endif; ?>
             </span>
             <span>
