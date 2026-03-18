@@ -3,9 +3,6 @@
 // Optional: $deleteEventOrigin (default '')
 $deleteEventOrigin ??= '';
 ?>
-<button type="button" class="btn btn-sm btn-outline-danger"
-        data-bs-toggle="modal"
-        data-bs-target="#deleteEventModal">Löschen</button>
 <div class="modal fade" id="deleteEventModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content text-start">

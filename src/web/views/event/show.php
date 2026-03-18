@@ -15,19 +15,25 @@
           <span class="badge bg-danger">nicht aktiviert</span>
         <?php endif; ?>
       </h2>
-      <?php if ($isAdmin || (Session::isLoggedIn() && Session::getUserId() === $event->creatorUserId)): ?>
-        <div class="btn-group ms-3">
-          <a href="/events/<?= html_out($event->eventGuid) ?>/edit" class="btn btn-sm btn-outline-secondary">Bearbeiten</a>
-          <?php
-            $deleteEventGuid   = $event->eventGuid;
-            $deleteEventTitle  = $event->eventTitle;
-            $deleteEventDate   = $event->eventDate;
-            $deleteEventOrigin = $origin;
-            include APP_ROOT . '/views/event/_delete_modal.php';
-          ?>
-        </div>
-      <?php endif; ?>
     </div>
+
+    <?php if ($isAdmin || (Session::isLoggedIn() && Session::getUserId() === $event->creatorUserId)): ?>
+      <div class="btn-group mb-3">
+        <a href="/events/<?= html_out($event->eventGuid) ?>/edit" class="btn btn-sm btn-outline-secondary">
+          Bearbeiten
+        </a>
+        <button type="button" class="btn btn-sm btn-outline-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteEventModal">Löschen</button>
+      </div>
+      <?php
+        $deleteEventGuid   = $event->eventGuid;
+        $deleteEventTitle  = $event->eventTitle;
+        $deleteEventDate   = $event->eventDate;
+        $deleteEventOrigin = $origin;
+        include APP_ROOT . '/views/event/_delete_modal.php';
+      ?>
+    <?php endif; ?>
 
     <?php if ($event->eventDescription !== null): ?>
       <p class="text-muted"><?= nl2br(html_out($event->eventDescription)) ?></p>
