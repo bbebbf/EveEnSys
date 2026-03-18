@@ -381,6 +381,7 @@ class AuthController
                 $this->response->redirect('/admin/users');
             }
             $this->userRepo->setRole($user->userId, 0);
+            $this->emailSender->sendAdminRoleRevokedEmail($user->userEmail, $user->userName);
             $this->session->setFlash('success', 'Administrator-Rechte von ' . $user->userName . ' wurden entzogen.');
         } else {
             if (!$user->userIsActive) {
@@ -388,6 +389,7 @@ class AuthController
                 $this->response->redirect('/admin/users');
             }
             $this->userRepo->setRole($user->userId, 1);
+            $this->emailSender->sendAdminRoleGrantedEmail($user->userEmail, $user->userName);
             $this->session->setFlash('success', $user->userName . ' wurde zum Administrator ernannt.');
         }
 

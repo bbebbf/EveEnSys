@@ -107,6 +107,38 @@ class EmailSender
         return $email->send();
     }
 
+    public function sendAdminRoleGrantedEmail(string $toEmail, string $toName): bool
+    {
+        $appTitle = APP_CONFIG->getAppTitleShort();
+
+        $content = $this->paragraph("Hallo {$toName},")
+            . $this->paragraph("Dir wurden bei <strong>{$appTitle}</strong> Administrator-Rechte erteilt.")
+            . $this->paragraph('Damit hast du jetzt Zugriff auf den Administrator-Bereich.', true);
+
+        return (new Email())
+            ->setFrom($this->noReplyAddress)
+            ->addTo($toEmail, $toName)
+            ->setSubject($appTitle . ': Administrator-Rechte vergeben')
+            ->setHtmlBody($this->wrapHtml($appTitle, 'Administrator-Rechte vergeben', $content))
+            ->send();
+    }
+
+    public function sendAdminRoleRevokedEmail(string $toEmail, string $toName): bool
+    {
+        $appTitle = APP_CONFIG->getAppTitleShort();
+
+        $content = $this->paragraph("Hallo {$toName},")
+            . $this->paragraph("Dir wurden deine Administrator-Rechte bei <strong>{$appTitle}</strong> entzogen.")
+            . $this->paragraph('Du hast nun keinen Zugriff mehr auf den Administrator-Bereich.', true);
+
+        return (new Email())
+            ->setFrom($this->noReplyAddress)
+            ->addTo($toEmail, $toName)
+            ->setSubject($appTitle . ': Administrator-Rechte entzogen')
+            ->setHtmlBody($this->wrapHtml($appTitle, 'Administrator-Rechte entzogen', $content))
+            ->send();
+    }
+
     public function sendProfileDeletedEmail(string $toEmail, string $toName, ?string $ccEmail = null, ?string $ccName = null): bool
     {
         $appTitle = APP_CONFIG->getAppTitleShort();
