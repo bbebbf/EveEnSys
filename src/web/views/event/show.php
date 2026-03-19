@@ -127,7 +127,9 @@
         </ul>
 
         <div class="card-body">
-          <?php if ($isInThePast): ?>
+          <?php if (!$enrollmentAllowed): ?>
+            <p class="text-danger mb-0">Anmeldungen sind derzeit nicht möglich.</p>
+          <?php elseif ($isInThePast): ?>
             <p class="text-danger mb-0">Anmeldungen für vergangene Veranstaltungen sind nicht möglich.</p>
           <?php elseif ($isFull): ?>
             <p class="text-danger mb-0">Diese Veranstaltung ist ausgebucht.</p>

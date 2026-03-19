@@ -88,22 +88,12 @@ class AppConfig
 
     public function getEventDateRangeFrom(): ?DateTime
     {
-        $value = $this->get_str_value('EventDateRangeFrom');
-        if ($value === '') {
-            return null;
-        }
-        $dt = DateTime::createFromFormat('Y-m-d\TH:i', $value);
-        return $dt !== false ? $dt : null;
+        return $this->parse_datetime('EventDateRangeFrom');
     }
 
     public function getEventDateRangeTo(): ?DateTime
     {
-        $value = $this->get_str_value('EventDateRangeTo');
-        if ($value === '') {
-            return null;
-        }
-        $dt = DateTime::createFromFormat('Y-m-d\TH:i', $value);
-        return $dt !== false ? $dt : null;
+        return $this->parse_datetime('EventDateRangeTo');
     }
 
     public function getNewEventsDaysOld(): int
@@ -127,12 +117,53 @@ class AppConfig
         return 1000000;
     }
 
+    public function getEnrollmentPeriodFrom(): ?DateTime
+    {
+        return $this->parse_datetime('EnrollmentPeriodFrom');
+    }
+
+    public function getEnrollmentPeriodToExcluded(): ?DateTime
+    {
+        return $this->parse_datetime('EnrollmentPeriodToExcluded');
+    }
+
+    public function isEnrollmentAllowed(): bool
+    {
+        $from       = $this->getEnrollmentPeriodFrom();
+        $toExcluded = $this->getEnrollmentPeriodToExcluded();
+
+        if ($from === null && $toExcluded === null) {
+            return true;
+        }
+
+        $now = new DateTime();
+        if ($from !== null && $now < $from) {
+            return false;
+        }
+        if ($toExcluded !== null && $now >= $toExcluded) {
+            return false;
+        }
+        return true;
+    }
+
     public function isNewEventApprovalRequired(): bool
     {
         if (is_array($this->config) && array_key_exists('NewEventApprovalRequired', $this->config)) {
             return (bool)$this->config['NewEventApprovalRequired'];
         }
         return false;
+    }
+
+    private function parse_datetime(string $key): ?DateTime
+    {
+        $value = $this->get_str_value($key);
+        if ($value === '') {
+            return null;
+        }
+        $dt = DateTime::createFromFormat('Y-m-d\TH:i:s', $value)
+           ?: DateTime::createFromFormat('Y-m-d\TH:i', $value)
+           ?: DateTime::createFromFormat('Y-m-d', $value);
+        return $dt !== false ? $dt : null;
     }
 
     private function get_str_value(string $key, string $default = ''): string

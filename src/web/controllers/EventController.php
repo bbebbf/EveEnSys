@@ -100,14 +100,15 @@ class EventController
             && $this->eventRepo->isUserEnrolledAsSelf($event->eventId, $this->session->getUserId());
 
         $this->view->render('event/show', [
-            'pageTitle'        => $event->eventTitle,
-            'event'            => $event,
-            'subscribers'      => $subscribers,
-            'isEnrolledAsSelf' => $isEnrolledAsSelf,
-            'subscriberCount'  => count($subscribers),
-            'isAdmin'          => $isAdmin,
-            'isCreator'        => $isCreator,
-            'origin'           => $req->get('origin', ''),
+            'pageTitle'         => $event->eventTitle,
+            'event'             => $event,
+            'subscribers'       => $subscribers,
+            'isEnrolledAsSelf'  => $isEnrolledAsSelf,
+            'subscriberCount'   => count($subscribers),
+            'isAdmin'           => $isAdmin,
+            'isCreator'         => $isCreator,
+            'origin'            => $req->get('origin', ''),
+            'enrollmentAllowed' => APP_CONFIG->isEnrollmentAllowed(),
         ]);
     }
 
@@ -124,6 +125,11 @@ class EventController
 
         if (!$event->eventIsVisible) {
             $this->session->setFlash('error', 'Anmeldungen für versteckte Veranstaltungen sind nicht möglich.');
+            $this->response->redirect('/events/' . $guid);
+        }
+
+        if (!APP_CONFIG->isEnrollmentAllowed()) {
+            $this->session->setFlash('error', 'Anmeldungen sind derzeit nicht möglich.');
             $this->response->redirect('/events/' . $guid);
         }
 
@@ -491,8 +497,8 @@ class EventController
     {
         $dt = new DateTime();
         $eventDateFrom = APP_CONFIG->getEventDateRangeFrom();
-        if ($eventDateFrom !== null) {
-            $dt = max($dt, $eventDateFrom);
+        if ($eventDateFrom !== null && $eventDateFrom > $dt) {
+            $dt = $eventDateFrom;
         }
         return $dt;
     }
@@ -508,8 +514,8 @@ class EventController
         $dt = new DateTime();
         $dt->modify('+6 months');
         $eventDateTo = APP_CONFIG->getEventDateRangeTo();
-        if ($eventDateTo !== null) {
-            $dt = min($dt, $eventDateTo);
+        if ($eventDateTo !== null && $eventDateTo < $dt) {
+            $dt = $eventDateTo;
         }
         return $dt;
     }
