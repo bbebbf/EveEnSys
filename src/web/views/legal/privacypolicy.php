@@ -129,8 +129,8 @@ $_opMissing = $_opName === '' || $_opStreet === '' || $_opCity === '' || $_opEma
         zu Veranstaltungen anmelden. Dabei werden folgende Daten verarbeitet:
       </p>
       <ul>
-        <li><strong>Veranstaltungsdaten</strong> (Titel, Beschreibung, Datum, Dauer,
-          Teilnehmerzahl) — werden dem erstellenden Nutzer zugeordnet gespeichert</li>
+        <li><strong>Veranstaltungsdaten</strong> (z.B. Titel, Beschreibung, Datum, Dauer,
+          max. Teilnehmerzahl) — werden dem erstellenden Nutzer zugeordnet gespeichert</li>
         <li><strong>Anmeldungen</strong> — es wird gespeichert, welcher angemeldete Nutzer wen
           angemeldet hat. Bei Fremdanmeldungen wird der angegebene Name der Person gespeichert.</li>
       </ul>
@@ -138,11 +138,6 @@ $_opMissing = $_opName === '' || $_opStreet === '' || $_opCity === '' || $_opEma
         Die Namen angemeldeter Personen sind ausschließlich für angemeldete Nutzer sichtbar.
         Rechtsgrundlage ist Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;b DSGVO. Die Daten werden mit
         Löschung der jeweiligen Veranstaltung oder des erstellenden Benutzerkontos entfernt.
-      </p>
-      <p class="text-muted small">
-        Bitte beachten Sie: Wenn Sie eine andere Person (die kein eigenes Konto besitzt) zu einer
-        Veranstaltung anmelden, sind Sie dafür verantwortlich, dass Sie dazu berechtigt sind und
-        die betreffende Person darüber informiert ist.
       </p>
     </section>
 
@@ -314,7 +309,7 @@ $_opMissing = $_opName === '' || $_opStreet === '' || $_opCity === '' || $_opEma
     <section class="mb-5">
       <h2 class="h4">14. Aktualität und Änderungen dieser Datenschutzerklärung</h2>
       <p>
-        Diese Datenschutzerklärung hat den Stand <strong>März&nbsp;2025</strong>. Durch die
+        Diese Datenschutzerklärung hat den Stand <strong>März&nbsp;2026</strong>. Durch die
         Weiterentwicklung der Anwendung oder aufgrund geänderter gesetzlicher bzw. behördlicher
         Vorgaben kann es notwendig werden, diese Datenschutzerklärung anzupassen. Die jeweils
         aktuelle Fassung kann jederzeit in der Anwendung abgerufen werden.
