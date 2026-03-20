@@ -5,10 +5,6 @@
 # Ignore Docker data directories
 /docker/data/*
 
-# Ignore application configuration and custom greetings files
-/src/web/_config/app-config.json
-/src/web/views/home/greetings.php
-
 # Ignore Composer dependencies and lock file
 /src/vendor/
 /src/composer.lock

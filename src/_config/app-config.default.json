@@ -6,12 +6,14 @@
     "OperatorName": "",
     "OperatorStreet": "",
     "OperatorCity": "",
+    "OperatorResponsible": "",
     "OperatorEmail": "",
     "KioskSlideDurationSec": 15,
     "DelayedStartMinutes": 15,
     "EventDateRangeFrom": "",
     "EventDateRangeTo": "",
     "SearchbarStartsAtItemCount": 6,
-    "NewEventApprovalRequired": false 
+    "NewEventApprovalRequired": false,
+    "EnrollmentPeriodFrom": "",
+    "EnrollmentPeriodToExcluded": ""
 }
- 

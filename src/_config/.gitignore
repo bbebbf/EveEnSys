@@ -1,0 +1,5 @@
+﻿# Application config files
+app-config.json
+
+# Database connection settings
+database-config.json
