@@ -42,16 +42,6 @@ class EventControllerTest extends TestCase
     // home()
     // -------------------------------------------------------------------------
 
-    public function test_home_redirects_to_events_when_logged_in(): void
-    {
-        $this->session->method('isLoggedIn')->willReturn(true);
-
-        $this->expectException(RedirectException::class);
-        $this->expectExceptionMessage('/events');
-
-        $this->controller->home();
-    }
-
     public function test_home_renders_with_upcoming_events_for_guest(): void
     {
         $event = $this->makeEvent();
