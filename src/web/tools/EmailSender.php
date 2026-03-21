@@ -4,18 +4,22 @@ declare(strict_types=1);
 class EmailSender
 {
     private string $noReplyAddress;
+    private string $appTitleShort;
+    private string $appTitleLong;
+    private string $navbarColor;
 
     public function __construct(string $noReplyAddress)
     {
         $this->noReplyAddress = $noReplyAddress;
+        $this->appTitleShort  = htmlspecialchars(APP_CONFIG->getAppTitleShort());
+        $this->appTitleLong   = htmlspecialchars(APP_CONFIG->getAppTitleLong());
+        $this->navbarColor    = htmlspecialchars(APP_CONFIG->getNavbarColor());
     }
 
     public function sendAccountActivationEmail(string $toEmail, string $toName, string $activationLink): bool
     {
-        $appTitle = APP_CONFIG->getAppTitleShort();
-
         $content = $this->paragraph("Hallo {$toName},")
-            . $this->paragraph("Vielen Dank für deine Registrierung bei {$appTitle}.")
+            . $this->paragraph("Vielen Dank für deine Registrierung bei {$this->appTitleShort}.")
             . $this->paragraph("Klicke auf die Schaltfläche, um dein Konto zu aktivieren. Der Link ist <strong>24 Stunden</strong> gültig.")
             . $this->button($activationLink, 'Konto aktivieren')
             . $this->paragraph('Falls du dich nicht registriert hast, kannst du diese E-Mail ignorieren.', true);
@@ -23,15 +27,13 @@ class EmailSender
         return (new Email())
             ->setFrom($this->noReplyAddress)
             ->addTo($toEmail, $toName)
-            ->setSubject($appTitle . '-Konto aktivieren')
-            ->setHtmlBody($this->wrapHtml($appTitle, 'Konto aktivieren', $content))
+            ->setSubject($this->getEmailSubject('Konto aktivieren'))
+            ->setHtmlBody($this->wrapHtml('Konto aktivieren', $content))
             ->send();
     }
 
     public function sendEventCreatedEmail(string $toEmail, string $toName, string $eventTitle, string $eventDate, string $eventLink, EventDto $event): bool
     {
-        $appTitle = APP_CONFIG->getAppTitleShort();
-
         $content = $this->paragraph("Hallo {$toName},")
             . $this->paragraph('Deine Veranstaltung wurde erfolgreich erstellt.')
             . $this->details(['Titel' => $eventTitle, 'Datum' => $eventDate])
@@ -40,24 +42,22 @@ class EmailSender
         return (new Email())
             ->setFrom($this->noReplyAddress)
             ->addTo($toEmail, $toName)
-            ->setSubject('Veranstaltung erstellt: ' . $eventTitle)
-            ->setHtmlBody($this->wrapHtml($appTitle, 'Veranstaltung erstellt', $content))
+            ->setSubject($this->getEmailSubject('Veranstaltung erstellt: ' . $eventTitle))
+            ->setHtmlBody($this->wrapHtml('Veranstaltung erstellt', $content))
             ->addAttachment(IcsGenerator::generate($event), 'veranstaltung.ics', 'text/calendar')
             ->send();
     }
 
     public function sendEventDeletedEmail(string $toEmail, string $toName, string $eventTitle, ?string $ccEmail = null, ?string $ccName = null): bool
     {
-        $appTitle = APP_CONFIG->getAppTitleShort();
-
         $content = $this->paragraph("Hallo {$toName},")
             . $this->paragraph("Deine Veranstaltung <strong>" . htmlspecialchars($eventTitle) . "</strong> wurde gelöscht.");
 
         $email = (new Email())
             ->setFrom($this->noReplyAddress)
             ->addTo($toEmail, $toName)
-            ->setSubject('Veranstaltung gelöscht: ' . $eventTitle)
-            ->setHtmlBody($this->wrapHtml($appTitle, 'Veranstaltung gelöscht', $content));
+            ->setSubject($this->getEmailSubject('Veranstaltung gelöscht: ' . $eventTitle))
+            ->setHtmlBody($this->wrapHtml('Veranstaltung gelöscht', $content));
 
         if ($ccEmail !== null) {
             $email->addCc($ccEmail, $ccName ?? '');
@@ -68,7 +68,6 @@ class EmailSender
 
     public function sendEnrolledEmail(string $toEmail, string $toName, string $enrolleeName, bool $isSelf, string $eventTitle, string $eventDate, string $eventLink, EventDto $event): bool
     {
-        $appTitle = APP_CONFIG->getAppTitleShort();
         $who      = $isSelf ? 'Du wurdest' : '<strong>' . htmlspecialchars($enrolleeName) . '</strong> wurde';
 
         $content = $this->paragraph("Hallo {$toName},")
@@ -79,15 +78,14 @@ class EmailSender
         return (new Email())
             ->setFrom($this->noReplyAddress)
             ->addTo($toEmail, $toName)
-            ->setSubject('Anmeldung bestätigt: ' . $eventTitle)
-            ->setHtmlBody($this->wrapHtml($appTitle, 'Anmeldung bestätigt', $content))
+            ->setSubject($this->getEmailSubject('Anmeldung bestätigt: ' . $eventTitle))
+            ->setHtmlBody($this->wrapHtml('Anmeldung bestätigt', $content))
             ->addAttachment(IcsGenerator::generate($event), 'veranstaltung.ics', 'text/calendar')
             ->send();
     }
 
     public function sendUnenrolledEmail(string $toEmail, string $toName, string $enrolleeName, bool $isSelf, string $eventTitle, ?string $ccEmail = null, ?string $ccName = null): bool
     {
-        $appTitle = APP_CONFIG->getAppTitleShort();
         $who      = $isSelf ? 'Du wurdest' : '<strong>' . htmlspecialchars($enrolleeName) . '</strong> wurde';
 
         $content = $this->paragraph("Hallo {$toName},")
@@ -97,8 +95,8 @@ class EmailSender
         $email = (new Email())
             ->setFrom($this->noReplyAddress)
             ->addTo($toEmail, $toName)
-            ->setSubject('Abmeldung: ' . $eventTitle)
-            ->setHtmlBody($this->wrapHtml($appTitle, 'Abmeldung', $content));
+            ->setSubject($this->getEmailSubject('Abmeldung: ' . $eventTitle))
+            ->setHtmlBody($this->wrapHtml('Abmeldung', $content));
 
         if ($ccEmail !== null) {
             $email->addCc($ccEmail, $ccName ?? '');
@@ -109,48 +107,42 @@ class EmailSender
 
     public function sendAdminRoleGrantedEmail(string $toEmail, string $toName): bool
     {
-        $appTitle = APP_CONFIG->getAppTitleShort();
-
         $content = $this->paragraph("Hallo {$toName},")
-            . $this->paragraph("Dir wurden bei <strong>{$appTitle}</strong> Administrator-Rechte erteilt.")
+            . $this->paragraph("Dir wurden bei <strong>{$this->appTitleShort}</strong> Administrator-Rechte erteilt.")
             . $this->paragraph('Damit hast du jetzt Zugriff auf den Administrator-Bereich.', true);
 
         return (new Email())
             ->setFrom($this->noReplyAddress)
             ->addTo($toEmail, $toName)
-            ->setSubject($appTitle . ': Administrator-Rechte vergeben')
-            ->setHtmlBody($this->wrapHtml($appTitle, 'Administrator-Rechte vergeben', $content))
+            ->setSubject($this->getEmailSubject('Administrator-Rechte vergeben'))
+            ->setHtmlBody($this->wrapHtml('Administrator-Rechte vergeben', $content))
             ->send();
     }
 
     public function sendAdminRoleRevokedEmail(string $toEmail, string $toName): bool
     {
-        $appTitle = APP_CONFIG->getAppTitleShort();
-
         $content = $this->paragraph("Hallo {$toName},")
-            . $this->paragraph("Dir wurden deine Administrator-Rechte bei <strong>{$appTitle}</strong> entzogen.")
+            . $this->paragraph("Dir wurden deine Administrator-Rechte bei <strong>{$this->appTitleShort}</strong> entzogen.")
             . $this->paragraph('Du hast nun keinen Zugriff mehr auf den Administrator-Bereich.', true);
 
         return (new Email())
             ->setFrom($this->noReplyAddress)
             ->addTo($toEmail, $toName)
-            ->setSubject($appTitle . ': Administrator-Rechte entzogen')
-            ->setHtmlBody($this->wrapHtml($appTitle, 'Administrator-Rechte entzogen', $content))
+            ->setSubject($this->getEmailSubject('Administrator-Rechte entzogen'))
+            ->setHtmlBody($this->wrapHtml('Administrator-Rechte entzogen', $content))
             ->send();
     }
 
     public function sendProfileDeletedEmail(string $toEmail, string $toName, ?string $ccEmail = null, ?string $ccName = null): bool
     {
-        $appTitle = APP_CONFIG->getAppTitleShort();
-
         $content = $this->paragraph("Hallo {$toName},")
-            . $this->paragraph("Dein Profil bei {$appTitle} wurde gelöscht. Alle deine Daten wurden entfernt.");
+            . $this->paragraph("Dein Profil bei {$this->appTitleShort} wurde gelöscht. Alle deine Daten wurden entfernt.");
 
         $email = (new Email())
             ->setFrom($this->noReplyAddress)
             ->addTo($toEmail, $toName)
-            ->setSubject($appTitle . '-Profil gelöscht')
-            ->setHtmlBody($this->wrapHtml($appTitle, 'Profil gelöscht', $content));
+            ->setSubject($this->getEmailSubject('Profil gelöscht'))
+            ->setHtmlBody($this->wrapHtml('Profil gelöscht', $content));
 
         if ($ccEmail !== null) {
             $email->addCc($ccEmail, $ccName ?? '');
@@ -161,10 +153,8 @@ class EmailSender
 
     public function sendPasswordResetEmail(string $toEmail, string $toName, string $resetLink): bool
     {
-        $appTitle = APP_CONFIG->getAppTitleShort();
-
         $content = $this->paragraph("Hallo {$toName},")
-            . $this->paragraph("Du hast eine Passwortzurücksetzung für dein {$appTitle}-Konto angefordert.")
+            . $this->paragraph("Du hast eine Passwortzurücksetzung für dein {$this->appTitleShort}-Konto angefordert.")
             . $this->paragraph("Klicke auf die Schaltfläche, um ein neues Passwort festzulegen. Der Link ist <strong>1 Stunde</strong> gültig.")
             . $this->button($resetLink, 'Passwort zurücksetzen')
             . $this->paragraph('Falls du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren.', true);
@@ -172,18 +162,21 @@ class EmailSender
         return (new Email())
             ->setFrom($this->noReplyAddress)
             ->addTo($toEmail, $toName)
-            ->setSubject($appTitle . '-Passwort zurücksetzen')
-            ->setHtmlBody($this->wrapHtml($appTitle, 'Passwort zurücksetzen', $content))
+            ->setSubject($this->getEmailSubject('Passwort zurücksetzen'))
+            ->setHtmlBody($this->wrapHtml('Passwort zurücksetzen', $content))
             ->send();
+    }
+
+    private function getEmailSubject(string $baseSubject): string
+    {
+        return '[' . $this->appTitleShort . '] ' . $baseSubject;
     }
 
     // --- HTML helpers ---
 
-    private function wrapHtml(string $appTitle, string $heading, string $content): string
+    private function wrapHtml(string $heading, string $content): string
     {
-        $safeTitle      = htmlspecialchars($appTitle);
         $safeHeading    = htmlspecialchars($heading);
-        $navbarColor    = htmlspecialchars(APP_CONFIG->getNavbarColor());
 
         return <<<HTML
         <!DOCTYPE html>
@@ -201,8 +194,10 @@ class EmailSender
 
                   <!-- Header -->
                   <tr>
-                    <td style="background-color:{$navbarColor};border-radius:8px 8px 0 0;padding:24px 32px;">
-                      <p style="margin:0;font-size:18px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">{$safeTitle}</p>
+                    <td style="background-color:{$this->navbarColor};border-radius:8px 8px 0 0;padding:24px 32px;">
+                      <p style="margin:0;font-size:18px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">
+                        {$this->appTitleLong}
+                      </p>
                     </td>
                   </tr>
 
@@ -217,7 +212,7 @@ class EmailSender
                   <!-- Footer -->
                   <tr>
                     <td style="background-color:#f4f4f5;border:1px solid #e4e4e7;border-top:none;border-radius:0 0 8px 8px;padding:16px 32px;text-align:center;">
-                      <p style="margin:0;font-size:12px;color:#71717a;">Diese E-Mail wurde automatisch von {$safeTitle} versandt. Bitte nicht antworten.</p>
+                      <p style="margin:0;font-size:12px;color:#71717a;">Diese E-Mail wurde automatisch von {$this->appTitleShort} versandt. Bitte nicht antworten.</p>
                     </td>
                   </tr>
 

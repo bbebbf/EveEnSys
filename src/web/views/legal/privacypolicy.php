@@ -153,6 +153,9 @@ $_opMissing = $_opName === '' || $_opStreet === '' || $_opCity === '' || $_opEma
           versendet (gültig für 24 Stunden)</li>
         <li><strong>Passwort-Zurücksetzen</strong> — auf Anfrage wird ein Link zum Zurücksetzen
           des Passworts gesendet (gültig für 1 Stunde)</li>
+        <li><strong>Profil gelöscht</strong> — Bestätigung an den betroffenen Nutzer</li>
+        <li><strong>Administrator-Rechte vergeben oder entzogen</strong> — Benachrichtigung an
+          den betroffenen Nutzer</li>
         <li><strong>Veranstaltung erstellt</strong> — Bestätigung an den Ersteller, mit der
           Veranstaltung als ICS-Anhang (Kalenderdatei)</li>
         <li><strong>Veranstaltung gelöscht</strong> — Benachrichtigung an den Ersteller</li>
@@ -160,9 +163,6 @@ $_opMissing = $_opName === '' || $_opStreet === '' || $_opCity === '' || $_opEma
           Nutzer, mit der Veranstaltung als ICS-Anhang</li>
         <li><strong>Abmeldung von einer Veranstaltung</strong> — Benachrichtigung an den
           abmeldenden Nutzer</li>
-        <li><strong>Profil gelöscht</strong> — Bestätigung an den betroffenen Nutzer</li>
-        <li><strong>Administrator-Rechte vergeben oder entzogen</strong> — Benachrichtigung an
-          den betroffenen Nutzer</li>
       </ul>
       <p>
         Rechtsgrundlage ist Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;b DSGVO (Vertragserfüllung /
