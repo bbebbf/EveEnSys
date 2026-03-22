@@ -14,7 +14,6 @@ class EventController
 
     public function kiosk(): void
     {
-        $this->session->requireLogin();
         $events = $this->eventRepo->findAllUpcoming(true);
         $this->view->renderStandalone('event/kiosk', ['events' => $events]);
     }
