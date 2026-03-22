@@ -37,8 +37,10 @@
       <?php
         $searchData = mb_strtolower($event->eventTitle .
             ' ' . ($event->eventDescription ?? '') .
-            ' ' . ($event->eventLocation ?? '') .
-            ' ' . ($event->getResponsibleName() ?? ''));
+            ' ' . ($event->eventLocation ?? ''));
+        if (Session::isLoggedIn()) {
+            $searchData .= ' ' . mb_strtolower($event->getResponsibleName() ?? '');
+        }
       ?>
       <div class="col" data-search="<?= html_out($searchData) ?>">
 
@@ -91,7 +93,11 @@
             <?php endif; ?>
             </span>
             <span class="ms-2 text-body-tertiary">
+            <?php if (Session::isLoggedIn()): ?>
               <?= html_out($event->getResponsibleName() ?? 'Unbekannt') ?>
+            <?php else: ?>
+              &nbsp;
+            <?php endif; ?>
             </span>
           </div>
         </div>

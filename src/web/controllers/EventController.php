@@ -27,7 +27,6 @@ class EventController
 
     public function index(): void
     {
-        $this->session->requireLogin();
         $isAdmin = $this->session->isAdmin();
         $events  = $this->eventRepo->findAllUpcoming(!$isAdmin);
         $this->view->render('event/index', [

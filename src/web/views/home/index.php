@@ -60,9 +60,7 @@
     <?php endforeach; ?>
   </div>
 
-  <?php if (!Session::isLoggedIn()): ?>
-    <div class="text-center">
-      <a href="/login" class="btn btn-outline-secondary">Anmelden, um alle bevorstehenden Veranstaltungen zu sehen</a>
-    </div>
-  <?php endif; ?>
+  <div class="text-center">
+    <a href="/events" class="btn btn-outline-secondary">Alle bevorstehenden Veranstaltungen anschauen</a>
+  </div>
 <?php endif; ?>
