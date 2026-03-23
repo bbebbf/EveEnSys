@@ -1,5 +1,5 @@
 -- ============================================================
--- EveEnSys Test Data
+-- EvEnSys Test Data
 -- 15 users, 40 events, ~120 subscriber records
 -- All users have password: Test1234
 -- ============================================================

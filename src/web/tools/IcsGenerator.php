@@ -19,7 +19,7 @@ class IcsGenerator
         $lines = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
-            'PRODID:-//EveEnSys//EveEnSys//DE',
+            'PRODID:-//EvEnSys//EvEnSys//DE',
             'CALSCALE:GREGORIAN',
             'METHOD:PUBLISH',
             'BEGIN:VEVENT',

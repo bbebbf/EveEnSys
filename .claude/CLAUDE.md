@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-EveEnSys (Event Enrollment System) is a PHP web app where users register, create events, and enroll themselves or other persons into events.
+EvEnSys (Event Enrollment System) is a PHP web app where users register, create events, and enroll themselves or other persons into events.
 
 - A logged-in user can create, edit, and delete their own events.
 - A logged-in user can enroll themselves into an event (`subscriber.subscriber_is_creator = 1`).

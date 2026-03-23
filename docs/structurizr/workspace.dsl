@@ -1,4 +1,4 @@
-workspace "EveEnSys" "Event-Anmeldesystem – C4-Architekturmodell" {
+workspace "EvEnSys" "Event-Anmeldesystem – C4-Architekturmodell" {
 
     model {
 
@@ -13,9 +13,9 @@ workspace "EveEnSys" "Event-Anmeldesystem – C4-Architekturmodell" {
         oidcProvider = softwareSystem "OIDC-Anbieter" "Optionaler externer Identity Provider (z.B. Google, Microsoft). Ermöglicht Single Sign-On." "External"
         emailClient  = softwareSystem "E-Mail-Client" "Empfängt Benachrichtigungen (Anmeldung, Abmeldung, Passwort-Reset) als Nutzer oder Administrator." "External"
 
-        # --- EveEnSys ---
+        # --- EvEnSys ---
 
-        eveEnSys = softwareSystem "EveEnSys" "Web-Applikation zur Verwaltung von Veranstaltungen und Teilnehmer-Anmeldungen." {
+        evEnSys = softwareSystem "EvEnSys" "Web-Applikation zur Verwaltung von Veranstaltungen und Teilnehmer-Anmeldungen." {
 
             webapp = container "Web-Applikation" "Verarbeitet HTTP-Anfragen, rendert HTML-Seiten und steuert die Geschäftslogik." "PHP 8.2, Apache" "WebApp" {
 
@@ -44,11 +44,11 @@ workspace "EveEnSys" "Event-Anmeldesystem – C4-Architekturmodell" {
 
         # --- Beziehungen: Personen → System ---
 
-        guest -> eveEnSys "Sieht bevorstehende Veranstaltungen" "HTTPS"
-        user  -> eveEnSys "Verwaltet Veranstaltungen, meldet sich an/ab, lädt iCal herunter" "HTTPS"
-        admin -> eveEnSys "Verwaltet Veranstaltungen und Benutzer" "HTTPS"
-        eveEnSys -> emailClient "Sendet E-Mail-Benachrichtigungen" "SMTP"
-        eveEnSys -> oidcProvider "Authentifiziert Benutzer (optional)" "OIDC / HTTPS"
+        guest -> evEnSys "Sieht bevorstehende Veranstaltungen" "HTTPS"
+        user  -> evEnSys "Verwaltet Veranstaltungen, meldet sich an/ab, lädt iCal herunter" "HTTPS"
+        admin -> evEnSys "Verwaltet Veranstaltungen und Benutzer" "HTTPS"
+        evEnSys -> emailClient "Sendet E-Mail-Benachrichtigungen" "SMTP"
+        evEnSys -> oidcProvider "Authentifiziert Benutzer (optional)" "OIDC / HTTPS"
 
         # --- Beziehungen: Container ---
 
@@ -102,24 +102,24 @@ workspace "EveEnSys" "Event-Anmeldesystem – C4-Architekturmodell" {
 
     views {
 
-        systemContext eveEnSys "Systemkontext" {
+        systemContext evEnSys "Systemkontext" {
             include *
             autoLayout lr
-            title "EveEnSys – Systemkontext (C4 Level 1)"
-            description "Zeigt EveEnSys im Kontext seiner Nutzer und externer Systeme."
+            title "EvEnSys – Systemkontext (C4 Level 1)"
+            description "Zeigt EvEnSys im Kontext seiner Nutzer und externer Systeme."
         }
 
-        container eveEnSys "Container" {
+        container evEnSys "Container" {
             include *
             autoLayout lr
-            title "EveEnSys – Container (C4 Level 2)"
+            title "EvEnSys – Container (C4 Level 2)"
             description "Zeigt die technischen Bausteine: Web-Applikation, Datenbank und Mail-Server."
         }
 
         component webapp "Komponenten" {
             include *
             autoLayout lr
-            title "EveEnSys – Komponenten der Web-Applikation (C4 Level 3)"
+            title "EvEnSys – Komponenten der Web-Applikation (C4 Level 3)"
             description "Zeigt die internen PHP-Komponenten: Controller, Repositories und Dienste."
         }
 
