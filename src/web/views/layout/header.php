@@ -75,6 +75,13 @@
   </div>
 </nav>
 
+<?php
+  $headerBannerFile = __DIR__ . '/header-banner.php';
+  if (isset($headerBannerVisible) && $headerBannerVisible === true && file_exists($headerBannerFile)) {
+    include $headerBannerFile;
+  }
+?>
+
 <div class="container mt-4">
 
 <?php

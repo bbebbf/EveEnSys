@@ -21,7 +21,10 @@ class EventController
     public function home(): void
     {
         $upcomingEvents = $this->eventRepo->findUpcoming(3);
-        $this->view->render('home/index', ['pageTitle' => 'Startseite', 'upcomingEvents' => $upcomingEvents]);
+        $this->view->render('home/index', [
+            'headerBannerVisible' => true,
+            'pageTitle' => 'Startseite',
+            'upcomingEvents' => $upcomingEvents]);
     }
 
     public function index(): void

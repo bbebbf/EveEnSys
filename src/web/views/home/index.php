@@ -1,12 +1,10 @@
 <div class="row justify-content-center">
-  <div class="col-lg-8 text-center mb-5">
-      <?php
-        $greetingsFile = __DIR__ . '/greetings.php';
-        if (file_exists($greetingsFile)) {
-            include $greetingsFile;
-        }
-      ?>
-  </div>
+<?php
+  $greetingsFile = __DIR__ . '/greetings.php';
+  if (file_exists($greetingsFile)) {
+      include $greetingsFile;
+  }
+?>
 </div>
 
 <?php if (empty($upcomingEvents)): ?>
