@@ -205,16 +205,18 @@ class EventController
         if (!$this->eventRepo->deleteSubscriber($subscriberGuid, $userId, $isAdmin)) {
             $this->session->setFlash('error', 'Anmeldung nicht gefunden oder du hast keine Berechtigung, sie zu entfernen.');
         } else {
+            $unenrolledUserName = 'Unbekannt';
             if ($subscriber !== null) {
                 $creator            = $this->userRepo->findById($event->creatorUserId);
                 $adminActingOnOther = $isAdmin && $subscriber->creatorUserId !== $userId;
                 if ($adminActingOnOther) {
                     $enrollingUser  = $this->userRepo->findById($subscriber->creatorUserId);
                     $creatorCcEmail = ($creator?->userEmail !== null && $creator->userEmail !== $enrollingUser->userEmail && $creator->userEmail !== $this->session->getUserEmail()) ? $creator->userEmail : null;
+                    $unenrolledUserName = $subscriber->subscriberName ?? $enrollingUser->userName;
                     $this->emailSender->sendUnenrolledEmail(
                         $enrollingUser->userEmail,
                         $enrollingUser->userName,
-                        $subscriber->subscriberName ?? $enrollingUser->userName,
+                        $unenrolledUserName,
                         $subscriber->subscriberIsCreator,
                         $event->eventTitle,
                         $this->session->getUserEmail(),
@@ -224,10 +226,11 @@ class EventController
                     );
                 } else {
                     $creatorCcEmail = ($creator?->userEmail !== null && $creator->userEmail !== $this->session->getUserEmail()) ? $creator->userEmail : null;
+                    $unenrolledUserName = $subscriber->subscriberName ?? $this->session->getUserName();
                     $this->emailSender->sendUnenrolledEmail(
                         $this->session->getUserEmail(),
                         $this->session->getUserName(),
-                        $subscriber->subscriberName ?? $this->session->getUserName(),
+                        $unenrolledUserName,
                         $subscriber->subscriberIsCreator,
                         $event->eventTitle,
                         $creatorCcEmail,
@@ -235,7 +238,7 @@ class EventController
                     );
                 }
             }
-            $this->session->setFlash('success', 'Anmeldung entfernt.');
+            $this->session->setFlash('success', $unenrolledUserName . ' wurde erfolgreich abgemeldet.');
         }
 
         $redirectUrl = $req->post('source') === 'enrolled' ? '/events/enrolled' : '/events/' . $guid;
