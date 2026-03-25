@@ -107,7 +107,7 @@ class EventController
             'isAdmin'           => $isAdmin,
             'isCreator'         => $isCreator,
             'origin'            => $req->get('origin', ''),
-            'enrollmentAllowed' => APP_CONFIG->isEnrollmentAllowed(),
+            'enrollmentAllowed' => $this->isEnrollmentForEventAllowed($event, count($subscribers)),
         ]);
     }
 
@@ -122,28 +122,10 @@ class EventController
         $event  = $this->eventRepo->findByGuid($guid) ?? $this->response->abort404();
         $userId = $this->session->getUserId();
 
-        if (!$event->eventIsVisible) {
-            $this->session->setFlash('error', 'Anmeldungen für versteckte Veranstaltungen sind nicht möglich.');
+        $allowed = $this->isEnrollmentForEventAllowed($event, $this->eventRepo->countSubscribers($event->eventId));
+        if ($allowed['allowed'] === false) {
+            $this->session->setFlash('error', $allowed['message']);
             $this->response->redirect('/events/' . $guid);
-        }
-
-        if (!APP_CONFIG->isEnrollmentAllowed()) {
-            $this->session->setFlash('error', 'Anmeldungen sind derzeit nicht möglich.');
-            $this->response->redirect('/events/' . $guid);
-        }
-
-        $delayedCurrentDatetime = APP_CONFIG->getDelayedCurrentDateTime();
-        if ($event->eventDate < $delayedCurrentDatetime) {
-            $this->session->setFlash('error', 'Anmeldungen für vergangene Veranstaltungen sind nicht möglich.');
-            $this->response->redirect('/events/' . $guid);
-        }
-
-        if ($event->eventMaxSubscriber !== null) {
-            $count = $this->eventRepo->countSubscribers($event->eventId);
-            if ($count >= $event->eventMaxSubscriber) {
-                $this->session->setFlash('error', 'Diese Veranstaltung ist ausgebucht.');
-                $this->response->redirect('/events/' . $guid);
-            }
         }
 
         $scheme    = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
@@ -524,6 +506,47 @@ class EventController
                 'event_duration_hours'  => $duration,
                 'event_max_subscriber'  => $maxSub,
             ],
+        ];
+    }
+
+    private function isEnrollmentForEventAllowed(EventDto $event, int $subscriberCount): array
+    {
+        if ($event->eventMaxSubscriber !== null && $subscriberCount >= $event->eventMaxSubscriber) {
+            return [
+                'isFull' => true,
+                'allowed' => false,
+                'message' => 'Diese Veranstaltung ist ausgebucht.'
+            ];
+        }
+
+        if (!$event->eventIsVisible) {
+            return [
+                'isFull' => false,
+                'allowed' => false,
+                'message' => 'Anmeldungen für versteckte Veranstaltungen sind nicht möglich.'
+            ];
+        }
+
+        if ($event->eventDate < APP_CONFIG->getDelayedCurrentDateTime()) {
+            return [
+                'isFull' => false,
+                'allowed' => false,
+                'message' => 'Anmeldungen für vergangene Veranstaltungen sind nicht möglich.'
+            ];
+        }
+
+        $allowed = APP_CONFIG->isEnrollmentWindowOpen();
+        if ($allowed['open'] === false) {
+            return [
+                'isFull' => false,
+                'allowed' => false,
+                'message' => $allowed['message'],
+            ];
+        }
+
+        return [
+            'isFull' => false,
+            'allowed' => true,
         ];
     }
 

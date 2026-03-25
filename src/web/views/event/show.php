@@ -89,15 +89,11 @@
   </div>
 
   <div class="col-lg-4">
-    <?php
-      $isInThePast = $event->eventDate < APP_CONFIG->getDelayedCurrentDateTime();
-      $isFull = $event->eventMaxSubscriber !== null && $subscriberCount >= $event->eventMaxSubscriber;
-    ?>
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <strong>Angemeldete Teilnehmer</strong>
         <?php if ($event->eventMaxSubscriber !== null): ?>
-          <span class="badge <?= $isFull ? 'bg-danger' : 'bg-secondary' ?>">
+          <span class="badge <?= $enrollmentAllowed['isFull'] ? 'bg-danger' : 'bg-secondary' ?>">
             <?= html_out($subscriberCount) ?>/<?= html_out($event->eventMaxSubscriber) ?>
           </span>
         <?php elseif ($subscriberCount > 0): ?>
@@ -130,12 +126,8 @@
         </ul>
 
         <div class="card-body">
-          <?php if (!$enrollmentAllowed): ?>
-            <p class="text-danger mb-0">Anmeldungen sind derzeit nicht möglich.</p>
-          <?php elseif ($isInThePast): ?>
-            <p class="text-danger mb-0">Anmeldungen für vergangene Veranstaltungen sind nicht möglich.</p>
-          <?php elseif ($isFull): ?>
-            <p class="text-danger mb-0">Diese Veranstaltung ist ausgebucht.</p>
+          <?php if ($enrollmentAllowed['allowed'] === false): ?>
+            <p class="text-danger mb-0"><?= html_out($enrollmentAllowed['message']) ?></p>
           <?php else: ?>
             <?php if (!$isEnrolledAsSelf): ?>
               <form method="post" action="/events/<?= html_out($event->eventGuid) ?>/enroll" class="mb-3">

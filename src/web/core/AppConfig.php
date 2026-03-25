@@ -128,23 +128,29 @@ class AppConfig
         return $this->parse_datetime('EnrollmentPeriodToExcluded');
     }
 
-    public function isEnrollmentAllowed(): bool
+    public function isEnrollmentWindowOpen(): array
     {
         $from       = $this->getEnrollmentPeriodFrom();
         $toExcluded = $this->getEnrollmentPeriodToExcluded();
 
         if ($from === null && $toExcluded === null) {
-            return true;
+            return ['open' => true];
         }
 
         $now = new DateTime();
         if ($from !== null && $now < $from) {
-            return false;
+            return [
+                'open' => false,
+                'message' => 'Anmeldungen sind ab dem ' . $from->format('Y-m-d H:i') . ' möglich.'
+            ];
         }
         if ($toExcluded !== null && $now >= $toExcluded) {
-            return false;
+            return [
+                'open' => false,
+                'message' => 'Anmeldungen sind derzeit nicht möglich.'
+            ];
         }
-        return true;
+        return ['open' => true];
     }
 
     public function isNewEventApprovalRequired(): bool
