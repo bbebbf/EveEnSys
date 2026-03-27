@@ -148,6 +148,8 @@ $router->post('/profile/{guid}/oidc/{identityId}/unlink',
     fn($p) => $oidcController->unlinkIdentity($req, $p['guid'], (int)$p['identityId']));
 $router->get('/privacypolicy',
     fn() => View::render('legal/privacypolicy', ['pageTitle' => 'Datenschutzerklärung']));
+$router->get('/about',
+    fn() => View::render('legal/about', ['pageTitle' => 'Über EvEnSys']));
 
 
 try {

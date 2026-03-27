@@ -6,6 +6,8 @@ class AppConfig
     private mixed $config = null;
     private ?AppLogo $appLogo = null;
 
+    private const APP_VERSION = '1.0';
+
     public function __construct() {
         $_appConfigFile = dirname(APP_ROOT) . '/_config/app-config.json';
         if (file_exists($_appConfigFile)) {
@@ -21,6 +23,11 @@ class AppConfig
     public function getAppTitleLong(): string
     {
         return $this->get_str_value('AppTitleLong', 'No App Title');
+    }
+
+    public function getAppVersion(): string
+    {
+        return self::APP_VERSION;
     }
 
     public function getAppImpressUrl(): string

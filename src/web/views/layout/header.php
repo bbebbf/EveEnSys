@@ -68,6 +68,7 @@
         </ul>
       <?php else: ?>
         <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/about">Über <?= html_out(APP_CONFIG->getAppTitleShort()) ?></a></li>
           <li class="nav-item"><a class="nav-link" href="/login">Anmelden</a></li>
         </ul>
       <?php endif; ?>
