@@ -184,9 +184,21 @@ class UserRepository implements UserRepositoryInterface
     public function findAll(): array
     {
         $result = $this->db->query(
-            'SELECT user_id, user_guid, user_email, user_is_new, user_is_active, user_role, user_name, user_passwd, user_last_login
-               FROM `user`
-              ORDER BY user_name ASC'
+            'SELECT u.user_id, u.user_guid, u.user_email, u.user_is_new, u.user_is_active, u.user_role, u.user_name, u.user_passwd, u.user_last_login,
+                    EXISTS (
+                        SELECT 1 FROM password_reset pr
+                         WHERE pr.user_id          = u.user_id
+                           AND pr.reset_expires_at > NOW()
+                           AND pr.reset_used        = b\'0\'
+                    ) AS has_pending_password_reset,
+                    EXISTS (
+                        SELECT 1 FROM activation_token at
+                         WHERE at.user_id          = u.user_id
+                           AND at.token_expires_at > NOW()
+                           AND at.token_used        = b\'0\'
+                    ) AS has_pending_activation_token
+               FROM `user` u
+              ORDER BY u.user_name ASC'
         );
         $users = [];
         while ($row = $result->fetch_assoc()) {
@@ -231,8 +243,10 @@ class UserRepository implements UserRepositoryInterface
             userIsActive:  (bool)$row['user_is_active'],
             userRole:      (int)$row['user_role'],
             userName:      $row['user_name'],
-            userPasswd:    $row['user_passwd'] ?? null,
-            userLastLogin: $row['user_last_login'],
+            userPasswd:                $row['user_passwd'] ?? null,
+            userLastLogin:             $row['user_last_login'],
+            hasPendingPasswordReset:   (bool)($row['has_pending_password_reset']   ?? false),
+            hasPendingActivationToken: (bool)($row['has_pending_activation_token'] ?? false),
         );
     }
 }

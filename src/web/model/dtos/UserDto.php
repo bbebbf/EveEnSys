@@ -13,5 +13,7 @@ class UserDto
         public readonly string  $userName,
         public readonly ?string $userPasswd,
         public readonly ?string $userLastLogin,
+        public readonly bool    $hasPendingPasswordReset   = false,
+        public readonly bool    $hasPendingActivationToken = false,
     ) {}
 }

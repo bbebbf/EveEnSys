@@ -49,6 +49,12 @@
             <?php if ($u->userRole >= 1): ?>
               <span class="badge bg-primary">Admin</span>
             <?php endif; ?>
+            <?php if ($u->hasPendingPasswordReset): ?>
+              <span class="badge bg-warning text-dark" title="Ausstehender Passwort-Reset">Passwort-Reset</span>
+            <?php endif; ?>
+            <?php if ($u->hasPendingActivationToken): ?>
+              <span class="badge bg-secondary" title="Ausstehende Aktivierung">Aktivierung</span>
+            <?php endif; ?>
           </td>
           <td>
             <?= html_out($u->userEmail) ?>
