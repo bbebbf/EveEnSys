@@ -50,10 +50,10 @@
               <span class="badge bg-primary">Admin</span>
             <?php endif; ?>
             <?php if ($u->hasPendingPasswordReset): ?>
-              <span class="badge bg-warning text-dark" title="Ausstehender Passwort-Reset">Passwort-Reset</span>
+              <span class="badge bg-warning text-dark">Passwort-Reset</span>
             <?php endif; ?>
-            <?php if ($u->hasPendingActivationToken): ?>
-              <span class="badge bg-secondary" title="Ausstehende Aktivierung">Aktivierung</span>
+            <?php if ($u->hasPendingActivationToken && $u->userIsNew && !$u->userIsActive): ?>
+              <span class="badge bg-secondary">Aktivierung</span>
             <?php endif; ?>
           </td>
           <td>
@@ -76,13 +76,9 @@
                   <button type="submit" class="btn btn-warning btn-md" title="Benutzer deaktivieren">
                     <i class="bi bi-x-circle"></i>
                   </button>
-                <?php elseif (!$u->userIsNew): ?>
-                  <button type="submit" class="btn btn-outline-success btn-md" title="Benutzer reaktivieren">
-                    <i class="bi bi-x-circle"></i>
-                  </button>
                 <?php else: ?>
-                  <button class="btn btn-primary btn-md invisible">
-                    <i class="bi bi-exclamation-square"></i>
+                  <button type="submit" class="btn btn-outline-success btn-md" title="Benutzer <?php if ($u->userIsNew): ?>aktivieren<?php else: ?>reaktivieren<?php endif; ?>">
+                    <i class="bi bi-x-circle"></i>
                   </button>
                 <?php endif; ?>
               </form>

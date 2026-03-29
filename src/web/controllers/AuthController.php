@@ -424,12 +424,11 @@ class AuthController
             }
             $this->userRepo->setActive($user->userId, false);
             $this->session->setFlash('success', $user->userName . ' wurde deaktiviert.');
-        } else {
-            if ($user->userIsNew) {
-                $this->session->setFlash('error', 'Neue Benutzer müssen sich über den Aktivierungslink aktivieren.');
-                $this->response->redirect('/admin/users');
-                return;
-            }
+        } else if ($user->userIsNew) {
+            $this->userRepo->activate($user->userId);
+            $this->session->setFlash('success', $user->userName . ' wurde aktiviert.');
+        }
+        else {
             $this->userRepo->setActive($user->userId, true);
             $this->session->setFlash('success', $user->userName . ' wurde reaktiviert.');
         }
