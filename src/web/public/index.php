@@ -28,6 +28,9 @@ require APP_ROOT . '/core/AppSession.php';
 require APP_ROOT . '/core/AppView.php';
 require APP_ROOT . '/core/AppResponse.php';
 
+// Core
+require APP_ROOT . '/core/EmailGenerator.php';
+
 // Load DTOs
 require APP_ROOT . '/model/dtos/UserDto.php';
 require APP_ROOT . '/model/dtos/EventDto.php';
@@ -56,7 +59,6 @@ require APP_ROOT . '/model/repositories/impl/OidcProviderRepository.php';
 require APP_ROOT . '/tools/Email.php';
 require APP_ROOT . '/tools/FileTools.php';
 require APP_ROOT . '/tools/IcsGenerator.php';
-require APP_ROOT . '/tools/EmailSender.php';
 
 require APP_ROOT . '/controllers/ControllerTools.php';
 require APP_ROOT . '/controllers/AuthController.php';
@@ -95,11 +97,11 @@ $session  = new AppSession();
 $view     = new AppView();
 $response = new AppResponse();
 
-$emailSender    = new EmailSender(APP_CONFIG->getNotificationFromEmail());
+$emailGenerator    = new EmailGenerator(APP_CONFIG->getNotificationFromEmail());
 
 // Instantiate controllers
-$authController  = new AuthController($userRepo, $resetRepo, $activationRepo, $oidcProviderRepo, $eventRepo, $oidcIdentityRepo, $session, $view, $response, $emailSender);
-$eventController = new EventController($eventRepo, $userRepo, $session, $view, $response, $emailSender);
+$authController  = new AuthController($userRepo, $resetRepo, $activationRepo, $oidcProviderRepo, $eventRepo, $oidcIdentityRepo, $session, $view, $response, $emailGenerator);
+$eventController = new EventController($eventRepo, $userRepo, $session, $view, $response, $emailGenerator);
 $oidcProvisioner = new OidcUserProvisioner($userRepo, $oidcIdentityRepo);
 $oidcController  = new OidcController($userRepo, $oidcIdentityRepo, $oidcProviderRepo, $oidcProvisioner, $session, $view, $response);
 

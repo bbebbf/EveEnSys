@@ -20,7 +20,7 @@ class AuthControllerTest extends TestCase
     private MockObject       $session;
     private MockObject       $view;
     private FakeResponse     $response;
-    private MockObject       $emailSender;
+    private MockObject       $emailGenerator;
     private \AuthController  $controller;
 
     protected function setUp(): void
@@ -34,7 +34,7 @@ class AuthControllerTest extends TestCase
         $this->session          = $this->createMock(\SessionInterface::class);
         $this->view             = $this->createMock(\ViewInterface::class);
         $this->response         = new FakeResponse();
-        $this->emailSender      = $this->createMock(\EmailSender::class);
+        $this->emailGenerator   = $this->createMock(\EmailGenerator::class);
 
         $this->controller = new \AuthController(
             $this->userRepo,
@@ -46,7 +46,7 @@ class AuthControllerTest extends TestCase
             $this->session,
             $this->view,
             $this->response,
-            $this->emailSender,
+            $this->emailGenerator,
         );
     }
 

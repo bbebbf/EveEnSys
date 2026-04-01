@@ -9,7 +9,7 @@ class EventController
         private SessionInterface $session,
         private ViewInterface $view,
         private ResponseInterface $response,
-        private EmailSender $emailSender,
+        private EmailGenerator $emailGenerator,
     ) {}
 
     public function kiosk(): void
@@ -160,7 +160,7 @@ class EventController
             }
             $this->eventRepo->createSubscriber($event->eventId, $userId, true, null);
             $ccEmail = ($creatorEmail !== null && $creatorEmail !== $this->session->getUserEmail()) ? $creatorEmail : null;
-            $this->emailSender->sendEnrolledEmail(
+            $this->emailGenerator->sendEnrolledEmail(
                 $this->session->getUserEmail(),
                 $this->session->getUserName(),
                 $this->session->getUserName(),
@@ -185,7 +185,7 @@ class EventController
             }
             $this->eventRepo->createSubscriber($event->eventId, $userId, false, $name);
             $ccEmail = ($creatorEmail !== null && $creatorEmail !== $this->session->getUserEmail()) ? $creatorEmail : null;
-            $this->emailSender->sendEnrolledEmail(
+            $this->emailGenerator->sendEnrolledEmail(
                 $this->session->getUserEmail(),
                 $this->session->getUserName(),
                 $name,
@@ -229,7 +229,7 @@ class EventController
                     $enrollingUser  = $this->userRepo->findById($subscriber->creatorUserId);
                     $creatorCcEmail = ($creator?->userEmail !== null && $creator->userEmail !== $enrollingUser->userEmail && $creator->userEmail !== $this->session->getUserEmail()) ? $creator->userEmail : null;
                     $unenrolledUserName = $subscriber->subscriberName ?? $enrollingUser->userName;
-                    $this->emailSender->sendUnenrolledEmail(
+                    $this->emailGenerator->sendUnenrolledEmail(
                         $enrollingUser->userEmail,
                         $enrollingUser->userName,
                         $unenrolledUserName,
@@ -243,7 +243,7 @@ class EventController
                 } else {
                     $creatorCcEmail = ($creator?->userEmail !== null && $creator->userEmail !== $this->session->getUserEmail()) ? $creator->userEmail : null;
                     $unenrolledUserName = $subscriber->subscriberName ?? $this->session->getUserName();
-                    $this->emailSender->sendUnenrolledEmail(
+                    $this->emailGenerator->sendUnenrolledEmail(
                         $this->session->getUserEmail(),
                         $this->session->getUserName(),
                         $unenrolledUserName,
@@ -346,7 +346,7 @@ class EventController
         $eventLink = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/events/' . $guid;
         $eventDate = event_date_out(new DateTimeImmutable($data['event_date']));
         if ($createdEvent !== null) {
-            $this->emailSender->sendEventCreatedEmail(
+            $this->emailGenerator->sendEventCreatedEmail(
                 $this->session->getUserEmail(),
                 $this->session->getUserName(),
                 $data['event_title'],
@@ -437,7 +437,7 @@ class EventController
         $adminActingOnOther = $this->session->isAdmin() && $event->creatorUserId !== $this->session->getUserId();
         if ($adminActingOnOther) {
             $creator = $this->userRepo->findById($event->creatorUserId);
-            $this->emailSender->sendEventDeletedEmail(
+            $this->emailGenerator->sendEventDeletedEmail(
                 $creator->userEmail,
                 $creator->userName,
                 $event->eventTitle,
@@ -445,7 +445,7 @@ class EventController
                 $this->session->getUserName(),
             );
         } else {
-            $this->emailSender->sendEventDeletedEmail(
+            $this->emailGenerator->sendEventDeletedEmail(
                 $this->session->getUserEmail(),
                 $this->session->getUserName(),
                 $event->eventTitle,

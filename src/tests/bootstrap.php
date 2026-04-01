@@ -37,8 +37,8 @@ require $srcRoot . '/core/Request.php';
 // Globals / helpers
 require $srcRoot . '/core/Globals.php';
 
-// Tools
-require $srcRoot . '/tools/EmailSender.php';
+// Core
+require $srcRoot . '/core/EmailGenerator.php';
 
 // Controllers
 require $srcRoot . '/controllers/ControllerTools.php';

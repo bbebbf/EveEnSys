@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-class EmailSender
+class EmailGenerator
 {
     private string $fromAddress;
     private string $appTitleShort;

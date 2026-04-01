@@ -16,17 +16,17 @@ class EventControllerTest extends TestCase
     private MockObject        $session;
     private MockObject        $view;
     private FakeResponse      $response;
-    private MockObject        $emailSender;
+    private MockObject        $emailGenerator;
     private \EventController  $controller;
 
     protected function setUp(): void
     {
-        $this->eventRepo   = $this->createMock(\EventRepositoryInterface::class);
-        $this->userRepo    = $this->createMock(\UserRepositoryInterface::class);
-        $this->session     = $this->createMock(\SessionInterface::class);
-        $this->view        = $this->createMock(\ViewInterface::class);
-        $this->response    = new FakeResponse();
-        $this->emailSender = $this->createMock(\EmailSender::class);
+        $this->eventRepo      = $this->createMock(\EventRepositoryInterface::class);
+        $this->userRepo       = $this->createMock(\UserRepositoryInterface::class);
+        $this->session        = $this->createMock(\SessionInterface::class);
+        $this->view           = $this->createMock(\ViewInterface::class);
+        $this->response       = new FakeResponse();
+        $this->emailGenerator = $this->createMock(\EmailGenerator::class);
 
         $this->controller = new \EventController(
             $this->eventRepo,
@@ -34,7 +34,7 @@ class EventControllerTest extends TestCase
             $this->session,
             $this->view,
             $this->response,
-            $this->emailSender,
+            $this->emailGenerator,
         );
     }
 

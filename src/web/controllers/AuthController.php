@@ -13,7 +13,7 @@ class AuthController
         private SessionInterface $session,
         private ViewInterface $view,
         private ResponseInterface $response,
-        private EmailSender $emailSender,
+        private EmailGenerator $emailGenerator,
     ) {}
 
     public function showRegister(): void
@@ -82,7 +82,7 @@ class AuthController
         $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
         $link    = $baseUrl . '/activate-account?token=' . urlencode($rawToken);
 
-        $this->emailSender->sendAccountActivationEmail($email, $name, $link);
+        $this->emailGenerator->sendAccountActivationEmail($email, $name, $link);
 
         $this->response->redirect('/activation-sent');
     }
@@ -178,7 +178,7 @@ class AuthController
             $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
             $link    = $baseUrl . '/reset-password?token=' . urlencode($rawToken);
 
-            $this->emailSender->sendPasswordResetEmail($user->userEmail, $user->userName, $link);
+            $this->emailGenerator->sendPasswordResetEmail($user->userEmail, $user->userName, $link);
         }
 
         // Always show the same message to prevent user enumeration
@@ -381,7 +381,7 @@ class AuthController
                 $this->response->redirect('/admin/users');
             }
             $this->userRepo->setRole($user->userId, 0);
-            $this->emailSender->sendAdminRoleRevokedEmail($user->userEmail, $user->userName);
+            $this->emailGenerator->sendAdminRoleRevokedEmail($user->userEmail, $user->userName);
             $this->session->setFlash('success', 'Administrator-Rechte von ' . $user->userName . ' wurden entzogen.');
         } else {
             if (!$user->userIsActive) {
@@ -389,7 +389,7 @@ class AuthController
                 $this->response->redirect('/admin/users');
             }
             $this->userRepo->setRole($user->userId, 1);
-            $this->emailSender->sendAdminRoleGrantedEmail($user->userEmail, $user->userName);
+            $this->emailGenerator->sendAdminRoleGrantedEmail($user->userEmail, $user->userName);
             $this->session->setFlash('success', $user->userName . ' wurde zum Administrator ernannt.');
         }
 
@@ -461,7 +461,7 @@ class AuthController
             $this->response->redirect('/admin/users');
         }
 
-        $this->emailSender->sendProfileDeletedEmail(
+        $this->emailGenerator->sendProfileDeletedEmail(
             $user->userEmail,
             $user->userName,
             $this->session->getUserEmail(),
@@ -512,7 +512,7 @@ class AuthController
             return;
         }
 
-        $this->emailSender->sendProfileDeletedEmail($user->userEmail, $user->userName);
+        $this->emailGenerator->sendProfileDeletedEmail($user->userEmail, $user->userName);
 
         $this->eventRepo->deleteSubscribersForUserEvents($user->userId);
         $this->eventRepo->deleteSubscribersByCreator($user->userId);

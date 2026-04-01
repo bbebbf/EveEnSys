@@ -30,9 +30,9 @@ workspace "EvEnSys" "Event-Anmeldesystem – C4-Architekturmodell" {
                 userRepo        = component "UserRepository" "Kapselt alle Datenbankzugriffe für Benutzerkonten, Aktivierungs-Tokens und Passwort-Reset-Tokens." "PHP, MySQLi"
                 oidcIdentityRepo = component "OidcIdentityRepository" "Kapselt alle Datenbankzugriffe für OIDC-Identitätsverknüpfungen." "PHP, MySQLi"
 
-                emailSender  = component "EmailSender" "Erstellt und versendet HTML-E-Mails für alle systemseitigen Benachrichtigungen. Hängt ICS-Dateien bei Anmeldungen an." "PHP, SMTP"
-                icsGenerator = component "IcsGenerator" "Erzeugt RFC-5545-konforme iCalendar-Dateien (VCALENDAR/VEVENT) aus Veranstaltungsdaten." "PHP"
-                fileTools    = component "FileTools" "Bereinigt Dateinamen für sichere Content-Disposition-Header (entfernt Windows-Sonderzeichen und reservierte Gerätenamen)." "PHP"
+                emailGenerator = component "EmailGenerator" "Erstellt und versendet HTML-E-Mails für alle systemseitigen Benachrichtigungen. Hängt ICS-Dateien bei Anmeldungen an." "PHP, SMTP"
+                icsGenerator   = component "IcsGenerator" "Erzeugt RFC-5545-konforme iCalendar-Dateien (VCALENDAR/VEVENT) aus Veranstaltungsdaten." "PHP"
+                fileTools      = component "FileTools" "Bereinigt Dateinamen für sichere Content-Disposition-Header (entfernt Windows-Sonderzeichen und reservierte Gerätenamen)." "PHP"
 
                 views = component "Views" "PHP-Templates (Bootstrap 5). Rendert HTML-Seiten für alle Ansichten: Veranstaltungslisten, Detailseite, Formulare, Profil, Login, Kiosk." "PHP, Bootstrap 5"
             }
@@ -68,19 +68,19 @@ workspace "EvEnSys" "Event-Anmeldesystem – C4-Architekturmodell" {
         router -> oidcController   "Leitet OIDC-Anfragen weiter"
 
         # EventController
-        eventController -> eventRepo    "Liest/schreibt Veranstaltungen und Anmeldungen"
-        eventController -> userRepo     "Liest Benutzerdaten (z.B. für CC-E-Mails)"
-        eventController -> emailSender  "Sendet Anmelde-/Abmelde-/Erstellungs-E-Mails"
-        eventController -> icsGenerator "Generiert ICS-Inhalt für Download"
-        eventController -> fileTools    "Bereinigt Dateinamen für iCal-Download"
-        eventController -> appSession   "Prüft Login-Status, Rolle und CSRF-Token"
-        eventController -> views        "Rendert HTML-Seiten"
+        eventController -> eventRepo      "Liest/schreibt Veranstaltungen und Anmeldungen"
+        eventController -> userRepo       "Liest Benutzerdaten (z.B. für CC-E-Mails)"
+        eventController -> emailGenerator "Sendet Anmelde-/Abmelde-/Erstellungs-E-Mails"
+        eventController -> icsGenerator   "Generiert ICS-Inhalt für Download"
+        eventController -> fileTools      "Bereinigt Dateinamen für iCal-Download"
+        eventController -> appSession     "Prüft Login-Status, Rolle und CSRF-Token"
+        eventController -> views          "Rendert HTML-Seiten"
 
         # AuthController
-        authController -> userRepo    "Liest/schreibt Benutzerkonten und Tokens"
-        authController -> emailSender "Sendet Aktivierungs- und Passwort-Reset-E-Mails"
-        authController -> appSession  "Verwaltet Anmeldesitzung"
-        authController -> views       "Rendert HTML-Seiten"
+        authController -> userRepo       "Liest/schreibt Benutzerkonten und Tokens"
+        authController -> emailGenerator "Sendet Aktivierungs- und Passwort-Reset-E-Mails"
+        authController -> appSession     "Verwaltet Anmeldesitzung"
+        authController -> views          "Rendert HTML-Seiten"
 
         # OidcController
         oidcController -> oidcIdentityRepo "Liest/schreibt OIDC-Identitätsverknüpfungen"
@@ -89,10 +89,10 @@ workspace "EvEnSys" "Event-Anmeldesystem – C4-Architekturmodell" {
         oidcController -> oidcProvider     "Redirect & Token-Austausch" "HTTPS"
         oidcController -> views            "Rendert HTML-Seiten"
 
-        # EmailSender
-        emailSender -> icsGenerator "Generiert ICS-Datei für E-Mail-Anhang"
-        emailSender -> fileTools    "Bereinigt Dateinamen für E-Mail-Anhang"
-        emailSender -> mailpit      "Versendet E-Mail" "SMTP"
+        # EmailGenerator
+        emailGenerator -> icsGenerator "Generiert ICS-Datei für E-Mail-Anhang"
+        emailGenerator -> fileTools    "Bereinigt Dateinamen für E-Mail-Anhang"
+        emailGenerator -> mailpit      "Versendet E-Mail" "SMTP"
 
         # Repositories → Datenbank
         eventRepo        -> database "SQL-Abfragen" "MySQLi"
