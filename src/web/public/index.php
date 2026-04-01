@@ -55,11 +55,14 @@ require APP_ROOT . '/model/repositories/impl/ActivationTokenRepository.php';
 require APP_ROOT . '/model/repositories/impl/OidcIdentityRepository.php';
 require APP_ROOT . '/model/repositories/impl/OidcProviderRepository.php';
 
-// Load controllers
+// Load tools
 require APP_ROOT . '/tools/Email.php';
+require APP_ROOT . '/tools/EmailSenderInterface.php';
+require APP_ROOT . '/tools/EmailSenderPhpMail.php';
 require APP_ROOT . '/tools/FileTools.php';
 require APP_ROOT . '/tools/IcsGenerator.php';
 
+// Load controllers
 require APP_ROOT . '/controllers/ControllerTools.php';
 require APP_ROOT . '/controllers/AuthController.php';
 require APP_ROOT . '/controllers/EventController.php';
@@ -97,7 +100,7 @@ $session  = new AppSession();
 $view     = new AppView();
 $response = new AppResponse();
 
-$emailGenerator    = new EmailGenerator(APP_CONFIG->getNotificationFromEmail());
+$emailGenerator    = new EmailGenerator(new EmailSenderPhpMail(), APP_CONFIG->getNotificationFromEmail());
 
 // Instantiate controllers
 $authController  = new AuthController($userRepo, $resetRepo, $activationRepo, $oidcProviderRepo, $eventRepo, $oidcIdentityRepo, $session, $view, $response, $emailGenerator);

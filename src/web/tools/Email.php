@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 class Email
 {
-    private const CONTENT_TYPE_TEXT_PLAIN = "plain";
-    private const CONTENT_TYPE_TEXT_HTML = "html";
-
     private string $from     = '';
     private string $fromName = '';
     private string $subject  = '';
@@ -31,10 +28,20 @@ class Email
         return $this;
     }
 
+    public function getFrom(): array
+    {
+        return ['email' => $this->from, 'name' => $this->fromName];
+    }
+
     public function setSubject(string $subject): static
     {
         $this->subject = $subject;
         return $this;
+    }
+
+    public function getSubject(): string
+    {
+        return $this->subject;
     }
 
     public function setTextBody(string $text): static
@@ -43,10 +50,20 @@ class Email
         return $this;
     }
 
+    public function getTextBody(): string
+    {
+        return $this->textBody;
+    }
+
     public function setHtmlBody(string $html): static
     {
         $this->htmlBody = $html;
         return $this;
+    }
+
+    public function getHtmlBody(): string
+    {
+        return $this->htmlBody;
     }
 
     public function setReplyTo(string $email, string $name = ''): static
@@ -56,10 +73,20 @@ class Email
         return $this;
     }
 
+    public function getReplyTo(): array
+    {
+        return ['email' => $this->replyTo, 'name' => $this->replyToName];
+    }
+
     public function addTo(string $email, string $name = ''): static
     {
         $this->to[] = ['email' => $email, 'name' => $name];
         return $this;
+    }
+
+    public function getTos(): array
+    {
+        return $this->to;
     }
 
     public function addCc(string $email, string $name = ''): static
@@ -68,10 +95,20 @@ class Email
         return $this;
     }
 
+    public function getCcs(): array
+    {
+        return $this->cc;
+    }
+
     public function addBcc(string $email, string $name = ''): static
     {
         $this->bcc[] = ['email' => $email, 'name' => $name];
         return $this;
+    }
+
+    public function getBccs(): array
+    {
+        return $this->bcc;
     }
 
     /**
@@ -102,199 +139,8 @@ class Email
         return $this;
     }
 
-    /**
-     * @throws \LogicException if no recipient or subject is set
-     */
-    public function send(): bool
+    public function getAttachments(): array
     {
-        if (empty($this->to)) {
-            throw new \LogicException('At least one recipient is required.');
-        }
-        if ($this->subject === '') {
-            throw new \LogicException('Subject is required.');
-        }
-
-        $to      = $this->formatAddressList($this->to);
-        $subject = $this->encodeHeader($this->subject);
-        [$contentHeaders, $body] = $this->buildContent();
-        $headers = $this->buildHeaders($contentHeaders);
-
-        return mail($to, $subject, $body, $headers);
-    }
-
-    // --- Private helpers ---
-
-    private function formatAddress(string $email, string $name): string
-    {
-        return $name !== '' ? $this->encodeHeader($name) . ' <' . $email . '>' : $email;
-    }
-
-    /**
-     * @param array<array{email: string, name: string}> $addresses
-     */
-    private function formatAddressList(array $addresses): string
-    {
-        return implode(', ', array_map(
-            fn($a) => $this->formatAddress($a['email'], $a['name']),
-            $addresses
-        ));
-    }
-
-    private function encodeHeader(string $value): string
-    {
-        if (preg_match('/[^\x20-\x7E]/', $value)) {
-            return '=?UTF-8?B?' . base64_encode($value) . '?=';
-        }
-        return $value;
-    }
-
-    /**
-     * @param list<string> $contentHeaders
-     */
-    private function buildHeaders(array $contentHeaders): string
-    {
-        $lines = [];
-
-        if ($this->from !== '') {
-            $lines[] = 'From: ' . $this->formatAddress($this->from, $this->fromName);
-        }
-        if ($this->replyTo !== '') {
-            $lines[] = 'Reply-To: ' . $this->formatAddress($this->replyTo, $this->replyToName);
-        }
-        if (!empty($this->cc)) {
-            $lines[] = 'Cc: ' . $this->formatAddressList($this->cc);
-        }
-        if (!empty($this->bcc)) {
-            $lines[] = 'Bcc: ' . $this->formatAddressList($this->bcc);
-        }
-
-        $lines[] = 'MIME-Version: 1.0';
-        foreach ($contentHeaders as $header) {
-            $lines[] = $header;
-        }
-
-        return implode("\r\n", $lines);
-    }
-
-    /**
-     * Builds the email content and returns [headerLines, body].
-     *
-     * @return array{0: list<string>, 1: string}
-     */
-    private function buildContent(): array
-    {
-        $hasHtml        = $this->htmlBody !== '';
-        $hasAttachments = !empty($this->attachments);
-
-        if (!$hasHtml && !$hasAttachments) {
-            return [
-                [
-                    $this->getContentTypeText(self::CONTENT_TYPE_TEXT_PLAIN),
-                    $this->getContentTransferEncoding(),
-                ],
-                $this->getEncodedContent($this->textBody),
-            ];
-        }
-
-        if ($hasHtml && !$hasAttachments) {
-            $boundary = $this->newBoundary();
-            return [
-                ["Content-Type: multipart/alternative; boundary=\"$boundary\""],
-                $this->buildAlternativeBody($boundary),
-            ];
-        }
-
-        if (!$hasHtml) {
-            // Plain text + attachments
-            $boundary = $this->newBoundary();
-            $body  = "--$boundary\r\n";
-            $body .= $this->getContentTypeText(self::CONTENT_TYPE_TEXT_PLAIN) . "\r\n";
-            $body .= $this->getContentTransferEncoding() . "\r\n\r\n";
-            $body .= $this->getEncodedContent($this->textBody);
-            $body .= "\r\n";
-            $body .= $this->buildAttachmentParts($boundary);
-            $body .= "--$boundary--\r\n";
-            return [
-                ["Content-Type: multipart/mixed; boundary=\"$boundary\""],
-                $body,
-            ];
-        }
-
-        // HTML + attachments: multipart/mixed wrapping multipart/alternative
-        $mixedBoundary = $this->newBoundary();
-        $altBoundary   = $this->newBoundary();
-        $body  = "--$mixedBoundary\r\n";
-        $body .= "Content-Type: multipart/alternative; boundary=\"$altBoundary\"\r\n\r\n";
-        $body .= $this->buildAlternativeBody($altBoundary);
-        $body .= "\r\n";
-        $body .= $this->buildAttachmentParts($mixedBoundary);
-        $body .= "--$mixedBoundary--\r\n";
-        return [
-            ["Content-Type: multipart/mixed; boundary=\"$mixedBoundary\""],
-            $body,
-        ];
-    }
-
-    private function buildAlternativeBody(string $boundary): string
-    {
-        $plainText = $this->textBody !== '' ? $this->textBody : $this->htmlToText($this->htmlBody);
-
-        $body  = "--$boundary\r\n";
-        $body .= $this->getContentTypeText(self::CONTENT_TYPE_TEXT_PLAIN) . "\r\n";
-        $body .= $this->getContentTransferEncoding() . "\r\n\r\n";
-        $body .= $this->getEncodedContent($plainText);
-        $body .= "\r\n";
-        $body .= "--$boundary\r\n";
-        $body .= $this->getContentTypeText(self::CONTENT_TYPE_TEXT_HTML) . "\r\n";
-        $body .= $this->getContentTransferEncoding() . "\r\n\r\n";
-        $body .= $this->getEncodedContent($this->htmlBody);
-        $body .= "\r\n";
-        $body .= "--$boundary--\r\n";
-        return $body;
-    }
-
-    private function buildAttachmentParts(string $boundary): string
-    {
-        $parts = '';
-        foreach ($this->attachments as $attachment) {
-            $encodedName = $this->encodeHeader($attachment['filename']);
-            $parts .= "--$boundary\r\n";
-            $parts .= "Content-Type: {$attachment['mimeType']}; name=\"$encodedName\"\r\n";
-            $parts .= "Content-Disposition: attachment; filename=\"$encodedName\"\r\n";
-            $parts .= $this->getContentTransferEncoding() . "\r\n\r\n";
-            $parts .= $this->getEncodedContent($attachment['data']);
-        }
-        return $parts;
-    }
-
-    private function getContentTypeText(string $textType): string
-    {
-        return "Content-Type: text/" . $textType . "; charset=\"utf-8\"";
-    }
-
-    private function getEncodedContent(string $content): string
-    {
-        return chunk_split(base64_encode($content));
-    }
-
-    private function getContentTransferEncoding(): string
-    {
-        return "Content-Transfer-Encoding: base64";
-    }
-
-    private function htmlToText(string $html): string
-    {
-        $text = str_replace(
-            ['<br>', '<br/>', '<br />', '</p>', '</div>', '</li>', '</h1>', '</h2>', '</h3>', '</h4>'],
-            "\n",
-            $html
-        );
-        $text = strip_tags($text);
-        return html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    }
-
-    private function newBoundary(): string
-    {
-        return '----=_Part_' . bin2hex(random_bytes(8));
+        return $this->attachments;
     }
 }

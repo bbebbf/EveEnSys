@@ -7,9 +7,11 @@ class EmailGenerator
     private string $appTitleShort;
     private string $appTitleLong;
     private string $navbarColor;
+    private EmailSenderInterface $emailSender;
 
-    public function __construct(string $fromAddress)
+    public function __construct(EmailSenderInterface $emailSender, string $fromAddress)
     {
+        $this->emailSender    = $emailSender;
         $this->fromAddress    = $fromAddress;
         $this->appTitleShort  = htmlspecialchars(APP_CONFIG->getAppTitleShort());
         $this->appTitleLong   = htmlspecialchars(APP_CONFIG->getAppTitleLong());
@@ -24,12 +26,13 @@ class EmailGenerator
             . $this->button($activationLink, 'Konto aktivieren')
             . $this->paragraph('Falls du dich nicht registriert hast, kannst du diese E-Mail ignorieren.', true);
 
-        return (new Email())
+        $email = (new Email())
             ->setFrom($this->fromAddress)
             ->addTo($toEmail, $toName)
             ->setSubject($this->getEmailSubject('Konto aktivieren'))
-            ->setHtmlBody($this->wrapHtml('Konto aktivieren', $content))
-            ->send();
+            ->setHtmlBody($this->wrapHtml('Konto aktivieren', $content));
+
+        return $this->emailSender->send($email);
     }
 
     public function sendEventCreatedEmail(string $toEmail, string $toName, string $eventTitle, string $eventDate, string $eventLink, EventDto $event): bool
@@ -39,13 +42,14 @@ class EmailGenerator
             . $this->details(['Titel' => $eventTitle, 'Datum' => $eventDate])
             . $this->button($eventLink, 'Zur Veranstaltung');
 
-        return (new Email())
+        $email = (new Email())
             ->setFrom($this->fromAddress)
             ->addTo($toEmail, $toName)
             ->setSubject($this->getEmailSubject('Veranstaltung erstellt: ' . $eventTitle))
             ->setHtmlBody($this->wrapHtml('Veranstaltung erstellt', $content))
-            ->addAttachment(IcsGenerator::generate($event), FileTools::sanitizeFileName($eventTitle . '.ics'), 'text/calendar')
-            ->send();
+            ->addAttachment(IcsGenerator::generate($event), FileTools::sanitizeFileName($eventTitle . '.ics'), 'text/calendar');
+
+        return $this->emailSender->send($email);
     }
 
     public function sendEventDeletedEmail(string $toEmail, string $toName, string $eventTitle, ?string $ccEmail = null, ?string $ccName = null): bool
@@ -63,7 +67,7 @@ class EmailGenerator
             $email->addCc($ccEmail, $ccName ?? '');
         }
 
-        return $email->send();
+        return $this->emailSender->send($email);
     }
 
     public function sendEnrolledEmail(string $toEmail, string $toName, string $enrolleeName, bool $isSelf, string $eventTitle, string $eventDate, string $eventLink, EventDto $event, ?string $ccEmail = null, ?string $ccName = null): bool
@@ -86,7 +90,7 @@ class EmailGenerator
             $email->addCc($ccEmail, $ccName ?? '');
         }
 
-        return $email->send();
+        return $this->emailSender->send($email);
     }
 
     public function sendUnenrolledEmail(string $toEmail, string $toName, string $enrolleeName, bool $isSelf, string $eventTitle, ?string $ccEmail = null, ?string $ccName = null, ?string $cc2Email = null, ?string $cc2Name = null): bool
@@ -111,7 +115,7 @@ class EmailGenerator
             $email->addCc($cc2Email, $cc2Name ?? '');
         }
 
-        return $email->send();
+        return $this->emailSender->send($email);
     }
 
     public function sendAdminRoleGrantedEmail(string $toEmail, string $toName): bool
@@ -120,12 +124,13 @@ class EmailGenerator
             . $this->paragraph("Dir wurden bei <strong>{$this->appTitleShort}</strong> Administrator-Rechte erteilt.")
             . $this->paragraph('Damit hast du jetzt Zugriff auf den Administrator-Bereich.', true);
 
-        return (new Email())
+        $email = (new Email())
             ->setFrom($this->fromAddress)
             ->addTo($toEmail, $toName)
             ->setSubject($this->getEmailSubject('Administrator-Rechte vergeben'))
-            ->setHtmlBody($this->wrapHtml('Administrator-Rechte vergeben', $content))
-            ->send();
+            ->setHtmlBody($this->wrapHtml('Administrator-Rechte vergeben', $content));
+
+        return $this->emailSender->send($email);
     }
 
     public function sendAdminRoleRevokedEmail(string $toEmail, string $toName): bool
@@ -134,12 +139,13 @@ class EmailGenerator
             . $this->paragraph("Dir wurden deine Administrator-Rechte bei <strong>{$this->appTitleShort}</strong> entzogen.")
             . $this->paragraph('Du hast nun keinen Zugriff mehr auf den Administrator-Bereich.', true);
 
-        return (new Email())
+        $email = (new Email())
             ->setFrom($this->fromAddress)
             ->addTo($toEmail, $toName)
             ->setSubject($this->getEmailSubject('Administrator-Rechte entzogen'))
-            ->setHtmlBody($this->wrapHtml('Administrator-Rechte entzogen', $content))
-            ->send();
+            ->setHtmlBody($this->wrapHtml('Administrator-Rechte entzogen', $content));
+
+        return $this->emailSender->send($email);
     }
 
     public function sendProfileDeletedEmail(string $toEmail, string $toName, ?string $ccEmail = null, ?string $ccName = null): bool
@@ -157,7 +163,7 @@ class EmailGenerator
             $email->addCc($ccEmail, $ccName ?? '');
         }
 
-        return $email->send();
+        return $this->emailSender->send($email);
     }
 
     public function sendPasswordResetEmail(string $toEmail, string $toName, string $resetLink): bool
@@ -168,12 +174,13 @@ class EmailGenerator
             . $this->button($resetLink, 'Passwort zurücksetzen')
             . $this->paragraph('Falls du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren.', true);
 
-        return (new Email())
+        $email = (new Email())
             ->setFrom($this->fromAddress)
             ->addTo($toEmail, $toName)
             ->setSubject($this->getEmailSubject('Passwort zurücksetzen'))
-            ->setHtmlBody($this->wrapHtml('Passwort zurücksetzen', $content))
-            ->send();
+            ->setHtmlBody($this->wrapHtml('Passwort zurücksetzen', $content));
+
+        return $this->emailSender->send($email);
     }
 
     private function getEmailSubject(string $baseSubject): string
