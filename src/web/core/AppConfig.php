@@ -6,7 +6,7 @@ class AppConfig
     private mixed $config = null;
     private ?AppLogo $appLogo = null;
 
-    private const APP_VERSION = '1.2';
+    private const APP_VERSION = '1.3';
 
     public function __construct() {
         $_appConfigFile = dirname(APP_ROOT) . '/_config/app-config.json';
@@ -185,6 +185,19 @@ class AppConfig
             $this->appLogo = new AppLogo($this->get_str_value('AppLogoHeight', ''));
         }
         return $this->appLogo;
+    }
+
+    public function getEmailSender(): EmailSenderInterface
+    {
+        $mailjetConfigFile = dirname(APP_ROOT) . '/_config/mailjet-config.json';
+        if (file_exists($mailjetConfigFile)) {
+            $config = json_decode(file_get_contents($mailjetConfigFile), true);
+            if (is_array($config)) {
+                return new EmailSenderMailjet($config);
+            }
+        }
+
+        return new EmailSenderPhpMail();
     }
 
     private function parse_datetime(string $key): ?DateTime

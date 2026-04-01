@@ -59,6 +59,7 @@ require APP_ROOT . '/model/repositories/impl/OidcProviderRepository.php';
 require APP_ROOT . '/tools/Email.php';
 require APP_ROOT . '/tools/EmailSenderInterface.php';
 require APP_ROOT . '/tools/EmailSenderPhpMail.php';
+require APP_ROOT . '/tools/EmailSenderMailjet.php';
 require APP_ROOT . '/tools/FileTools.php';
 require APP_ROOT . '/tools/IcsGenerator.php';
 
@@ -100,7 +101,7 @@ $session  = new AppSession();
 $view     = new AppView();
 $response = new AppResponse();
 
-$emailGenerator    = new EmailGenerator(new EmailSenderPhpMail(), APP_CONFIG->getNotificationFromEmail());
+$emailGenerator    = new EmailGenerator(APP_CONFIG->getEmailSender(), APP_CONFIG->getNotificationFromEmail());
 
 // Instantiate controllers
 $authController  = new AuthController($userRepo, $resetRepo, $activationRepo, $oidcProviderRepo, $eventRepo, $oidcIdentityRepo, $session, $view, $response, $emailGenerator);
