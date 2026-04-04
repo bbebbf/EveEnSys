@@ -56,7 +56,7 @@ $action = $isEdit ? '/events/' . $event->eventGuid . '/edit' : '/events/create';
       </div>
 
       <div class="btn-group mb-3" role="group" aria-label="radio toggle button group">
-        <?php $isPublished = !empty($old) ? isset($old['event_is_published']) : ($event?->eventIsPublished ?? false); ?>
+        <?php $isPublished = !empty($old) ? isset($old['event_is_published']) : ($event?->eventIsPublished ?? true); ?>
         <input type="radio"
                class="btn-check"
                name="event_is_published"
