@@ -40,7 +40,8 @@
               </p>
             <?php endif; ?>
           </div>
-          <div class="card-footer text-muted small">
+          <div class="card-footer text-muted small d-flex justify-content-between align-items-center">
+            <span>
             <?php if ($event->eventDurationHours !== null): ?>
               &nbsp;<i class="bi bi-clock-history"></i> <?= html_out($event->eventDurationHours) ?> h
             <?php endif; ?>
@@ -50,6 +51,10 @@
             <?php if ($event->eventLocation !== null): ?>
               &nbsp;<i class="bi bi-geo-alt"></i> <?= html_out($event->eventLocation) ?>
             <?php endif; ?>
+            </span>
+            <span>
+              &nbsp; <!-- To ensure the footer has a minimum height -->
+            </span>
           </div>
         </div>
 
