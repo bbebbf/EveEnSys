@@ -61,6 +61,10 @@
       <?php if (Session::isLoggedIn()): ?>
         <dt class="col-sm-3">Verantwortlich</dt>
         <dd class="col-sm-9"><?= html_out($event->getResponsibleName() ?? 'Unbekannt') ?></dd>
+        <?php if ($isAdmin): ?>
+          <dt class="col-sm-3">Eingetragen durch</dt>
+          <dd class="col-sm-9"><?= html_out($event->creatorName ?? 'Unbekannt') ?></dd>
+        <?php endif; ?>
       <?php endif; ?>
 
       <?php if ($isAdmin || $isCreator): ?>
