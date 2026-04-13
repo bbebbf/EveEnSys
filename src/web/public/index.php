@@ -85,7 +85,9 @@ $req = new Request();
 $router = new Router($req);
 
 // Instantiate repositories
-$userRepo         = new UserRepository($db);
+$userRepo         = new UserRepository($db,
+    APP_CONFIG->getDelayedStartMinutes()
+    );
 $eventRepo        = new EventRepository($db,
     APP_CONFIG->getDelayedStartMinutes(),
     APP_CONFIG->getNewEventsDaysOld(),

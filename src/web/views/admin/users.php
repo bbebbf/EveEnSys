@@ -22,6 +22,8 @@
       <tr>
         <th>Name</th>
         <th>E-Mail-Adresse</th>
+        <th class="text-end pe-3">Veranstaltungen</th>
+        <th class="text-end pe-3">Anmeldungen</th>
         <th>Letzter Login</th>
         <th>Aktionen</th>
       </tr>
@@ -63,6 +65,14 @@
                 <?= html_out($oidcProviderInfos[$identity->providerKey]->label ?? $identity->providerKey) ?>
               </span>
             <?php endforeach; ?>
+          </td>
+          <td class="text-end pe-3">
+            <?= $u->upcomingEventsCreated !== null ? html_out($u->upcomingEventsCreated) : '—' ?> /
+            <?= $u->totalEventsCreated !== null ? html_out($u->totalEventsCreated) : '—' ?> 
+          </td>
+          <td class="text-end pe-3">
+            <?= $u->upcomingEnrollmentsCreated !== null ? html_out($u->upcomingEnrollmentsCreated) : '—' ?> /
+            <?= $u->totalEnrollmentsCreated !== null ? html_out($u->totalEnrollmentsCreated) : '—' ?>
           </td>
           <td>
             <?= $u->userLastLogin ? html_out(date('d.m.Y H:i', strtotime($u->userLastLogin))) : '—' ?>

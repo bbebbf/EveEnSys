@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function __construct(private mysqli $db) {}
+    public function __construct(
+        private mysqli $db,
+        private int $delayedStartMinutes,
+    ) {}
 
     public function findByEmail(string $email): ?UserDto
     {
@@ -183,7 +186,7 @@ class UserRepository implements UserRepositoryInterface
     /** @return UserDto[] */
     public function findAll(): array
     {
-        $result = $this->db->query(
+        $stmt = $this->db->prepare(
             'SELECT u.user_id, u.user_guid, u.user_email, u.user_is_new, u.user_is_active, u.user_role, u.user_name, u.user_passwd, u.user_last_login,
                     EXISTS (
                         SELECT 1 FROM password_reset pr
@@ -196,15 +199,38 @@ class UserRepository implements UserRepositoryInterface
                          WHERE at.user_id          = u.user_id
                            AND at.token_expires_at > NOW()
                            AND at.token_used        = b\'0\'
-                    ) AS has_pending_activation_token
+                    ) AS has_pending_activation_token,
+                    (
+                        SELECT COUNT(*) FROM event e
+                        WHERE e.creator_user_id = u.user_id
+                    ) AS total_events_created,
+                    (
+                        SELECT COUNT(*) FROM event e
+                        WHERE e.creator_user_id = u.user_id
+                        AND DATE_ADD(e.event_date, INTERVAL ? MINUTE) >= NOW()
+                    ) AS upcoming_events_created,
+                    (
+                        SELECT COUNT(*) FROM subscriber s
+                        WHERE s.creator_user_id = u.user_id
+                    ) AS total_enrollments_created,
+                    (
+                        SELECT COUNT(*) FROM subscriber s
+                        JOIN event e ON e.event_id = s.event_id
+                        WHERE s.creator_user_id = u.user_id
+                        AND DATE_ADD(e.event_date, INTERVAL ? MINUTE) >= NOW()
+                    ) AS upcoming_enrollments_created
                FROM `user` u
               ORDER BY u.user_name ASC'
         );
+        $stmt->bind_param('ii', $this->delayedStartMinutes, $this->delayedStartMinutes);
+        $stmt->execute();
+        $result = $stmt->get_result();
         $users = [];
         while ($row = $result->fetch_assoc()) {
             $users[] = $this->mapRow($row);
         }
         $result->free();
+        $stmt->close();
         return $users;
     }
 
@@ -247,6 +273,10 @@ class UserRepository implements UserRepositoryInterface
             userLastLogin:             $row['user_last_login'],
             hasPendingPasswordReset:   (bool)($row['has_pending_password_reset']   ?? false),
             hasPendingActivationToken: (bool)($row['has_pending_activation_token'] ?? false),
+            totalEventsCreated:        isset($row['total_events_created'])        ? (int)$row['total_events_created']        : null,
+            upcomingEventsCreated:     isset($row['upcoming_events_created'])     ? (int)$row['upcoming_events_created']     : null,
+            totalEnrollmentsCreated:   isset($row['total_enrollments_created'])   ? (int)$row['total_enrollments_created']   : null,
+            upcomingEnrollmentsCreated:isset($row['upcoming_enrollments_created'])? (int)$row['upcoming_enrollments_created']: null,
         );
     }
 }
