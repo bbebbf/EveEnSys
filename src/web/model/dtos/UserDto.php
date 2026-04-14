@@ -15,9 +15,9 @@ class UserDto
         public readonly ?string $userLastLogin,
         public readonly bool    $hasPendingPasswordReset   = false,
         public readonly bool    $hasPendingActivationToken = false,
-        public readonly ?int    $totalEventsCreated = null,
+        public readonly ?int    $pastEventsCreated = null,
         public readonly ?int    $upcomingEventsCreated = null,
-        public readonly ?int    $totalEnrollmentsCreated = null,
+        public readonly ?int    $pastEnrollmentsCreated = null,
         public readonly ?int    $upcomingEnrollmentsCreated = null,
     ) {}
 }

@@ -261,6 +261,20 @@ class UserRepository implements UserRepositoryInterface
 
     private function mapRow(array $row): UserDto
     {
+        $pastEventsCreated = null;
+        $upcomingEventsCreated = null;
+        if (isset($row['total_events_created']) && isset($row['upcoming_events_created'])) {
+            $upcomingEventsCreated = (int)$row['upcoming_events_created'];
+            $pastEventsCreated = (int)$row['total_events_created'] - $upcomingEventsCreated;
+        }
+
+        $pastEnrollmentsCreated = null;
+        $upcomingEnrollmentsCreated = null;
+        if (isset($row['total_enrollments_created']) && isset($row['upcoming_enrollments_created'])) {
+            $upcomingEnrollmentsCreated = (int)$row['upcoming_enrollments_created'];
+            $pastEnrollmentsCreated = (int)$row['total_enrollments_created'] - $upcomingEnrollmentsCreated;
+        }
+
         return new UserDto(
             userId:        (int)$row['user_id'],
             userGuid:      $row['user_guid'],
@@ -273,10 +287,10 @@ class UserRepository implements UserRepositoryInterface
             userLastLogin:             $row['user_last_login'],
             hasPendingPasswordReset:   (bool)($row['has_pending_password_reset']   ?? false),
             hasPendingActivationToken: (bool)($row['has_pending_activation_token'] ?? false),
-            totalEventsCreated:        isset($row['total_events_created'])        ? (int)$row['total_events_created']        : null,
-            upcomingEventsCreated:     isset($row['upcoming_events_created'])     ? (int)$row['upcoming_events_created']     : null,
-            totalEnrollmentsCreated:   isset($row['total_enrollments_created'])   ? (int)$row['total_enrollments_created']   : null,
-            upcomingEnrollmentsCreated:isset($row['upcoming_enrollments_created'])? (int)$row['upcoming_enrollments_created']: null,
+            pastEventsCreated:         $pastEventsCreated,
+            upcomingEventsCreated:     $upcomingEventsCreated,
+            pastEnrollmentsCreated:    $pastEnrollmentsCreated,
+            upcomingEnrollmentsCreated:$upcomingEnrollmentsCreated,
         );
     }
 }

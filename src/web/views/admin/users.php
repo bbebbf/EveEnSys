@@ -22,8 +22,8 @@
       <tr>
         <th>Name</th>
         <th>E-Mail-Adresse</th>
-        <th class="text-end pe-3">Veranstaltungen</th>
-        <th class="text-end pe-3">Anmeldungen</th>
+        <th colspan="2" class="text-end">Veranstaltungen</th>
+        <th colspan="2" class="text-end">Anmeldungen</th>
         <th>Letzter Login</th>
         <th>Aktionen</th>
       </tr>
@@ -66,13 +66,17 @@
               </span>
             <?php endforeach; ?>
           </td>
-          <td class="text-end pe-3">
-            <?= $u->upcomingEventsCreated !== null ? html_out($u->upcomingEventsCreated) : '—' ?> /
-            <?= $u->totalEventsCreated !== null ? html_out($u->totalEventsCreated) : '—' ?> 
+          <td class="text-end">
+            <?= $u->pastEventsCreated !== null ? html_out($u->pastEventsCreated) : '—' ?>
           </td>
-          <td class="text-end pe-3">
-            <?= $u->upcomingEnrollmentsCreated !== null ? html_out($u->upcomingEnrollmentsCreated) : '—' ?> /
-            <?= $u->totalEnrollmentsCreated !== null ? html_out($u->totalEnrollmentsCreated) : '—' ?>
+          <td class="text-end">
+            <?= $u->upcomingEventsCreated !== null ? html_out($u->upcomingEventsCreated) : '—' ?>
+          </td>
+          <td class="text-end">
+            <?= $u->pastEnrollmentsCreated !== null ? html_out($u->pastEnrollmentsCreated) : '—' ?>
+          </td>
+          <td class="text-end">
+            <?= $u->upcomingEnrollmentsCreated !== null ? html_out($u->upcomingEnrollmentsCreated) : '—' ?>
           </td>
           <td>
             <?= $u->userLastLogin ? html_out(date('d.m.Y H:i', strtotime($u->userLastLogin))) : '—' ?>
