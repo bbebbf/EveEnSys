@@ -49,7 +49,7 @@
           <div class="card-header d-flex justify-content-between align-items-center">
             <span>
               <i class="bi bi-calendar-event"></i>
-              <?= event_date_out($event->eventDate) ?>
+              <?= event_datetime_out($event->eventDate) ?>
               <?php if (!$event->eventIsActivated): ?>
                 <span class="badge bg-danger me-2">nicht aktiviert</span>
               <?php endif; ?>

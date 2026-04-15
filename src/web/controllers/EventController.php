@@ -39,10 +39,8 @@ class EventController
             'content_text' => $e->eventDescription ?? '',
             'date_published' => $e->eventDate->format(\DateTimeInterface::ATOM),
             '_evensys'     => array_filter([
-                'location'       => $e->eventLocation,
                 'duration_hours' => $e->eventDurationHours,
                 'max_subscriber' => $e->eventMaxSubscriber,
-                'responsible'    => $e->getResponsibleName(),
             ], fn($v) => $v !== null),
         ], $events);
 
@@ -197,7 +195,7 @@ class EventController
         }
 
         $eventLink = get_base_url() . '/events/' . $guid;
-        $eventDate = event_date_out($event->eventDate);
+        $eventDate = event_datetime_out($event->eventDate);
 
         $creator      = $this->userRepo->findById($event->creatorUserId);
         $creatorEmail = $creator?->userEmail;
@@ -394,7 +392,7 @@ class EventController
         $createdEvent = $this->eventRepo->findByGuid($guid);
 
         $eventLink = get_base_url() . '/events/' . $guid;
-        $eventDate = event_date_out(new DateTimeImmutable($data['event_date']));
+        $eventDate = event_datetime_out(new DateTimeImmutable($data['event_date']));
         if ($createdEvent !== null) {
             $this->emailGenerator->sendEventCreatedEmail(
                 $this->session->getUserEmail(),
@@ -543,9 +541,9 @@ class EventController
             if (!$dt) {
                 $errors['event_date'] = 'Bitte gib ein gültiges Datum und eine gültige Uhrzeit ein.';
             } elseif ($dt < $this->getMinEventDate()) {
-                $errors['event_date'] = 'Das Datum muss mindestens ' . event_date_out($this->getMinEventDate()) . ' sein.';
+                $errors['event_date'] = 'Das Datum muss mindestens ' . event_datetime_out($this->getMinEventDate()) . ' sein.';
             } elseif ($dt > $this->getMaxEventDate()) {
-                $errors['event_date'] = 'Das Datum darf höchstens ' . event_date_out($this->getMaxEventDate()) . ' sein.';
+                $errors['event_date'] = 'Das Datum darf höchstens ' . event_datetime_out($this->getMaxEventDate()) . ' sein.';
             } else {
                 $eventDate = $dt->format('Y-m-d H:i:s');
             }

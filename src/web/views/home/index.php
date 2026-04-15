@@ -26,7 +26,7 @@
         <div class="card h-100 shadow-sm">
           <div class="card-header">
             <i class="bi bi-calendar-event"></i>
-            <?= event_date_out($event->eventDate) ?>
+            <?= event_datetime_out($event->eventDate) ?>
           </div>
           <div class="card-body">
             <h5 class="card-title d-flex justify-content-between">

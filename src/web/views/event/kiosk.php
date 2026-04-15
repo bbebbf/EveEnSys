@@ -226,9 +226,7 @@
           <div class="slide-content">
             <div class="event-date-badge">
               <i class="bi bi-calendar-event"></i>
-              <?= html_out($event->eventDate->format('d.m.Y')) ?>
-              &nbsp;&bull;&nbsp;
-              <?= html_out($event->eventDate->format('H:i')) ?> Uhr
+              <?= html_out(event_datetime_out($event->eventDate)) ?>
             </div>
 
             <div class="event-title"><?= html_out($event->eventTitle) ?></div>

@@ -40,14 +40,14 @@
         <?php foreach ($enrollments as $enrollment): ?>
           <?php $searchData = mb_strtolower(
             $enrollment->eventTitle . ' '
-            . event_date_out($enrollment->eventDate) . ' '
+            . event_datetime_out($enrollment->eventDate) . ' '
             . $enrollment->subscriberName . ' '
             . $enrollment->creatorUserName
           ); ?>
           <tr data-search="<?= html_out($searchData) ?>">
             <td class="text-nowrap">
               <?php if ($prev_eventGuid != $enrollment->eventGuid): ?>
-                <?= html_out(event_date_out($enrollment->eventDate)) ?>
+                <?= html_out(event_datetime_out($enrollment->eventDate)) ?>
               <?php else: ?>
                 &nbsp;
               <?php endif; ?>
@@ -68,7 +68,7 @@
               <?= html_out($enrollment->creatorUserName) ?>
             </td>
             <td class="text-nowrap text-muted small">
-              <?= html_out($enrollment->subscriberEnrollTimestamp->format('d.m.Y H:i \U\h\r')) ?>
+              <?= enrollment_datetime_out($enrollment->subscriberEnrollTimestamp) ?>
             </td>
             <td class="text-end">
               <?php
@@ -76,7 +76,7 @@
                 $unenrollEventGuid      = $enrollment->eventGuid;
                 $unenrollSubscriberName = $enrollment->subscriberName;
                 $unenrollSource         = 'admin_enrolled';
-                $unenrollEventInfo      = $enrollment->eventTitle . ' — ' . event_date_out($enrollment->eventDate);
+                $unenrollEventInfo      = $enrollment->eventTitle . ' — ' . event_datetime_out($enrollment->eventDate);
                 include APP_ROOT . '/views/event/_unenroll_modal.php';
               ?>
             </td>

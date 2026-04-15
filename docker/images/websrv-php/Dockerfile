@@ -34,7 +34,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN usermod -u 1000 www-data && \
     usermod -G staff www-data
 
-RUN docker-php-ext-install mysqli bcmath gd
+RUN docker-php-ext-install mysqli bcmath gd intl
 
 RUN a2enmod rewrite && \
     sed -ri 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf

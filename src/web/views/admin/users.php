@@ -79,7 +79,7 @@
             <?= $u->upcomingEnrollmentsCreated !== null ? html_out($u->upcomingEnrollmentsCreated) : '—' ?>
           </td>
           <td>
-            <?= $u->userLastLogin ? html_out(date('d.m.Y H:i', strtotime($u->userLastLogin))) : '—' ?>
+            <?= $u->userLastLogin ? html_out(default_datetime_out(new DateTimeImmutable($u->userLastLogin))) : '—' ?>
           </td>
           <td>
             <?php if ($u->userId <> Session::getUserId()): ?>

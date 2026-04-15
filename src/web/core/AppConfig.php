@@ -6,7 +6,7 @@ class AppConfig
     private mixed $config = null;
     private ?AppLogo $appLogo = null;
 
-    private const APP_VERSION = '1.15';
+    private const APP_VERSION = '1.16';
 
     public function __construct() {
         $_appConfigFile = dirname(APP_ROOT) . '/_config/app-config.json';
@@ -154,7 +154,7 @@ class AppConfig
         if ($from !== null && $now < $from) {
             return [
                 'open' => false,
-                'message' => 'Anmeldungen sind ab dem ' . $from->format('Y-m-d H:i') . ' möglich.'
+                'message' => 'Anmeldungen sind ab dem ' . enrollment_datetime_out($from) . ' möglich.'
             ];
         }
         if ($toExcluded !== null && $now >= $toExcluded) {

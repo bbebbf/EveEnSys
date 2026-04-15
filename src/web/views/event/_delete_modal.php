@@ -16,7 +16,7 @@ $deleteEventOrigin ??= '';
         <div class="modal-body">
           <p>Möchtest du die folgende Veranstaltung wirklich dauerhaft löschen?</p>
           <p class="fw-bold"><?= html_out($deleteEventTitle) ?></p>
-          <p class="text-muted small">Geplant: <?= event_date_out($deleteEventDate) ?></p>
+          <p class="text-muted small">Geplant: <?= event_datetime_out($deleteEventDate) ?></p>
           <p class="text-danger small mb-0">Diese Aktion kann nicht rückgängig gemacht werden.</p>
         </div>
         <div class="modal-footer">

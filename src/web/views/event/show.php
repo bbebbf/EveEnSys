@@ -41,7 +41,7 @@
 
     <dl class="row mb-4">
       <dt class="col-sm-3">Datum &amp; Uhrzeit</dt>
-      <dd class="col-sm-9"><?= event_date_out($event->eventDate) ?></dd>
+      <dd class="col-sm-9"><?= event_datetime_out($event->eventDate) ?></dd>
 
       <?php if (Session::isLoggedIn() && $event->eventLocation !== null): ?>
         <dt class="col-sm-3">Veranstaltungsort</dt>
@@ -123,7 +123,7 @@
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span>
                   <?= html_out($sub->subscriberName ?? 'Unbekannt') ?>
-                  <small class="text-muted ms-1"><?= html_out($sub->subscriberEnrollTimestamp->format('d.m.Y')) ?></small>
+                  <small class="text-muted ms-1"><?= enrollment_date_out($sub->subscriberEnrollTimestamp) ?></small>
                 </span>
                 <?php if ($isAdmin || $sub->creatorUserId === Session::getUserId()): ?>
                   <?php

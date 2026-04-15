@@ -8,17 +8,39 @@ function html_out(mixed $value): string
 
 function datetime_out(\DateTimeInterface $aDate, string $format): string
 {
-    return $aDate !== null ? $aDate->format($format) : '';
+    if ($aDate == null) {
+        return '';
+    }
+
+    $fmt = new IntlDateFormatter(
+        'de_DE',
+        IntlDateFormatter::SHORT,
+        IntlDateFormatter::NONE,
+        $aDate->getTimezone(),
+        null,
+        $format
+    );
+    return $fmt->format($aDate);
 }
 
-function event_date_out(\DateTimeInterface $aDate): string
+function event_datetime_out(\DateTimeInterface $aDate): string
 {
-    return datetime_out($aDate, 'd.m. \u\m H:i \U\h\r');
+    return datetime_out($aDate, "EEEE, dd.MM. 'um' HH:mm 'Uhr'");
+}
+
+function enrollment_date_out(\DateTimeInterface $aDate): string
+{
+    return datetime_out($aDate, "dd.MM.yy");
+}
+
+function enrollment_datetime_out(\DateTimeInterface $aDate): string
+{
+    return datetime_out($aDate, "dd.MM.yy / HH:mm");
 }
 
 function default_datetime_out(\DateTimeInterface $aDate): string
 {
-    return datetime_out($aDate, 'd.m.y / H:i:s');
+    return datetime_out($aDate, "dd.MM.yy / HH:mm:ss");
 }
 
 function get_base_url(): string
