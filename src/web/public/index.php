@@ -67,6 +67,7 @@ require APP_ROOT . '/tools/IcsGenerator.php';
 require APP_ROOT . '/controllers/ControllerTools.php';
 require APP_ROOT . '/controllers/AuthController.php';
 require APP_ROOT . '/controllers/EventController.php';
+require APP_ROOT . '/controllers/LoginEventNotifier.php';
 require APP_ROOT . '/controllers/OidcUserProvisioner.php';
 require APP_ROOT . '/controllers/OidcController.php';
 
@@ -106,10 +107,11 @@ $response = new AppResponse();
 $emailGenerator    = new EmailGenerator(APP_CONFIG->getEmailSender(), APP_CONFIG->getNotificationFromEmail());
 
 // Instantiate controllers
-$authController  = new AuthController($userRepo, $resetRepo, $activationRepo, $oidcProviderRepo, $eventRepo, $oidcIdentityRepo, $session, $view, $response, $emailGenerator);
+$loginEventNotifier = new LoginEventNotifier($eventRepo, $session);
+$authController  = new AuthController($userRepo, $resetRepo, $activationRepo, $oidcProviderRepo, $eventRepo, $oidcIdentityRepo, $loginEventNotifier, $session, $view, $response, $emailGenerator);
 $eventController = new EventController($eventRepo, $userRepo, $session, $view, $response, $emailGenerator);
 $oidcProvisioner = new OidcUserProvisioner($userRepo, $oidcIdentityRepo);
-$oidcController  = new OidcController($userRepo, $oidcIdentityRepo, $oidcProviderRepo, $oidcProvisioner, $session, $view, $response);
+$oidcController  = new OidcController($userRepo, $oidcIdentityRepo, $oidcProviderRepo, $oidcProvisioner, $loginEventNotifier, $session, $view, $response);
 
 // --- Routes ---
 $router->get('/',                      fn() => $eventController->home());

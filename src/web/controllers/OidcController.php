@@ -8,6 +8,7 @@ class OidcController
         private OidcIdentityRepositoryInterface $identityRepo,
         private OidcProviderRepositoryInterface $providerRepo,
         private OidcUserProvisioner $provisioner,
+        private LoginEventNotifier $loginEventNotifier,
         private SessionInterface $session,
         private ViewInterface $view,
         private ResponseInterface $response,
@@ -150,6 +151,7 @@ class OidcController
         }
 
         $this->session->login($user);
+        $this->loginEventNotifier->notifyIfNewEventsSince($user->userLastLogin);
         $this->userRepo->updateLastLogin($user->userId);
         $this->response->redirect('/events');
     }

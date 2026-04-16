@@ -89,6 +89,7 @@
 <?php
 $_flashSuccess = Session::getFlash('success');
 $_flashError   = Session::getFlash('error');
+$_flashInfo    = Session::getFlash('info');
 ?>
 <?php if ($_flashSuccess !== null): ?>
   <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -99,6 +100,12 @@ $_flashError   = Session::getFlash('error');
 <?php if ($_flashError !== null): ?>
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
     <?= html_out($_flashError) ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<?php endif; ?>
+<?php if ($_flashInfo !== null): ?>
+  <div class="alert alert-info alert-dismissible fade show" role="alert">
+    <?= html_out($_flashInfo) ?>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 <?php endif; ?>

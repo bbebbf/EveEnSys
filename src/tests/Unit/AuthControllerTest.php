@@ -17,6 +17,7 @@ class AuthControllerTest extends TestCase
     private MockObject       $oidcProviderRepo;
     private MockObject       $eventRepo;
     private MockObject       $oidcIdentityRepo;
+    private MockObject       $loginEventNotifier;
     private MockObject       $session;
     private MockObject       $view;
     private FakeResponse     $response;
@@ -25,16 +26,17 @@ class AuthControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->userRepo         = $this->createMock(\UserRepositoryInterface::class);
-        $this->resetRepo        = $this->createMock(\PasswordResetRepositoryInterface::class);
-        $this->activationRepo   = $this->createMock(\ActivationTokenRepositoryInterface::class);
-        $this->oidcProviderRepo = $this->createMock(\OidcProviderRepositoryInterface::class);
-        $this->eventRepo        = $this->createMock(\EventRepositoryInterface::class);
-        $this->oidcIdentityRepo = $this->createMock(\OidcIdentityRepositoryInterface::class);
-        $this->session          = $this->createMock(\SessionInterface::class);
-        $this->view             = $this->createMock(\ViewInterface::class);
-        $this->response         = new FakeResponse();
-        $this->emailGenerator   = $this->createMock(\EmailGenerator::class);
+        $this->userRepo            = $this->createMock(\UserRepositoryInterface::class);
+        $this->resetRepo           = $this->createMock(\PasswordResetRepositoryInterface::class);
+        $this->activationRepo      = $this->createMock(\ActivationTokenRepositoryInterface::class);
+        $this->oidcProviderRepo    = $this->createMock(\OidcProviderRepositoryInterface::class);
+        $this->eventRepo           = $this->createMock(\EventRepositoryInterface::class);
+        $this->oidcIdentityRepo    = $this->createMock(\OidcIdentityRepositoryInterface::class);
+        $this->loginEventNotifier  = $this->createMock(\LoginEventNotifier::class);
+        $this->session             = $this->createMock(\SessionInterface::class);
+        $this->view                = $this->createMock(\ViewInterface::class);
+        $this->response            = new FakeResponse();
+        $this->emailGenerator      = $this->createMock(\EmailGenerator::class);
 
         $this->controller = new \AuthController(
             $this->userRepo,
@@ -43,6 +45,7 @@ class AuthControllerTest extends TestCase
             $this->oidcProviderRepo,
             $this->eventRepo,
             $this->oidcIdentityRepo,
+            $this->loginEventNotifier,
             $this->session,
             $this->view,
             $this->response,

@@ -284,7 +284,7 @@ class UserRepository implements UserRepositoryInterface
             userRole:      (int)$row['user_role'],
             userName:      $row['user_name'],
             userPasswd:                $row['user_passwd'] ?? null,
-            userLastLogin:             $row['user_last_login'],
+            userLastLogin:             isset($row['user_last_login']) ? new \DateTimeImmutable($row['user_last_login']) : null,
             hasPendingPasswordReset:   (bool)($row['has_pending_password_reset']   ?? false),
             hasPendingActivationToken: (bool)($row['has_pending_activation_token'] ?? false),
             pastEventsCreated:         $pastEventsCreated,

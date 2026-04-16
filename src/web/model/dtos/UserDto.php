@@ -12,7 +12,7 @@ class UserDto
         public readonly int     $userRole,
         public readonly string  $userName,
         public readonly ?string $userPasswd,
-        public readonly ?string $userLastLogin,
+        public readonly ?\DateTimeImmutable $userLastLogin,
         public readonly bool    $hasPendingPasswordReset   = false,
         public readonly bool    $hasPendingActivationToken = false,
         public readonly ?int    $pastEventsCreated = null,

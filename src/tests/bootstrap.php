@@ -42,6 +42,7 @@ require $srcRoot . '/core/EmailGenerator.php';
 
 // Controllers
 require $srcRoot . '/controllers/ControllerTools.php';
+require $srcRoot . '/controllers/LoginEventNotifier.php';
 require $srcRoot . '/controllers/AuthController.php';
 require $srcRoot . '/controllers/EventController.php';
 require $srcRoot . '/controllers/OidcUserProvisioner.php';

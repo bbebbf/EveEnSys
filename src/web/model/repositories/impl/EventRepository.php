@@ -468,6 +468,28 @@ class EventRepository implements EventRepositoryInterface
         return $isDeleted;
     }
 
+    /** @return string[] */
+    public function findGuidsNewOrUpdatedSince(\DateTimeImmutable $since): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT e.event_guid FROM event e
+              WHERE (e.event_created_date > ? OR e.event_updated_date > ?)
+                AND DATE_ADD(e.event_date, INTERVAL ? MINUTE) >= NOW()
+                AND (e.event_is_visible = 1 AND e.event_is_published = 1)'
+        );
+        $sinceStr = $since->format('Y-m-d H:i:s');
+        $stmt->bind_param('ssi', $sinceStr, $sinceStr, $this->delayedStartMinutes);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $guids = [];
+        while ($row = $result->fetch_assoc()) {
+            $guids[] = $row['event_guid'];
+        }
+        $result->free();
+        $stmt->close();
+        return $guids;
+    }
+
     private function generateGuid(): string
     {
         $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';

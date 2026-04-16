@@ -60,4 +60,7 @@ interface EventRepositoryInterface
     public function findSubscriberByGuid(string $subscriberGuid): ?SubscriberDto;
 
     public function deleteSubscriber(string $subscriberGuid, int $creatorUserId, bool $ignoreCreator = false): bool;
+
+    /** @return string[] */
+    public function findGuidsNewOrUpdatedSince(\DateTimeImmutable $since): array;
 }
