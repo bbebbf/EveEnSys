@@ -32,4 +32,12 @@ interface SessionInterface
     public function getOidcNonce(): string;
     public function getOidcLinkUserId(): ?int;
     public function clearOidcData(): void;
+
+    /** @param string[] $guids */
+    public function setNewOrUpdatedEventGuids(array $guids): void;
+
+    /** @return bool */
+    public function isEventGuidInNewOrUpdated(string $guid): bool;
+
+    public function removeEventGuidFromNewOrUpdated(string $guid): void;
 }

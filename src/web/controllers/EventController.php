@@ -163,6 +163,8 @@ class EventController
         $subscribers      = $this->eventRepo->findSubscribersByEvent($event->eventId);
         $isEnrolledAsSelf = $this->session->isLoggedIn()
             && $this->eventRepo->isUserEnrolledAsSelf($event->eventId, $this->session->getUserId());
+        
+        $this->session->removeEventGuidFromNewOrUpdated($event->eventGuid);
 
         $this->view->render('event/show', [
             'pageTitle'         => $event->eventTitle,

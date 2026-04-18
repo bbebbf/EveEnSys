@@ -17,7 +17,7 @@ class LoginEventNotifier
         if (count($guids) === 0) {
             return;
         }
-        $_SESSION['new_or_updated_event_guids'] = $guids;
+        $this->session->setNewOrUpdatedEventGuids($guids);
         $count = count($guids);
         $this->session->setFlash('info',
             "Seit deinem letzten Login gibt es $count neue oder aktualisierte bevorstehende Veranstaltung(en)."

@@ -32,4 +32,8 @@ class AppSession implements SessionInterface
     public function getOidcNonce(): string                { return Session::getOidcNonce(); }
     public function getOidcLinkUserId(): ?int             { return Session::getOidcLinkUserId(); }
     public function clearOidcData(): void                 { Session::clearOidcData(); }
+
+    public function setNewOrUpdatedEventGuids(array $guids): void { Session::setNewOrUpdatedEventGuids($guids); }
+    public function isEventGuidInNewOrUpdated(string $guid): bool { return Session::isEventGuidInNewOrUpdated($guid); }
+    public function removeEventGuidFromNewOrUpdated(string $guid): void { Session::removeEventGuidFromNewOrUpdated($guid); }
 }

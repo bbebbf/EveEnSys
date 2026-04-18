@@ -144,6 +144,28 @@ class Session
         );
     }
 
+    /** @param string[] $guids */
+    public static function setNewOrUpdatedEventGuids(array $guids): void
+    {
+        $_SESSION['new_or_updated_event_guids'] = $guids;
+    }
+
+    /** @return string[] */
+    public static function isEventGuidInNewOrUpdated(string $guid): bool
+    {
+        return in_array($guid, $_SESSION['new_or_updated_event_guids'] ?? []);
+    }
+
+    public static function removeEventGuidFromNewOrUpdated(string $guid): void
+    {
+        $guids = $_SESSION['new_or_updated_event_guids'] ?? [];
+        $key = array_search($guid, $guids);
+        if ($key !== false) {
+            unset($guids[$key]);
+            $_SESSION['new_or_updated_event_guids'] = array_values($guids);
+        }
+    }
+
     public static function setFlash(string $key, string $message): void
     {
         $_SESSION['flash'][$key] = $message;
