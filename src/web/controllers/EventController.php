@@ -326,7 +326,7 @@ class EventController
             $this->response->abort404();
         }
 
-        $ics      = IcsGenerator::generate($event);
+        $ics      = IcsGenerator::generate($event, $this->session->isLoggedIn());
         $filename = FileTools::sanitizeFileName($event->eventTitle . '.ics');
 
         header('Content-Type: text/calendar; charset=utf-8');

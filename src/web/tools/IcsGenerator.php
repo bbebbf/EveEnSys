@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 class IcsGenerator
 {
-    public static function generate(EventDto $event): string
+    public static function generate(EventDto $event,
+        bool $includePrivateInformation = false): string
     {
         $utc      = new \DateTimeZone('UTC');
         $now      = new \DateTimeImmutable('now', $utc);
@@ -34,7 +35,7 @@ class IcsGenerator
             $lines[] = 'DESCRIPTION:' . self::escapeText($event->eventDescription);
         }
 
-        if ($event->eventLocation !== null && $event->eventLocation !== '') {
+        if ($includePrivateInformation && $event->eventLocation !== null && $event->eventLocation !== '') {
             $lines[] = 'LOCATION:' . self::escapeText($event->eventLocation);
         }
 

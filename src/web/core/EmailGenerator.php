@@ -48,7 +48,7 @@ class EmailGenerator
             ->addTo($toEmail, $toName)
             ->setSubject($this->getEmailSubject('Veranstaltung erstellt: ' . $eventTitle))
             ->setHtmlBody($this->wrapHtml('Veranstaltung erstellt', $content))
-            ->addAttachment(IcsGenerator::generate($event), FileTools::sanitizeFileName($eventTitle . '.ics'), 'text/calendar');
+            ->addAttachment(IcsGenerator::generate($event, true), FileTools::sanitizeFileName($eventTitle . '.ics'), 'text/calendar');
 
         return $this->emailSender->send($email);
     }
@@ -85,7 +85,7 @@ class EmailGenerator
             ->addTo($toEmail, $toName)
             ->setSubject($this->getEmailSubject('Anmeldung bestätigt: ' . $eventTitle))
             ->setHtmlBody($this->wrapHtml('Anmeldung bestätigt', $content))
-            ->addAttachment(IcsGenerator::generate($event), FileTools::sanitizeFileName($eventTitle . '.ics'), 'text/calendar');
+            ->addAttachment(IcsGenerator::generate($event, true), FileTools::sanitizeFileName($eventTitle . '.ics'), 'text/calendar');
 
         if ($ccEmail !== null) {
             $email->addCc($ccEmail, $ccName ?? '');

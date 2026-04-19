@@ -6,7 +6,7 @@ class AppConfig
     private mixed $config = null;
     private ?AppLogo $appLogo = null;
 
-    private const APP_VERSION = '1.18';
+    private const APP_VERSION = '1.19';
 
     public function __construct() {
         $_appConfigFile = dirname(APP_ROOT) . '/_config/app-config.json';
